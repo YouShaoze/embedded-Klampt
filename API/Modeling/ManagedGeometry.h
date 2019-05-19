@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-19 13:01:03
+* @Last Modified time: 2019-05-19 13:41:37
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -12,7 +12,7 @@
 #define MODELING_MANAGED_GEOMETRY_H
 
 #include <KrisLibrary/geometry/AnyGeometry.h>
-#include <KrisLibrary/GLdraw/GeometryAppearance.h>
+		#include <KrisLibrary/GLdraw/GeometryAppearance.h>
 #include <memory>
 #include <map>
 #include <string>
