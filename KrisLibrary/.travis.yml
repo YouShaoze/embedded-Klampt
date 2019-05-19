@@ -1,0 +1,23 @@
+# Enable C++ support
+language: cpp
+# Compiler selection
+compiler:
+  - clang
+  - gcc
+# Ubuntu 14.04+ is required
+dist: trusty
+# Build steps
+script:
+  - cmake . && make
+addons:
+  apt:
+    packages:
+    - cmake
+    - freeglut3
+    - freeglut3-dev
+    - libxmu-dev
+    - libxi-dev
+    - libglpk-dev
+    - liblog4cxx10-dev
+    - libglew-dev
+
