@@ -1,3 +1,13 @@
+/*
+* @File Name DynamicPath.h
+* @File Path M:\MAS2\embedded Klampt\API\Modeling\DynamicPath.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:44
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-19 12:55:43
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*****************************************************************************
  *
  * Copyright (c) 2010-2011, the Trustees of Indiana University
@@ -40,10 +50,10 @@ namespace ParabolicRamp {
  */
 class FeasibilityCheckerBase
 {
- public:
-  virtual ~FeasibilityCheckerBase() {}
-  virtual bool ConfigFeasible(const Vector& x)=0;
-  virtual bool SegmentFeasible(const Vector& a,const Vector& b)=0;
+	public:
+	virtual ~FeasibilityCheckerBase() {}
+	virtual bool ConfigFeasible(const Vector& x)=0;
+	virtual bool SegmentFeasible(const Vector& a,const Vector& b)=0;
 };
 
 /** @brief A base class for a distance checker.
@@ -55,9 +65,9 @@ class FeasibilityCheckerBase
 class DistanceCheckerBase
 {
  public:
-  virtual ~DistanceCheckerBase() {}
-  virtual Real ObstacleDistanceNorm() const { return Math::Inf; }
-  virtual Real ObstacleDistance(const Vector& x)=0;
+	virtual ~DistanceCheckerBase() {}
+	virtual Real ObstacleDistanceNorm() const { return Math::Inf; }
+	virtual Real ObstacleDistance(const Vector& x)=0;
 };
 
 /// Checks whether the ramp is feasible using exact checking
@@ -82,14 +92,14 @@ bool CheckRamp(const ParabolicRampND& ramp,FeasibilityCheckerBase* space,Real to
 class RampFeasibilityChecker
 {
  public:
-  RampFeasibilityChecker(FeasibilityCheckerBase* feas,Real tol);
-  RampFeasibilityChecker(FeasibilityCheckerBase* feas,DistanceCheckerBase* distance,int maxiters);
-  bool Check(const ParabolicRampND& x);
+	RampFeasibilityChecker(FeasibilityCheckerBase* feas,Real tol);
+	RampFeasibilityChecker(FeasibilityCheckerBase* feas,DistanceCheckerBase* distance,int maxiters);
+	bool Check(const ParabolicRampND& x);
 
-  FeasibilityCheckerBase* feas;
-  Real tol;
-  DistanceCheckerBase* distance;
-  int maxiters;
+	FeasibilityCheckerBase* feas;
+	Real tol;
+	DistanceCheckerBase* distance;
+	int maxiters;
 };
 
 /** @brief A custom random number generator that can be provided to
@@ -98,7 +108,7 @@ class RampFeasibilityChecker
 class RandomNumberGeneratorBase
 {
  public:
-  virtual Real Rand() { return Math::Rand(); }
+	virtual Real Rand() { return Math::Rand(); }
 };
 
 
@@ -114,50 +124,50 @@ class RandomNumberGeneratorBase
 class DynamicPath
 {
  public:
-  DynamicPath();
-  void Init(const Vector& velMax,const Vector& accMax);
-  void SetJointLimits(const Vector& qMin,const Vector& qMax);
-  inline void Clear() { ramps.clear(); }
-  inline bool Empty() const { return ramps.empty(); }
-  inline const Vector& StartConfig() const { return ramps.front().x0; }
-  inline const Vector& EndConfig() const { return ramps.back().x1; }
-  inline const Vector& StartVelocity() const { return ramps.front().dx0; }
-  inline const Vector& EndVelocity() const { return ramps.back().dx1; }
-  Real GetTotalTime() const;
-  int GetSegment(Real t,Real& u) const;
-  void Evaluate(Real t,Vector& x) const;
-  void Derivative(Real t,Vector& dx) const;
-  void Accel(Real t,Vector& ddx) const;
-  bool SolveMinTime(const Vector& x0,const Vector& dx0,const Vector& x1,const Vector& dx1);
-  bool SolveMinAccel(const Vector& x0,const Vector& dx0,const Vector& x1,const Vector& dx1,Real endTime);
-  bool SetMilestones(const std::vector<Vector>& x);
-  bool SetMilestones(const std::vector<Vector>& x,const std::vector<Vector>& dx);
-  void GetMilestones(std::vector<Vector>& x,std::vector<Vector>& dx) const;
-  void Append(const Vector& x);
-  void Append(const Vector& x,const Vector& dx);
-  void Concat(const DynamicPath& suffix);
-  void Split(Real t,DynamicPath& before,DynamicPath& after) const;
-  bool TryShortcut(Real t1,Real t2,RampFeasibilityChecker& check);
-  int Shortcut(int numIters,RampFeasibilityChecker& check);
-  int Shortcut(int numIters,RampFeasibilityChecker& check,RandomNumberGeneratorBase* rng);
-  int ShortCircuit(RampFeasibilityChecker& check);
-  /// leadTime: the amount of time before this path should be executable
-  /// padTime: an approximate bound on the time it takes to check a shortcut
-  int OnlineShortcut(Real leadTime,Real padTime,RampFeasibilityChecker& check);
-  int OnlineShortcut(Real leadTime,Real padTime,RampFeasibilityChecker& check,RandomNumberGeneratorBase* rng);
+	DynamicPath();
+	void Init(const Vector& velMax,const Vector& accMax);
+	void SetJointLimits(const Vector& qMin,const Vector& qMax);
+	inline void Clear() { ramps.clear(); }
+	inline bool Empty() const { return ramps.empty(); }
+	inline const Vector& StartConfig() const { return ramps.front().x0; }
+	inline const Vector& EndConfig() const { return ramps.back().x1; }
+	inline const Vector& StartVelocity() const { return ramps.front().dx0; }
+	inline const Vector& EndVelocity() const { return ramps.back().dx1; }
+	Real GetTotalTime() const;
+	int GetSegment(Real t,Real& u) const;
+	void Evaluate(Real t,Vector& x) const;
+	void Derivative(Real t,Vector& dx) const;
+	void Accel(Real t,Vector& ddx) const;
+	bool SolveMinTime(const Vector& x0,const Vector& dx0,const Vector& x1,const Vector& dx1);
+	bool SolveMinAccel(const Vector& x0,const Vector& dx0,const Vector& x1,const Vector& dx1,Real endTime);
+	bool SetMilestones(const std::vector<Vector>& x);
+	bool SetMilestones(const std::vector<Vector>& x,const std::vector<Vector>& dx);
+	void GetMilestones(std::vector<Vector>& x,std::vector<Vector>& dx) const;
+	void Append(const Vector& x);
+	void Append(const Vector& x,const Vector& dx);
+	void Concat(const DynamicPath& suffix);
+	void Split(Real t,DynamicPath& before,DynamicPath& after) const;
+	bool TryShortcut(Real t1,Real t2,RampFeasibilityChecker& check);
+	int Shortcut(int numIters,RampFeasibilityChecker& check);
+	int Shortcut(int numIters,RampFeasibilityChecker& check,RandomNumberGeneratorBase* rng);
+	int ShortCircuit(RampFeasibilityChecker& check);
+	/// leadTime: the amount of time before this path should be executable
+	/// padTime: an approximate bound on the time it takes to check a shortcut
+	int OnlineShortcut(Real leadTime,Real padTime,RampFeasibilityChecker& check);
+	int OnlineShortcut(Real leadTime,Real padTime,RampFeasibilityChecker& check,RandomNumberGeneratorBase* rng);
 
-  //Shortcutting technique with wrapping ranges, useful for angles.  Set
-  //modulus = Inf to indicate that the range should not be wrapped.
-  //Note: does not allow intermediate segments to wrap twice, even if that
-  //would be more efficient
-  int WrappedShortcut(const std::vector<Real>& modulus,int numIters,RampFeasibilityChecker& check,RandomNumberGeneratorBase* rng);
+	//Shortcutting technique with wrapping ranges, useful for angles.  Set
+	//modulus = Inf to indicate that the range should not be wrapped.
+	//Note: does not allow intermediate segments to wrap twice, even if that
+	//would be more efficient
+	int WrappedShortcut(const std::vector<Real>& modulus,int numIters,RampFeasibilityChecker& check,RandomNumberGeneratorBase* rng);
 
-  bool IsValid() const;
+	bool IsValid() const;
 
-  /// The joint limits (optional), velocity bounds, and acceleration bounds
-  Vector xMin,xMax,velMax,accMax;
-  /// The path is stored as a series of ramps
-  std::vector<ParabolicRampND> ramps;
+	/// The joint limits (optional), velocity bounds, and acceleration bounds
+	Vector xMin,xMax,velMax,accMax;
+	/// The path is stored as a series of ramps
+	std::vector<ParabolicRampND> ramps;
 };
 
 } //namespace ParabolicRamp

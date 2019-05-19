@@ -1,3 +1,13 @@
+/*
+* @File Name Interpolate.h
+* @File Path M:\MAS2\embedded Klampt\API\Modeling\Interpolate.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:44
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-19 13:00:44
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 #ifndef ROBOT_INTERPOLATE_H
 #define ROBOT_INTERPOLATE_H
 

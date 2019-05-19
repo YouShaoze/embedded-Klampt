@@ -1,3 +1,13 @@
+/*
+* @File Name Config.h
+* @File Path M:\MAS2\embedded Klampt\API\Modeling\Config.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:44
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-19 11:49:51
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 #ifndef PARABOLIC_RAMP_CONFIG_H
 #define PARABOLIC_RAMP_CONFIG_H
 
@@ -14,51 +24,51 @@
 
 namespace ParabolicRamp {
 
-  ///tolerance for time equality
-  const static Real EpsilonT = 1e-10;
+//tolerance for time equality
+const static Real EpsilonT = 1e-10;
 
-  ///tolerance for position equality
-  const static Real EpsilonX = 1e-10;
+//tolerance for position equality
+const static Real EpsilonX = 1e-10;
 
-  ///tolerance for velocity equality
-  const static Real EpsilonV = 1e-10;
+//tolerance for velocity equality
+const static Real EpsilonV = 1e-10;
 
-  ///tolerance for acceleration equality
-  const static Real EpsilonA = 1e-10;
+//tolerance for acceleration equality
+const static Real EpsilonA = 1e-10;
 
-  ///We have a second set of epsilons for self-testing -- that is, these
-  ///are not used for the algorithm logic, but rather whether errors are
-  ///triggered.
+//We have a second set of epsilons for self-testing -- that is, these
+//are not used for the algorithm logic, but rather whether errors are
+//triggered.
 
-  ///tolerance for time equality self-tests
-  const static Real CheckEpsilonT = 1e-6;
+//tolerance for time equality self-tests
+const static Real CheckEpsilonT = 1e-6;
 
-  ///tolerance for position equality self-tests
-  const static Real CheckEpsilonX = 1e-5;
+//tolerance for position equality self-tests
+const static Real CheckEpsilonX = 1e-5;
 
-  ///tolerance for velocity equality self-tests
-  const static Real CheckEpsilonV = 1e-5;
+//tolerance for velocity equality self-tests
+const static Real CheckEpsilonV = 1e-5;
 
-  ///tolerance for acceleration equality self-tests
-  const static Real CheckEpsilonA = 1e-6;
+//tolerance for acceleration equality self-tests
+const static Real CheckEpsilonA = 1e-6;
 
-  ///self validity check level:
-  ///- 0 no checking
-  ///- 1 moderate checking 
-  ///- 2 full checking
-  const static int gValidityCheckLevel = 2;
+//self validity check level:
+//- 0 no checking
+//- 1 moderate checking 
+//- 2 full checking
+const static int gValidityCheckLevel = 2;
 
-  ///verbosity level:
-  ///- 0 all messages off
-  ///- 1 brief messages
-  ///- 2 detailed messages
-  const static int gVerbose = 0;
+//verbosity level:
+//- 0 all messages off
+//- 1 brief messages
+//- 2 detailed messages
+const static int gVerbose = 0;
 
-  ///whether or not to pause on serious errors
-  const static bool gErrorGetchar = false;
+//whether or not to pause on serious errors
+const static bool gErrorGetchar = false;
 
-  ///whether or not errors are logged to disk
-  const static bool gErrorSave = true;
+//whether or not errors are logged to disk
+const static bool gErrorSave = true;
 
 } //namespace ParabolicRamp
 

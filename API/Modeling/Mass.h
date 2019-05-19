@@ -1,3 +1,13 @@
+/*
+* @File Name Mass.h
+* @File Path M:\MAS2\embedded Klampt\API\Modeling\Mass.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:44
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-19 13:01:35
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 #ifndef OBJECT_MASS_H
 #define OBJECT_MASS_H
 
@@ -46,14 +56,14 @@ Vector3 CenterOfMass_Solid(const Meshing::TriMesh& mesh,Real gridRes);
 Matrix3 Covariance_Solid(const Meshing::TriMesh& mesh,Real gridRes,const Vector3& center);
 inline Matrix3 Covariance_Solid(const Meshing::TriMesh& mesh,Real gridRes)
 {
-  return Covariance_Solid(mesh,gridRes,CenterOfMass_Solid(mesh,gridRes));
+	return Covariance_Solid(mesh,gridRes,CenterOfMass_Solid(mesh,gridRes));
 }
 ///Computes the inertia integrated over the solid inside the mesh
 ///using a grid approximation
 Matrix3 Inertia_Solid(const Meshing::TriMesh& mesh,Real gridRes,const Vector3& center,Real mass);
 inline Matrix3 Inertia_Solid(const Meshing::TriMesh& mesh,Real gridRes,Real mass)
 {
-  return Inertia_Solid(mesh,gridRes,CenterOfMass_Solid(mesh,gridRes),mass);
+	return Inertia_Solid(mesh,gridRes,CenterOfMass_Solid(mesh,gridRes),mass);
 }
 
 /*@}*/
