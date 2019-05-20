@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 20:25:19
+* @Last Modified time: 2019-05-20 20:26:26
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -1558,7 +1558,7 @@ bool Collide(const CollisionMesh& m,const GeometricPrimitive3D& g)
 	case GeometricPrimitive3D::Empty:
 		return false;
 	default:
-				LOG4CXX_ERROR(KrisLibrary::logger(),"Collide: Collider for type "<<g.TypeName());
+				// LOG4CXX_ERROR(KrisLibrary::logger(),"Collide: Collider for type "<<g.TypeName());
 		return false;
 	}
 }
@@ -1685,7 +1685,7 @@ void CollideAll(const CollisionMesh& m,const GeometricPrimitive3D& g,std::vector
 	case GeometricPrimitive3D::Empty:
 		return;
 	default:
-				LOG4CXX_ERROR(KrisLibrary::logger(),"CollideAll: Collider for type "<<g.TypeName());
+				// LOG4CXX_ERROR(KrisLibrary::logger(),"CollideAll: Collider for type "<<g.TypeName());
 	}
 }
 
@@ -1781,7 +1781,7 @@ void NearbyTriangles(const CollisionMesh& m,const GeometricPrimitive3D& g,Real d
 	case GeometricPrimitive3D::Empty:
 		return;
 	default:
-				LOG4CXX_ERROR(KrisLibrary::logger(),"NearbyTriangles: Collider for type "<<g.TypeName());
+				// LOG4CXX_ERROR(KrisLibrary::logger(),"NearbyTriangles: Collider for type "<<g.TypeName());
 	}
 }
 
@@ -1991,7 +1991,7 @@ TriDistance(double R[3][3], double T[3], Tri *t1, Tri *t2,
 		Segment3D s;
 		bool res=a.intersects(b,s);
 		if(!res) {
-			LOG4CXX_WARN(KrisLibrary::logger(),"Warning: PQP says triangles intersect, but I don't find an intersection\n");
+			// LOG4CXX_WARN(KrisLibrary::logger(),"Warning: PQP says triangles intersect, but I don't find an intersection\n");
 			Copy((a.a+a.b+a.c)/3.0,p);
 			Copy((b.a+b.b+b.c)/3.0,q);
 		}
