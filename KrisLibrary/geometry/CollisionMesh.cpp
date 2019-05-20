@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 19:43:35
+* @Last Modified time: 2019-05-20 20:25:19
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -90,13 +90,13 @@ void ConvertTriToPQP(const TriMesh& tri, PQP_Model& pqp)
 
 CollisionMesh::CollisionMesh()
 {
-	pqpModel=NULL;
+	pqpModel = NULL;
 	currentTransform.setIdentity();
 }
 
 CollisionMesh::CollisionMesh(const Meshing::TriMesh& mesh)
 {
-	pqpModel=NULL;
+	pqpModel = NULL;
 	verts = mesh.verts;
 	tris = mesh.tris;
 	currentTransform.setIdentity();
@@ -105,7 +105,7 @@ CollisionMesh::CollisionMesh(const Meshing::TriMesh& mesh)
 
 CollisionMesh::CollisionMesh(const Meshing::TriMeshWithTopology& mesh)
 {
-	pqpModel=NULL;
+	pqpModel = NULL;
 	TriMeshWithTopology::operator = (mesh);
 	currentTransform.setIdentity();
 	InitCollisions();
@@ -113,7 +113,7 @@ CollisionMesh::CollisionMesh(const Meshing::TriMeshWithTopology& mesh)
 
 CollisionMesh::CollisionMesh(const CollisionMesh& model)
 {
-	pqpModel=NULL;
+	pqpModel = NULL;
 	operator = (model);
 }
 
@@ -125,7 +125,8 @@ CollisionMesh::~CollisionMesh()
 void CollisionMesh::InitCollisions()
 {
 	SafeDelete(pqpModel);
-	if(!tris.empty()) {
+	if(!tris.empty())
+	{
 		pqpModel = new PQP_Model;
 		ConvertTriToPQP(*this,*pqpModel);
 		CalcVertexNeighbors();
@@ -140,13 +141,17 @@ void CopyPQPModel(const PQP_Model* source, PQP_Model* dest)
 	dest->num_tris_alloced = source->num_tris;
 	dest->tris = new Tri[source->num_tris];  
 	for(int i=0;i<source->num_tris;i++)
+	{
 		dest->tris[i] = source->tris[i];
+	}
 
 	dest->num_bvs = source->num_bvs;
 	dest->num_bvs_alloced = source->num_bvs;
 	dest->b = new BV[source->num_bvs];  
 	for(int i=0;i<source->num_bvs;i++)
+	{
 		dest->b[i] = source->b[i];
+	}
 }
 
 const CollisionMesh& CollisionMesh::operator = (const CollisionMesh& model)
@@ -154,7 +159,8 @@ const CollisionMesh& CollisionMesh::operator = (const CollisionMesh& model)
 	SafeDelete(pqpModel);
 	TriMeshWithTopology::operator = (model);
 	currentTransform.setIdentity();
-	if(!tris.empty()) {
+	if(!tris.empty())
+	{
 		pqpModel = new PQP_Model;
 		CopyPQPModel(model.pqpModel,pqpModel);
 	}
@@ -214,110 +220,181 @@ CollisionMeshQuery::~CollisionMeshQuery()
 
 bool CollisionMeshQuery::Collide()
 {
-	if(m1->tris.empty() || m2->tris.empty()) return false;
-	if(m1->pqpModel == NULL || m2->pqpModel == NULL) return false;
+	if( m1->tris.empty() || m2->tris.empty() ) 
+	{
+		return false;
+	}
+	if( m1->pqpModel == NULL || m2->pqpModel == NULL ) 
+	{
+		return false;
+	}
+
 	double R1[3][3],T1[3],R2[3][3],T2[3];
-	RigidTransformToPQP(m1->currentTransform,R1,T1);
-	RigidTransformToPQP(m2->currentTransform,R2,T2);
-	int res=PQP_Collide(&pqpResults->collide,
+
+	RigidTransformToPQP( m1->currentTransform,R1,T1 );
+	RigidTransformToPQP( m2->currentTransform,R2,T2 );
+
+	int res = PQP_Collide( &pqpResults->collide,
 					R1,T1,m1->pqpModel,
 					R2,T2,m2->pqpModel,
-					PQP_FIRST_CONTACT);
-	Assert(res == PQP_OK);
-	return (pqpResults->collide.Colliding()!=0);
+					PQP_FIRST_CONTACT );
+	Assert( res == PQP_OK );
+
+	return ( pqpResults->collide.Colliding() != 0 );
 }
 
 bool CollisionMeshQuery::CollideAll()
 {
-	if(m1->tris.empty() || m2->tris.empty()) return false;
-	if(m1->pqpModel == NULL || m2->pqpModel == NULL) return false;
+	if ( m1->tris.empty() || m2->tris.empty() ) 
+	{
+		return false;
+	}
+	if ( m1->pqpModel == NULL || m2->pqpModel == NULL ) 
+	{
+		return false;
+	}
 	double R1[3][3],T1[3],R2[3][3],T2[3];
-	RigidTransformToPQP(m1->currentTransform,R1,T1);
-	RigidTransformToPQP(m2->currentTransform,R2,T2);
-	int res=PQP_Collide(&pqpResults->collide,
+	RigidTransformToPQP( m1->currentTransform,R1,T1 );
+	RigidTransformToPQP( m2->currentTransform,R2,T2 );
+	int res = PQP_Collide( &pqpResults->collide,
 					R1,T1,m1->pqpModel,
 					R2,T2,m2->pqpModel,
-					PQP_ALL_CONTACTS);
-	Assert(res == PQP_OK);
-	return (pqpResults->collide.Colliding()!=0);
+					PQP_ALL_CONTACTS );
+
+	Assert( res == PQP_OK );
+
+	return ( pqpResults->collide.Colliding() != 0 );
 }
 
-Real CollisionMeshQuery::Distance(Real absErr,Real relErr,Real bound)
+Real CollisionMeshQuery::Distance(Real absErr, Real relErr, Real bound)
 {
-	if(m1->tris.empty() || m2->tris.empty()) return Inf;
-	if(m1->pqpModel == NULL || m2->pqpModel == NULL) return false;
+	if( m1->tris.empty() || m2->tris.empty() ) 
+	{
+		return Inf;
+	}
+	if( m1->pqpModel == NULL || m2->pqpModel == NULL ) 
+	{
+		return false;
+	}
+
 	double R1[3][3],T1[3],R2[3][3],T2[3];
-	RigidTransformToPQP(m1->currentTransform,R1,T1);
-	RigidTransformToPQP(m2->currentTransform,R2,T2);
-	if(IsInf(bound)) bound=-1;
-	int res = PQP_Distance(&pqpResults->distance,
-			 R1,T1,m1->pqpModel,
-			 R2,T2,m2->pqpModel,
-			 relErr,absErr,
-			 100,bound);
-	Assert(res == PQP_OK);
+	RigidTransformToPQP( m1->currentTransform, R1, T1 );
+	RigidTransformToPQP( m2->currentTransform, R2, T2 );
+	if( IsInf(bound) ) 
+	{
+		bound = -1;
+	}
+	int res = PQP_Distance( &pqpResults->distance,
+			R1,T1,m1->pqpModel,
+			R2,T2,m2->pqpModel,
+			relErr,absErr,
+			100,bound );
+
+	Assert( res == PQP_OK );
+
 	return pqpResults->distance.Distance();
 }
 
-Real CollisionMeshQuery::Distance_Coherent(Real absErr,Real relErr,Real bound)
+Real CollisionMeshQuery::Distance_Coherent( Real absErr, Real relErr, Real bound )
 {
-	if(m1->tris.empty() || m2->tris.empty()) return Inf;
-	if(m1->pqpModel == NULL || m2->pqpModel == NULL) return false;
+	if( m1->tris.empty() || m2->tris.empty() ) 
+	{
+		return Inf;
+	}
+	if( m1->pqpModel == NULL || m2->pqpModel == NULL ) 
+	{
+		return false;
+	}
+
 	double R1[3][3],T1[3],R2[3][3],T2[3];
-	RigidTransformToPQP(m1->currentTransform,R1,T1);
-	RigidTransformToPQP(m2->currentTransform,R2,T2);
-	if(IsInf(bound)) bound=-1;
-	int res = PQP_Distance(&pqpResults->distance,
-			 R1,T1,m1->pqpModel,
-			 R2,T2,m2->pqpModel,
-			 relErr,absErr,
-			 2,bound);
+	RigidTransformToPQP( m1->currentTransform, R1, T1 );
+	RigidTransformToPQP( m2->currentTransform, R2, T2 );
+
+	if ( IsInf(bound) ) 
+	{
+		bound=-1;
+	}
+	int res = PQP_Distance( &pqpResults->distance,
+			R1,T1,m1->pqpModel,
+			R2,T2,m2->pqpModel,
+			relErr,absErr,
+			2,bound );
+
 	Assert(res == PQP_OK);
+
 	return pqpResults->distance.Distance();
 }
 
 Real CollisionMeshQuery::PenetrationDepth()
 {
-	if(!CollideAll()) return -Zero;
+	if ( !CollideAll() ) 
+	{
+		return -Zero;
+	}
+
 	int n = pqpResults->collide.NumPairs();
-	if(n == 0) return -Zero;
+
+	if(n == 0) 
+	{
+		return -Zero;
+	}
 	tc1.resize(n);
 	tc2.resize(n);
-	for(int i=0;i<n;i++) {
+	for ( int i = 0; i < n; i ++ )
+	{
 		tc1[i] = pqpResults->collide.Id1(i);
 		tc2[i] = pqpResults->collide.Id2(i);
 	}
 
-	if(!penetration1) penetration1 = new ApproximatePenetrationDepth(*m1,*m2);
-	if(!penetration2) penetration2 = new ApproximatePenetrationDepth(*m2,*m1);
+	if(!penetration1)
+	{
+		penetration1 = new ApproximatePenetrationDepth(*m1,*m2);
+	}
+	if(!penetration2)
+	{
+		penetration2 = new ApproximatePenetrationDepth(*m2,*m1);
+	}
 	penetration1->Reset();
 	penetration1->ComputeInitial(m1->currentTransform,m2->currentTransform,&tc1[0],&tc2[0],n);
 	penetration1->ComputeDepth();
 	penetration2->Reset();
 	penetration2->ComputeInitial(m2->currentTransform,m1->currentTransform,&tc2[0],&tc1[0],n);
 	penetration2->ComputeDepth();
-	if(penetration1->maxDepth <= 0 && penetration2->maxDepth <= 0) {
-		Real d=Distance(1e-3,1e-2);
-		if(d > 1e-3) {
-			LOG4CXX_ERROR(KrisLibrary::logger(),"PenetrationDepth(): Error, the two objects aren't penetrating?!?!");
-			LOG4CXX_INFO(KrisLibrary::logger(),"Distance "<<d);
+
+	if( penetration1->maxDepth <= 0 && penetration2->maxDepth <= 0 )
+	{
+		Real d = Distance(1e-3,1e-2);
+		if ( d > 1e-3 )
+		{
+			// LOG4CXX_ERROR(KrisLibrary::logger(),"PenetrationDepth(): Error, the two objects aren't penetrating?!?!");
+			// LOG4CXX_INFO(KrisLibrary::logger(),"Distance "<<d);
 			Abort();
 		}
-		LOG4CXX_WARN(KrisLibrary::logger(),"PenetrationDepth(): Warning, the approximate computation failed, returning "<<Max(-d,(Real)1e-5));
+		// LOG4CXX_WARN(KrisLibrary::logger(),"PenetrationDepth(): Warning, the approximate computation failed, returning "<<Max(-d,(Real)1e-5));
 		//KrisLibrary::loggerWait();
 		return Max(-d,(Real)1e-5);
 	}
-	if(penetration1->maxDepth <= 0) return penetration2->maxDepth;
-	else if(penetration2->maxDepth <= 0) return penetration1->maxDepth;
-	else return Min(penetration1->maxDepth,penetration2->maxDepth);
+	if ( penetration1->maxDepth <= 0 )
+	{
+		return penetration2->maxDepth;
+	}
+	else if ( penetration2->maxDepth <= 0 )
+	{
+		return penetration1->maxDepth;
+	}
+	else
+	{
+		return Min(penetration1->maxDepth,penetration2->maxDepth);
+	}
 }
 
 void CollisionMeshQuery::CollisionPairs(vector<int>& t1,vector<int>& t2) const
 { 
-	int n=pqpResults->collide.NumPairs();
+	int n = pqpResults->collide.NumPairs();
 	t1.resize(n);
 	t2.resize(n);
-	for(int i=0;i<n;i++) {
+	for( int i = 0; i < n; i ++ )
+	{
 		t1[i] = pqpResults->collide.Id1(i);
 		t2[i] = pqpResults->collide.Id2(i);
 	}
@@ -342,12 +419,16 @@ void CollisionMeshQuery::TolerancePairs(vector<int>& t1,vector<int>& t2) const
 		}
 	}
 	*/
-	for(map<int,int>::const_iterator i=allRes.triPartner1.begin();i!=allRes.triPartner1.end();++i) {
+	for(map<int,int>::const_iterator i=allRes.triPartner1.begin();i!=allRes.triPartner1.end();++i)
+	{
 		t1.push_back(i->first);
 		t2.push_back(i->second);
 	}
-	for(map<int,int>::const_iterator i=allRes.triPartner2.begin();i!=allRes.triPartner2.end();++i) {
-		if(allRes.triPartner1.find(i->second)->second != i->first) { //avoid double counting  
+	for(map<int,int>::const_iterator i=allRes.triPartner2.begin();i!=allRes.triPartner2.end();++i)
+	{
+		if(allRes.triPartner1.find(i->second)->second != i->first)
+		{
+			//avoid double counting  
 			t1.push_back(i->second);
 			t2.push_back(i->first);
 		}
@@ -362,17 +443,18 @@ bool OverlappingTriangleCollision(const CollisionMesh* m1,const CollisionMesh* m
 	Triangle3D tri1,tri2,tri2loc;
 	m1->GetTriangle(a,tri1);
 	m2->GetTriangle(b,tri2);
-	const RigidTransform& T1=m1->currentTransform;
-	const RigidTransform& T2=m2->currentTransform;
+	const RigidTransform& T1 = m1->currentTransform;
+	const RigidTransform& T2 = m2->currentTransform;
 	RigidTransform T21;
 	T21.mulInverseA(T1,T2);
 	tri2loc.a = T21*tri2.a;
 	tri2loc.b = T21*tri2.b;
 	tri2loc.c = T21*tri2.c;
 	Segment3D s;
-	if(tri2loc.intersects(tri1,s)) { 
-		p1 = (s.a+s.b)*0.5;
-		T2.mulInverse(T1*p1,p2);
+	if( tri2loc.intersects(tri1,s) )
+	{ 
+		p1 = (s.a+s.b) * 0.5;
+		T2.mulInverse( T1*p1, p2 );
 		return true;
 	}
 	return false;
@@ -397,42 +479,54 @@ void CollisionMeshQuery::TolerancePoints(vector<Vector3>& p1,vector<Vector3>& p2
 		}
 	}
 	*/
-	for(map<int,PQP_ClosestPoints >::const_iterator i=allRes.triCp1.begin();i!=allRes.triCp1.end();++i) {
-		if(allRes.triDist1.find(i->first)->second == 0) {
+	for( map <int,PQP_ClosestPoints>::const_iterator i=allRes.triCp1.begin();i!=allRes.triCp1.end(); ++i )
+	{
+		if( allRes.triDist1.find(i->first)->second == 0 )
+		{
 			//overlapping triangles
 			//NOTE: if any triangles are overlapping, PQP gives junk results for the pairs of points, not the intersecting points!
 			Vector3 pl1,pl2;
-			if(OverlappingTriangleCollision(m1,m2,i->first,allRes.triPartner1.find(i->first)->second,pl1,pl2)) {
+			if( OverlappingTriangleCollision(m1, m2, i->first, allRes.triPartner1.find(i->first)->second, pl1, pl2) )
+			{
 				p1.push_back(pl1);
 				p2.push_back(pl2);
 			}
-			else {
-				LOG4CXX_WARN(KrisLibrary::logger(),"Warning, PQP detected overlapping triangles but we find they don't intersect?\n");
+			else
+			{
+				// LOG4CXX_WARN(KrisLibrary::logger(),"Warning, PQP detected overlapping triangles but we find they don't intersect?\n");
 				continue;
 			}
 		}
-		else {
+		else
+		{
 			p1.push_back(Vector3(i->second.p1));
 			p2.push_back(Vector3(i->second.p2));
 		}
 	}
-	for(map<int,int>::const_iterator i=allRes.triPartner2.begin();i!=allRes.triPartner2.end();++i) {
-		if(allRes.triPartner1.find(i->second)->second != i->first) { //avoid double counting  
-			if(allRes.triDist2.find(i->first)->second == 0) {
+	for ( map<int,int>::const_iterator i=allRes.triPartner2.begin(); i!=allRes.triPartner2.end(); ++i )
+	{
+		if ( allRes.triPartner1.find(i->second)->second != i->first)
+		{
+			//avoid double counting  
+			if ( allRes.triDist2.find(i->first)->second == 0 )
+			{
 				//overlapping triangles
 				//NOTE: if any triangles are overlapping, PQP gives junk results for the pairs of points, not the intersecting points!
 				Vector3 pl1,pl2;
-				if(OverlappingTriangleCollision(m1,m2,allRes.triPartner2.find(i->first)->second,i->first,pl1,pl2)) {
+				if ( OverlappingTriangleCollision(m1,m2,allRes.triPartner2.find(i->first)->second,i->first,pl1,pl2) )
+				{
 					p1.push_back(pl1);
 					p2.push_back(pl2);
 				}
-				else {
-					LOG4CXX_WARN(KrisLibrary::logger(),"Warning, PQP detected overlapping triangles but we find they don't intersect?\n");
+				else
+				{
+					// LOG4CXX_WARN(KrisLibrary::logger(),"Warning, PQP detected overlapping triangles but we find they don't intersect?\n");
 					continue;
 				}
 			}
 			else {
 				Assert(allRes.triCp2.find(i->first) != allRes.triCp2.end());
+
 				p1.push_back(Vector3(allRes.triCp2.find(i->first)->second.p1));
 				p2.push_back(Vector3(allRes.triCp2.find(i->first)->second.p2));
 			}
@@ -448,13 +542,23 @@ Real CollisionMeshQuery::Distance_Cached() const
 
 Real CollisionMeshQuery::PenetrationDepth_Cached() const
 {
-	if(penetration1->maxDepth <= 0 && penetration2->maxDepth <= 0) {
-		LOG4CXX_ERROR(KrisLibrary::logger(),"PenetrationDepth_Cached(): Error, the two objects have no interior vertices!");
+	if ( penetration1->maxDepth <= 0 && penetration2->maxDepth <= 0 )
+	{
+		// LOG4CXX_ERROR(KrisLibrary::logger(),"PenetrationDepth_Cached(): Error, the two objects have no interior vertices!");
 		Abort();
 	}
-	if(penetration1->maxDepth <= 0) return penetration2->maxDepth;
-	else if(penetration2->maxDepth <= 0) return penetration1->maxDepth;
-	else return Min(penetration1->maxDepth,penetration2->maxDepth);
+	if (penetration1->maxDepth <= 0)
+	{
+		return penetration2->maxDepth;
+	}
+	else if(penetration2->maxDepth <= 0)
+	{
+		return penetration1->maxDepth;
+	}
+	else
+	{
+		return Min(penetration1->maxDepth,penetration2->maxDepth);
+	}
 }
 
 inline void VEC3_COPY(double* res,const double* in)
@@ -543,50 +647,89 @@ void CollisionMeshQuery::PenetrationPoints(Vector3& p1,Vector3& p2,Vector3& d1) 
 {
 	const RigidTransform& f1=m1->currentTransform;
 	const RigidTransform& f2=m2->currentTransform;
-	if(penetration1->maxDepth > 0) p1 = penetration1->deepestPoint;
-	if(penetration2->maxDepth > 0) p2 = penetration2->deepestPoint;
-	if(penetration1->maxDepth <= 0 && penetration2->maxDepth <= 0) {
-		LOG4CXX_WARN(KrisLibrary::logger(),"PenetrationPoints(): Warning, the two objects have no interior vertices!");
+	if(penetration1->maxDepth > 0)
+	{
+		p1 = penetration1->deepestPoint;
+	}
+	if(penetration2->maxDepth > 0)
+	{
+		p2 = penetration2->deepestPoint;
+	}
+	if(penetration1->maxDepth <= 0 && penetration2->maxDepth <= 0)
+	{
+		// LOG4CXX_WARN(KrisLibrary::logger(),"PenetrationPoints(): Warning, the two objects have no interior vertices!");
 		//TODO : estimate penetration points/distance using collision pairs
 		//closest points between m1 and m2
 		Real closestDist = Inf, d;
 		Triangle3D t1,t2;
 		Vector3 v;
-		for(size_t i=0;i<tc1.size();i++) {
+		for( size_t i = 0; i < tc1.size(); i++ )
+		{
 			m1->GetTriangle(tc1[i],t1);
 			m2->GetTriangle(tc2[i],t2);
 			v = t2.closestPoint(t1.a); d = t1.a.distance(v);
-			if(d < closestDist) { p1=t1.a; p2=v; closestDist=d; }
-			v = t2.closestPoint(t1.b); d = t1.b.distance(v);
-			if(d < closestDist) { p1=t1.b; p2=v; closestDist=d; }
-			v = t2.closestPoint(t1.c); d = t1.c.distance(v);
-			if(d < closestDist) { p1=t1.c; p2=v; closestDist=d; }
+			if(d < closestDist)
+			{
+				p1=t1.a; p2=v; closestDist=d;
+			}
+			v = t2.closestPoint(t1.b);
+			d = t1.b.distance(v);
+			if(d < closestDist)
+			{
+				p1=t1.b; p2=v; closestDist=d;
+			}
+			v = t2.closestPoint(t1.c);
+			d = t1.c.distance(v);
+			if(d < closestDist)
+			{
+				p1=t1.c; p2=v; closestDist=d;
+			}
 			
-			v = t1.closestPoint(t2.a); d = t2.a.distance(v);
-			if(d < closestDist) { p1=v; p2=t2.a; closestDist=d; }
-			v = t1.closestPoint(t2.b); d = t2.b.distance(v);
-			if(d < closestDist) { p1=v; p2=t2.b; closestDist=d; }
-			v = t1.closestPoint(t2.c); d = t2.c.distance(v);
-			if(d < closestDist) { p1=v; p2=t2.c; closestDist=d; }
+			v = t1.closestPoint(t2.a);
+			d = t2.a.distance(v);
+			if(d < closestDist)
+			{
+				p1=v; p2=t2.a;
+				closestDist=d;
+			}
+			v = t1.closestPoint(t2.b);
+			d = t2.b.distance(v);
+			if(d < closestDist)
+			{
+				p1=v;
+				p2=t2.b;
+				closestDist=d;
+			}
+			v = t1.closestPoint(t2.c);
+			d = t2.c.distance(v);
+			if(d < closestDist)
+			{
+				p1=v;
+				p2=t2.c;
+				closestDist=d;
+			}
 		}
 		
 		d1 = p2-p1;
 		d1.inplaceNormalize();
-		LOG4CXX_INFO(KrisLibrary::logger(),"Returning closest points "<<p1<<", "<<p2<<", dir "<<d1);
+		// LOG4CXX_INFO(KrisLibrary::logger(),"Returning closest points "<<p1<<", "<<p2<<", dir "<<d1);
 		//KrisLibrary::loggerWait();
 		return;
 	}
-	else {
+	else
+	{
 		Real pen1 = (penetration1->maxDepth <= 0 ? Inf: penetration1->maxDepth);
 		Real pen2 = (penetration2->maxDepth <= 0 ? Inf: penetration2->maxDepth);
-		if(pen1 < pen2) {
+		if( pen1 < pen2 )
+		{
 			f1.mulVector(penetration1->deepestNormal,d1);
 			Vector3 pt = p1; pt.madd(penetration1->deepestNormal,penetration1->maxDepth);
 			Vector3 ptworld;
 			f1.mulPoint(pt,ptworld);
 			f2.mulPointInverse(ptworld,p2);
 		}
-		else {
+		else
+		{
 			f2.mulVector(penetration2->deepestNormal,d1);
 			d1.inplaceNegative();
 			Vector3 pt = p2; pt.madd(penetration2->deepestNormal,penetration2->maxDepth);
