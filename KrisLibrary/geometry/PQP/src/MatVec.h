@@ -62,22 +62,23 @@ const double M_PI = (double)3.14159265359;
 // #ifdef gnu
 // #include "zzzz.h"
 
-// #ifdef hppa
-// #define myfabs(x) \
-//  ({double __value, __arg = (x); \
-//    asm("fabs,dbl %1, %0": "=f" (__value): "f" (__arg)); \
-//    __value; \
-// });
-// #endif
+/*
+ #ifdef hppa
+ #define myfabs(x) \
+  ({double __value, __arg = (x); \
+    asm("fabs,dbl %1, %0": "=f" (__value): "f" (__arg)); \
+    __value; \
+ });
+ #endif
 
-// #ifdef mips
-// #define myfabs(x) \
-//  ({double __value, __arg = (x); \
-//    asm("abs.d %0, %1": "=f" (__value): "f" (__arg)); \
-//    __value; \
-// });
-// #endif
-
+ #ifdef mips
+ #define myfabs(x) \
+  ({double __value, __arg = (x); \
+    asm("abs.d %0, %1": "=f" (__value): "f" (__arg)); \
+    __value; \
+ });
+ #endif
+*/
 // #else  
 
 #define myfabs(x) ((x < 0) ? -x : x)
