@@ -1,11 +1,21 @@
+/*
+* @File Name math.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\math\math.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 19:41:16
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 #ifndef MATH_MATH_H
 #define MATH_MATH_H
 
-#if defined(__APPLE__) || defined(MACOSX)
-#include "/usr/include/math.h"
-#else
+// #if defined(__APPLE__) || defined(MACOSX)
+// #include "/usr/include/math.h"
+// #else
 #include <math.h>
-#endif
+// #endif
 
 #include <float.h>
 #include <limits>
@@ -16,32 +26,32 @@
  * NEEDED ON SOLARIS
  */
 
-#if defined (__SVR4) && defined (__sun)
-#include <ieeefp.h>
+// #if defined (__SVR4) && defined (__sun)
+// #include <ieeefp.h>
 
-static inline int isinf(double x) { return !finite(x) && x==x; }
-static inline int isinff(double x) { return isinf(x); }
-static inline int finitef(double x) { return finite(x); }
+// static inline int isinf(double x) { return !finite(x) && x==x; }
+// static inline int isinff(double x) { return isinf(x); }
+// static inline int finitef(double x) { return finite(x); }
 
-static inline float acosf (float x) { return acos(x); }
-static inline float asinf (float x) { return asin(x); }
-static inline float atanf (float x) { return atan(x); }
-static inline float atan2f (float x, float y) { return atan2(x, y); }
-static inline float ceilf (float x) { return ceil(x); }
-static inline float cosf (float x) { return cos(x); }
-static inline float coshf (float x) { return cosh(x); }
-static inline float expf (float x) { return exp(x); }
-static inline float fabsf (float x) { return fabs(x); }
-static inline float fmodf (float x, float y) { return fmod(x, y); }
-static inline float floorf (float x) { return floor (x); }
-static inline float logf (float x) { return log (x); }
-static inline float sinf (float x) { return sin (x); }
-static inline float sinhf (float x) { return sinh (x); }
-static inline float sqrtf (float x) { return sqrt (x); }
-static inline float powf (float x, float y) { return pow (x,y); }
-static inline float tanf (float x) { return tan (x); }
-static inline float tanhf (float x) { return tanh(x); }
-#endif
+// static inline float acosf (float x) { return acos(x); }
+// static inline float asinf (float x) { return asin(x); }
+// static inline float atanf (float x) { return atan(x); }
+// static inline float atan2f (float x, float y) { return atan2(x, y); }
+// static inline float ceilf (float x) { return ceil(x); }
+// static inline float cosf (float x) { return cos(x); }
+// static inline float coshf (float x) { return cosh(x); }
+// static inline float expf (float x) { return exp(x); }
+// static inline float fabsf (float x) { return fabs(x); }
+// static inline float fmodf (float x, float y) { return fmod(x, y); }
+// static inline float floorf (float x) { return floor (x); }
+// static inline float logf (float x) { return log (x); }
+// static inline float sinf (float x) { return sin (x); }
+// static inline float sinhf (float x) { return sinh (x); }
+// static inline float sqrtf (float x) { return sqrt (x); }
+// static inline float powf (float x, float y) { return pow (x,y); }
+// static inline float tanf (float x) { return tan (x); }
+// static inline float tanhf (float x) { return tanh(x); }
+// #endif
 
 /**
  * END SOLARIS SECTION
@@ -110,7 +120,7 @@ const static float fEpsilon = 1e-5f;
 const static float fDtoRConst = 0.0174532925f;
 const static float fRtoDConst = 57.29577951f;
 
-#ifdef MATH_DOUBLE
+// #ifdef MATH_DOUBLE
 
 typedef double Real;
 
@@ -134,31 +144,31 @@ const static Real DtoRConst = dDtoRConst;
 const static Real RtoDConst = dRtoDConst;
 const static Real Inf = dInf;
 
-#else
+// #else
 
-typedef float Real;
+// typedef float Real;
 
-const static Real Zero = fZero;
-const static Real One = fOne;
-const static Real Two = fTwo;
-const static Real Half = fHalf;
-const static Real E = fE;
-const static Real Log2e = fLog2e; //log_2 e
-const static Real Log10e = fLog10e;  //log_10 e
-const static Real Ln2 = fLn2;  //log_e 2
-const static Real Ln10 = fLn10;  //log_e 10 
-const static Real Pi = fPi;
-const static Real TwoPi = fTwoPi;
-const static Real Pi_2 = fPi_2;
-const static Real Pi_4 = fPi_4;
-const static Real Sqrt2 = fSqrt2;
-const static Real Sqrt1_2 = fSqrt1_2;
-const static Real Epsilon = fEpsilon;
-const static Real DtoRConst = fDtoRConst;
-const static Real RtoDConst = fRtoDConst;
-const static Real Inf = fInf;
+// const static Real Zero = fZero;
+// const static Real One = fOne;
+// const static Real Two = fTwo;
+// const static Real Half = fHalf;
+// const static Real E = fE;
+// const static Real Log2e = fLog2e; //log_2 e
+// const static Real Log10e = fLog10e;  //log_10 e
+// const static Real Ln2 = fLn2;  //log_e 2
+// const static Real Ln10 = fLn10;  //log_e 10 
+// const static Real Pi = fPi;
+// const static Real TwoPi = fTwoPi;
+// const static Real Pi_2 = fPi_2;
+// const static Real Pi_4 = fPi_4;
+// const static Real Sqrt2 = fSqrt2;
+// const static Real Sqrt1_2 = fSqrt1_2;
+// const static Real Epsilon = fEpsilon;
+// const static Real DtoRConst = fDtoRConst;
+// const static Real RtoDConst = fRtoDConst;
+// const static Real Inf = fInf;
 
-#endif //MATH_DOUBLE
+// #endif //MATH_DOUBLE
 
 //math.h aliases
 inline double Abs(double x) { return fabs(x); }

@@ -4,46 +4,46 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 16:37:12
+* @Last Modified time: 2019-05-20 19:06:54
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
 /*************************************************************************\
 
-  Copyright 1999 The University of North Carolina at Chapel Hill.
-  All Rights Reserved.
+	Copyright 1999 The University of North Carolina at Chapel Hill.
+	All Rights Reserved.
 
-  Permission to use, copy, modify and distribute this software and its
-  documentation for educational, research and non-profit purposes, without
-  fee, and without a written agreement is hereby granted, provided that the
-  above copyright notice and the following three paragraphs appear in all
-  copies.
+	Permission to use, copy, modify and distribute this software and its
+	documentation for educational, research and non-profit purposes, without
+	fee, and without a written agreement is hereby granted, provided that the
+	above copyright notice and the following three paragraphs appear in all
+	copies.
 
-  IN NO EVENT SHALL THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL BE
-  LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR
-  CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE
-  USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY
-  OF NORTH CAROLINA HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH
-  DAMAGES.
+	IN NO EVENT SHALL THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL BE
+	LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR
+	CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE
+	USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY
+	OF NORTH CAROLINA HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH
+	DAMAGES.
 
-  THE UNIVERSITY OF NORTH CAROLINA SPECIFICALLY DISCLAIM ANY
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE
-  PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-  NORTH CAROLINA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT,
-  UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+	THE UNIVERSITY OF NORTH CAROLINA SPECIFICALLY DISCLAIM ANY
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+	MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE
+	PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+	NORTH CAROLINA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT,
+	UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-  The authors may be contacted via:
+	The authors may be contacted via:
 
-  US Mail:             S. Gottschalk, E. Larsen
-                       Department of Computer Science
-                       Sitterson Hall, CB #3175
-                       University of N. Carolina
-                       Chapel Hill, NC 27599-3175
+	US Mail:             S. Gottschalk, E. Larsen
+											 Department of Computer Science
+											 Sitterson Hall, CB #3175
+											 University of N. Carolina
+											 Chapel Hill, NC 27599-3175
 
-  Phone:               (919)962-1749
+	Phone:               (919)962-1749
 
-  EMail:               geom@cs.unc.edu
+	EMail:               geom@cs.unc.edu
 
 
 \**************************************************************************/
@@ -53,7 +53,7 @@
 
 #include "PQP_Compile.h"   
 #include "PQP_Internal.h"                             
-                        
+												
 //----------------------------------------------------------------------------
 //
 //  PQP API Return Values
@@ -61,38 +61,38 @@
 //----------------------------------------------------------------------------
 
 const int PQP_OK = 0; 
-  // Used by all API routines upon successful completion except
-  // constructors and destructors
+	// Used by all API routines upon successful completion except
+	// constructors and destructors
 
 const int PQP_ERR_MODEL_OUT_OF_MEMORY = -1; 
-  // Returned when an API function cannot obtain enough memory to
-  // store or process a PQP_Model object.
+	// Returned when an API function cannot obtain enough memory to
+	// store or process a PQP_Model object.
 
 const int PQP_ERR_OUT_OF_MEMORY = -2;
-  // Returned when a PQP query cannot allocate enough storage to
-  // compute or hold query information.  In this case, the returned
-  // data should not be trusted.
+	// Returned when a PQP query cannot allocate enough storage to
+	// compute or hold query information.  In this case, the returned
+	// data should not be trusted.
 
 const int PQP_ERR_UNPROCESSED_MODEL = -3;
-  // Returned when an unprocessed model is passed to a function which
-  // expects only processed models, such as PQP_Collide() or
-  // PQP_Distance().
+	// Returned when an unprocessed model is passed to a function which
+	// expects only processed models, such as PQP_Collide() or
+	// PQP_Distance().
 
 const int PQP_ERR_BUILD_OUT_OF_SEQUENCE = -4;
-  // Returned when: 
-  //       1. AddTri() is called before BeginModel().  
-  //       2. BeginModel() is called immediately after AddTri().  
-  // This error code is something like a warning: the invoked
-  // operation takes place anyway, and PQP does what makes "most
-  // sense", but the returned error code may tip off the client that
-  // something out of the ordinary is happenning.
+	// Returned when: 
+	//       1. AddTri() is called before BeginModel().  
+	//       2. BeginModel() is called immediately after AddTri().  
+	// This error code is something like a warning: the invoked
+	// operation takes place anyway, and PQP does what makes "most
+	// sense", but the returned error code may tip off the client that
+	// something out of the ordinary is happenning.
 
 const int PQP_ERR_BUILD_EMPTY_MODEL = -5; 
-  // Returned when EndModel() is called on a model to which no
-  // triangles have been added.  This is similar in spirit to the
-  // OUT_OF_SEQUENCE return code, except that the requested operation
-  // has FAILED -- the model remains "unprocessed", and the client may
-  // NOT use it in queries.
+	// Returned when EndModel() is called on a model to which no
+	// triangles have been added.  This is similar in spirit to the
+	// OUT_OF_SEQUENCE return code, except that the requested operation
+	// has FAILED -- the model remains "unprocessed", and the client may
+	// NOT use it in queries.
 
 //----------------------------------------------------------------------------
 //
@@ -213,11 +213,10 @@ const int PQP_ERR_BUILD_EMPTY_MODEL = -5;
 const int PQP_ALL_CONTACTS = 1;  // find all pairwise intersecting triangles
 const int PQP_FIRST_CONTACT = 2; // report first intersecting tri pair found
 
-int 
-PQP_Collide(PQP_CollideResult *result,
-            double R1[3][3], double T1[3], const PQP_Model *o1,
-            double R2[3][3], double T2[3], const PQP_Model *o2,
-            int flag = PQP_ALL_CONTACTS);
+int PQP_Collide(PQP_CollideResult *result,
+						double R1[3][3], double T1[3], const PQP_Model *o1,
+						double R2[3][3], double T2[3], const PQP_Model *o2,
+						int flag = PQP_ALL_CONTACTS);
 
 
 
@@ -277,12 +276,11 @@ PQP_Collide(PQP_CollideResult *result,
 //
 //----------------------------------------------------------------------------
 
-int 
-PQP_Distance(PQP_DistanceResult *result, 
-             double R1[3][3], double T1[3], const PQP_Model *o1,
-             double R2[3][3], double T2[3], const PQP_Model *o2,
-             double rel_err, double abs_err,
-             int qsize = 2, double init_bound = -1);
+int PQP_Distance(PQP_DistanceResult *result, 
+						 double R1[3][3], double T1[3], const PQP_Model *o1,
+						 double R2[3][3], double T2[3], const PQP_Model *o2,
+						 double rel_err, double abs_err,
+						 int qsize = 2, double init_bound = -1);
 
 //----------------------------------------------------------------------------
 //
@@ -334,15 +332,13 @@ PQP_Distance(PQP_DistanceResult *result,
 //
 //----------------------------------------------------------------------------
 
-int
-PQP_Tolerance(PQP_ToleranceResult *res, 
-              double R1[3][3], double T1[3], const PQP_Model *o1,
-              double R2[3][3], double T2[3], const PQP_Model *o2,
-              double tolerance,
-              int qsize = 2);
+int PQP_Tolerance(PQP_ToleranceResult *res, 
+							double R1[3][3], double T1[3], const PQP_Model *o1,
+							double R2[3][3], double T2[3], const PQP_Model *o2,
+							double tolerance,
+							int qsize = 2);
 
-int
-PQP_ToleranceAll(PQP_ToleranceResult* res,
+int PQP_ToleranceAll(PQP_ToleranceResult* res,
 		 double R1[3][3], double T1[3], const PQP_Model *o1,
 		 double R2[3][3], double T2[3], const PQP_Model *o2,
 		 double tolerance,PQP_ToleranceAllResult& allRes);

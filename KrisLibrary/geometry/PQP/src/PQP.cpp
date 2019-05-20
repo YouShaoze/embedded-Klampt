@@ -4,46 +4,46 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 16:29:05
+* @Last Modified time: 2019-05-20 17:27:51
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
 /*************************************************************************\
 
-  Copyright 1999 The University of North Carolina at Chapel Hill.
-  All Rights Reserved.
+	Copyright 1999 The University of North Carolina at Chapel Hill.
+	All Rights Reserved.
 
-  Permission to use, copy, modify and distribute this software and its
-  documentation for educational, research and non-profit purposes, without
-  fee, and without a written agreement is hereby granted, provided that the
-  above copyright notice and the following three paragraphs appear in all
-  copies.
+	Permission to use, copy, modify and distribute this software and its
+	documentation for educational, research and non-profit purposes, without
+	fee, and without a written agreement is hereby granted, provided that the
+	above copyright notice and the following three paragraphs appear in all
+	copies.
 
-  IN NO EVENT SHALL THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL BE
-  LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR
-  CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE
-  USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY
-  OF NORTH CAROLINA HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH
-  DAMAGES.
+	IN NO EVENT SHALL THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL BE
+	LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR
+	CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE
+	USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY
+	OF NORTH CAROLINA HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH
+	DAMAGES.
 
-  THE UNIVERSITY OF NORTH CAROLINA SPECIFICALLY DISCLAIM ANY
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE
-  PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-  NORTH CAROLINA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT,
-  UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+	THE UNIVERSITY OF NORTH CAROLINA SPECIFICALLY DISCLAIM ANY
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+	MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE
+	PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+	NORTH CAROLINA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT,
+	UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-  The authors may be contacted via:
+	The authors may be contacted via:
 
-  US Mail:             S. Gottschalk, E. Larsen
-                       Department of Computer Science
-                       Sitterson Hall, CB #3175
-                       University of N. Carolina
-                       Chapel Hill, NC 27599-3175
+	US Mail:             S. Gottschalk, E. Larsen
+											 Department of Computer Science
+											 Sitterson Hall, CB #3175
+											 University of N. Carolina
+											 Chapel Hill, NC 27599-3175
 
-  Phone:               (919)962-1749
+	Phone:               (919)962-1749
 
-  EMail:               geom@cs.unc.edu
+	EMail:               geom@cs.unc.edu
 
 
 \**************************************************************************/
@@ -60,208 +60,208 @@
 
 enum BUILD_STATE
 { 
-  PQP_BUILD_STATE_EMPTY,     // empty state, immediately after constructor
-  PQP_BUILD_STATE_BEGUN,     // after BeginModel(), state for adding triangles
-  PQP_BUILD_STATE_PROCESSED  // after tree has been built, ready to use
+	PQP_BUILD_STATE_EMPTY,     // empty state, immediately after constructor
+	PQP_BUILD_STATE_BEGUN,     // after BeginModel(), state for adding triangles
+	PQP_BUILD_STATE_PROCESSED  // after tree has been built, ready to use
 };
 
 PQP_Model::PQP_Model()
 {
-  // no bounding volume tree yet
+	// no bounding volume tree yet
 
-  b = 0;  
-  num_bvs_alloced = 0;
-  num_bvs = 0;
+	b = 0;  
+	num_bvs_alloced = 0;
+	num_bvs = 0;
 
-  // no tri list yet
+	// no tri list yet
 
-  tris = 0;
-  num_tris = 0;
-  num_tris_alloced = 0;
+	tris = 0;
+	num_tris = 0;
+	num_tris_alloced = 0;
 
-  build_state = PQP_BUILD_STATE_EMPTY;
+	build_state = PQP_BUILD_STATE_EMPTY;
 }
 
 PQP_Model::~PQP_Model()
 {
-  if (b != NULL)
-    delete [] b;
-  if (tris != NULL)
-    delete [] tris;
+	if (b != NULL)
+		delete [] b;
+	if (tris != NULL)
+		delete [] tris;
 }
 
 int PQP_Model::BeginModel(int n)
 {
-  // reset to initial state if necessary
+	// reset to initial state if necessary
 
-  if (build_state != PQP_BUILD_STATE_EMPTY) 
-  {
-    delete [] b;
-    delete [] tris;
-  
-    num_tris = num_bvs = num_tris_alloced = num_bvs_alloced = 0;
-  }
+	if (build_state != PQP_BUILD_STATE_EMPTY) 
+	{
+		delete [] b;
+		delete [] tris;
+	
+		num_tris = num_bvs = num_tris_alloced = num_bvs_alloced = 0;
+	}
 
-  // prepare model for addition of triangles
+	// prepare model for addition of triangles
 
-  if (n <= 0) n = 8;
-  num_tris_alloced = n;
-  tris = new Tri[n];
-  if (!tris) 
-  {
+	if (n <= 0) n = 8;
+	num_tris_alloced = n;
+	tris = new Tri[n];
+	if (!tris) 
+	{
 //        LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array on "
 //                    "BeginModel() call!");
-    return PQP_ERR_MODEL_OUT_OF_MEMORY;  
-  }
+		return PQP_ERR_MODEL_OUT_OF_MEMORY;  
+	}
 
-  // give a warning if called out of sequence
+	// give a warning if called out of sequence
 
-  if (build_state != PQP_BUILD_STATE_EMPTY)
-  {
+	if (build_state != PQP_BUILD_STATE_EMPTY)
+	{
 //        LOG4CXX_ERROR(KrisLibrary::logger(),
 //            "PQP Warning! Called BeginModel() on a PQP_Model that \n"
 //            "was not empty. This model was cleared and previous\n"
 //            "triangle additions were lost.");
-    build_state = PQP_BUILD_STATE_BEGUN;
-    return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
-  }
+		build_state = PQP_BUILD_STATE_BEGUN;
+		return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
+	}
 
-  build_state = PQP_BUILD_STATE_BEGUN;
-  return PQP_OK;
+	build_state = PQP_BUILD_STATE_BEGUN;
+	return PQP_OK;
 }
 
 int
 PQP_Model::AddTri(const double *p1, 
-                  const double *p2, 
-                  const double *p3, 
-                  int id)
+									const double *p2, 
+									const double *p3, 
+									int id)
 {
-  if (build_state == PQP_BUILD_STATE_EMPTY)
-  {
-    BeginModel();
-  }
-  else if (build_state == PQP_BUILD_STATE_PROCESSED)
-  {
+	if (build_state == PQP_BUILD_STATE_EMPTY)
+	{
+		BeginModel();
+	}
+	else if (build_state == PQP_BUILD_STATE_PROCESSED)
+	{
 //        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Warning! Called AddTri() on PQP_Model \n"
 //                   "object that was already ended. AddTri() was\n"
 //                   "ignored.  Must do a BeginModel() to clear the\n"
 //                   "model for addition of new triangles");
-    return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
-  }
-        
-  // allocate for new triangles
+		return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
+	}
+				
+	// allocate for new triangles
 
-  if (num_tris >= num_tris_alloced)
-  {
-    Tri *temp;
-    temp = new Tri[num_tris_alloced*2];
-    if (!temp)
-    {
+	if (num_tris >= num_tris_alloced)
+	{
+		Tri *temp;
+		temp = new Tri[num_tris_alloced*2];
+		if (!temp)
+		{
 //            LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array on"
 //	              " AddTri() call!");
-      return PQP_ERR_MODEL_OUT_OF_MEMORY;  
-    }
-    memcpy(temp, tris, sizeof(Tri)*num_tris);
-    delete [] tris;
-    tris = temp;
-    num_tris_alloced = num_tris_alloced*2;
-  }
-  
-  // initialize the new triangle
+			return PQP_ERR_MODEL_OUT_OF_MEMORY;  
+		}
+		memcpy(temp, tris, sizeof(Tri)*num_tris);
+		delete [] tris;
+		tris = temp;
+		num_tris_alloced = num_tris_alloced*2;
+	}
+	
+	// initialize the new triangle
 
-  tris[num_tris].p1[0] = p1[0];
-  tris[num_tris].p1[1] = p1[1];
-  tris[num_tris].p1[2] = p1[2];
+	tris[num_tris].p1[0] = p1[0];
+	tris[num_tris].p1[1] = p1[1];
+	tris[num_tris].p1[2] = p1[2];
 
-  tris[num_tris].p2[0] = p2[0];
-  tris[num_tris].p2[1] = p2[1];
-  tris[num_tris].p2[2] = p2[2];
+	tris[num_tris].p2[0] = p2[0];
+	tris[num_tris].p2[1] = p2[1];
+	tris[num_tris].p2[2] = p2[2];
 
-  tris[num_tris].p3[0] = p3[0];
-  tris[num_tris].p3[1] = p3[1];
-  tris[num_tris].p3[2] = p3[2];
+	tris[num_tris].p3[0] = p3[0];
+	tris[num_tris].p3[1] = p3[1];
+	tris[num_tris].p3[2] = p3[2];
 
-  tris[num_tris].id = id;
+	tris[num_tris].id = id;
 
-  num_tris += 1;
+	num_tris += 1;
 
-  return PQP_OK;
+	return PQP_OK;
 }
 
 int
 PQP_Model::EndModel()
 {
-  if (build_state == PQP_BUILD_STATE_PROCESSED)
-  {
+	if (build_state == PQP_BUILD_STATE_PROCESSED)
+	{
 //        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Warning! Called EndModel() on PQP_Model \n"
 //                   "object that was already ended. EndModel() was\n"
 //                   "ignored.  Must do a BeginModel() to clear the\n"
 //                   "model for addition of new triangles");
-    return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
-  }
+		return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
+	}
 
-  // report error is no tris
+	// report error is no tris
 
-  if (num_tris == 0)
-  {
+	if (num_tris == 0)
+	{
 //        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Error! EndModel() called on model with"
 //                   " no triangles");
-    return PQP_ERR_BUILD_EMPTY_MODEL;
-  }
+		return PQP_ERR_BUILD_EMPTY_MODEL;
+	}
 
-  // shrink fit tris array 
+	// shrink fit tris array 
 
-  if (num_tris_alloced > num_tris)
-  {
-    Tri *new_tris = new Tri[num_tris];
-    if (!new_tris) 
-    {
+	if (num_tris_alloced > num_tris)
+	{
+		Tri *new_tris = new Tri[num_tris];
+		if (!new_tris) 
+		{
 //            LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array "
 //                      "in EndModel() call!");
-      return PQP_ERR_MODEL_OUT_OF_MEMORY;  
-    }
-    memcpy(new_tris, tris, sizeof(Tri)*num_tris);
-    delete [] tris;
-    tris = new_tris;
-    num_tris_alloced = num_tris;
-  }
+			return PQP_ERR_MODEL_OUT_OF_MEMORY;  
+		}
+		memcpy(new_tris, tris, sizeof(Tri)*num_tris);
+		delete [] tris;
+		tris = new_tris;
+		num_tris_alloced = num_tris;
+	}
 
-  // create an array of BVs for the model
+	// create an array of BVs for the model
 
-  b = new BV[2*num_tris - 1];
-  if (!b)
-  {
+	b = new BV[2*num_tris - 1];
+	if (!b)
+	{
 //        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Error! out of memory for BV array "
 //                   "in EndModel()");
-    return PQP_ERR_MODEL_OUT_OF_MEMORY;
-  }
-  num_bvs_alloced = 2*num_tris - 1;
-  num_bvs = 0;
+		return PQP_ERR_MODEL_OUT_OF_MEMORY;
+	}
+	num_bvs_alloced = 2*num_tris - 1;
+	num_bvs = 0;
 
-  // we should build the model now.
+	// we should build the model now.
 
-  build_model(this);
-  build_state = PQP_BUILD_STATE_PROCESSED;
+	build_model(this);
+	build_state = PQP_BUILD_STATE_PROCESSED;
 
-  return PQP_OK;
+	return PQP_OK;
 }
 
 int
 PQP_Model::MemUsage(int msg) const
 {
-  int mem_bv_list = sizeof(BV)*num_bvs;
-  int mem_tri_list = sizeof(Tri)*num_tris;
+	int mem_bv_list = sizeof(BV)*num_bvs;
+	int mem_tri_list = sizeof(Tri)*num_tris;
 
-  int total_mem = mem_bv_list + mem_tri_list + sizeof(PQP_Model);
+	int total_mem = mem_bv_list + mem_tri_list + sizeof(PQP_Model);
 
-  if (msg) 
-  {
+	if (msg) 
+	{
 //        LOG4CXX_ERROR(KrisLibrary::logger(),"Total for model "<< this<<": "<< total_mem);
 //        LOG4CXX_ERROR(KrisLibrary::logger(),"BVs: "<<num_bvs<<" alloced, take "<<sizeof(BV)<<" bytes each");
 //        LOG4CXX_ERROR(KrisLibrary::logger(),"Tris: "<<num_tris<<" alloced, take "<<sizeof(Tri)<<" bytes each");
-  }
-  
-  return total_mem;
+	}
+	
+	return total_mem;
 }
 
 //  COLLIDE STUFF
@@ -270,332 +270,319 @@ PQP_Model::MemUsage(int msg) const
 
 PQP_CollideResult::PQP_CollideResult()
 {
-  pairs = 0;
-  num_pairs = num_pairs_alloced = 0;
-  num_bv_tests = 0;
-  num_tri_tests = 0;
+	pairs = NULL;
+	num_pairs = num_pairs_alloced = 0;
+	num_bv_tests = 0;
+	num_tri_tests = 0;
 }
 
 PQP_CollideResult::~PQP_CollideResult()
 {
-  delete [] pairs;
+	delete [] pairs;
 }
 
-void
-PQP_CollideResult::FreePairsList()
+void PQP_CollideResult::FreePairsList()
 {
-  num_pairs = num_pairs_alloced = 0;
-  delete [] pairs;
-  pairs = 0;
+	num_pairs = num_pairs_alloced = 0;
+	delete [] pairs;
+	pairs = NULL;
 }
 
 // may increase OR reduce mem usage
-void
-PQP_CollideResult::SizeTo(int n)
+void PQP_CollideResult::SizeTo(int n)
 {
-  CollisionPair *temp;
+	CollisionPair *temp;
 
-  if (n < num_pairs) 
-  {
+	if (n < num_pairs) 
+	{
 //        LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error: Internal error in "
 //                    "'PQP_CollideResult::SizeTo(int n)'");
 //        LOG4CXX_ERROR(KrisLibrary::logger(), "       n = "<< n<<", but num_pairs = "<< num_pairs);
-    return;
-  }
-  
-  temp = new CollisionPair[n];
-  memcpy(temp, pairs, num_pairs*sizeof(CollisionPair));
-  delete [] pairs;
-  pairs = temp;
-  num_pairs_alloced = n;
-  return;
+		return;
+	}
+	
+	temp = new CollisionPair[n];
+	memcpy(temp, pairs, num_pairs*sizeof(CollisionPair));
+	delete [] pairs;
+	pairs = temp;
+	num_pairs_alloced = n;
+	return;
 }
 
-void
-PQP_CollideResult::Add(int a, int b)
+void PQP_CollideResult::Add(int a, int b)
 {
-  if (num_pairs >= num_pairs_alloced) 
-  {
-    // allocate more
+	if (num_pairs >= num_pairs_alloced) 
+	{
+		// allocate more
 
-    SizeTo(num_pairs_alloced*2+8);
-  }
+		SizeTo(num_pairs_alloced*2+8);
+	}
 
-  // now proceed as usual
+	// now proceed as usual
 
-  pairs[num_pairs].id1 = a;
-  pairs[num_pairs].id2 = b;
-  num_pairs++;
+	pairs[num_pairs].id1 = a;
+	pairs[num_pairs].id2 = b;
+	num_pairs++;
 }
 
 // TRIANGLE OVERLAP TEST
-       
-inline
-double
-max(double a, double b, double c)
+			 
+inline double max(double a, double b, double c)
 {
-  double t = a;
-  if (b > t) t = b;
-  if (c > t) t = c;
-  return t;
+	double t = a;
+	if (b > t) t = b;
+	if (c > t) t = c;
+	return t;
 }
 
-inline
-double
-min(double a, double b, double c)
+inline double min(double a, double b, double c)
 {
-  double t = a;
-  if (b < t) t = b;
-  if (c < t) t = c;
-  return t;
+	double t = a;
+	if (b < t) t = b;
+	if (c < t) t = c;
+	return t;
 }
 
-int
-project6(double *ax, 
-         double *p1, double *p2, double *p3, 
-         double *q1, double *q2, double *q3)
+int project6(double *ax, 
+				 double *p1, double *p2, double *p3, 
+				 double *q1, double *q2, double *q3)
 {
-  double P1 = VdotV(ax, p1);
-  double P2 = VdotV(ax, p2);
-  double P3 = VdotV(ax, p3);
-  double Q1 = VdotV(ax, q1);
-  double Q2 = VdotV(ax, q2);
-  double Q3 = VdotV(ax, q3);
-  
-  double mx1 = max(P1, P2, P3);
-  double mn1 = min(P1, P2, P3);
-  double mx2 = max(Q1, Q2, Q3);
-  double mn2 = min(Q1, Q2, Q3);
+	double P1 = VdotV(ax, p1);
+	double P2 = VdotV(ax, p2);
+	double P3 = VdotV(ax, p3);
+	double Q1 = VdotV(ax, q1);
+	double Q2 = VdotV(ax, q2);
+	double Q3 = VdotV(ax, q3);
+	
+	double mx1 = max(P1, P2, P3);
+	double mn1 = min(P1, P2, P3);
+	double mx2 = max(Q1, Q2, Q3);
+	double mn2 = min(Q1, Q2, Q3);
 
-  if (mn1 > mx2) return 0;
-  if (mn2 > mx1) return 0;
-  return 1;
+	if (mn1 > mx2) return 0;
+	if (mn2 > mx1) return 0;
+	return 1;
 }
 
 // very robust triangle intersection test
 // uses no divisions
 // works on coplanar triangles
-int 
-TriContact(const double *P1, const double *P2, const double *P3,
-           const double *Q1, const double *Q2, const double *Q3) 
+int TriContact(const double *P1, const double *P2, const double *P3,
+					 const double *Q1, const double *Q2, const double *Q3) 
 {
 
-  // One triangle is (p1,p2,p3).  Other is (q1,q2,q3).
-  // Edges are (e1,e2,e3) and (f1,f2,f3).
-  // Normals are n1 and m1
-  // Outwards are (g1,g2,g3) and (h1,h2,h3).
-  //  
-  // We assume that the triangle vertices are in the same coordinate system.
-  //
-  // First thing we do is establish a new c.s. so that p1 is at (0,0,0).
+	// One triangle is (p1,p2,p3).  Other is (q1,q2,q3).
+	// Edges are (e1,e2,e3) and (f1,f2,f3).
+	// Normals are n1 and m1
+	// Outwards are (g1,g2,g3) and (h1,h2,h3).
+	//  
+	// We assume that the triangle vertices are in the same coordinate system.
+	//
+	// First thing we do is establish a new c.s. so that p1 is at (0,0,0).
 
-  double p1[3], p2[3], p3[3];
-  double q1[3], q2[3], q3[3];
-  double e1[3], e2[3], e3[3];
-  double f1[3], f2[3], f3[3];
-  double g1[3], g2[3], g3[3];
-  double h1[3], h2[3], h3[3];
-  double n1[3], m1[3];
+	double p1[3], p2[3], p3[3];
+	double q1[3], q2[3], q3[3];
+	double e1[3], e2[3], e3[3];
+	double f1[3], f2[3], f3[3];
+	double g1[3], g2[3], g3[3];
+	double h1[3], h2[3], h3[3];
+	double n1[3], m1[3];
 
-  double ef11[3], ef12[3], ef13[3];
-  double ef21[3], ef22[3], ef23[3];
-  double ef31[3], ef32[3], ef33[3];
-  
-  p1[0] = P1[0] - P1[0];  p1[1] = P1[1] - P1[1];  p1[2] = P1[2] - P1[2];
-  p2[0] = P2[0] - P1[0];  p2[1] = P2[1] - P1[1];  p2[2] = P2[2] - P1[2];
-  p3[0] = P3[0] - P1[0];  p3[1] = P3[1] - P1[1];  p3[2] = P3[2] - P1[2];
-  
-  q1[0] = Q1[0] - P1[0];  q1[1] = Q1[1] - P1[1];  q1[2] = Q1[2] - P1[2];
-  q2[0] = Q2[0] - P1[0];  q2[1] = Q2[1] - P1[1];  q2[2] = Q2[2] - P1[2];
-  q3[0] = Q3[0] - P1[0];  q3[1] = Q3[1] - P1[1];  q3[2] = Q3[2] - P1[2];
-  
-  e1[0] = p2[0] - p1[0];  e1[1] = p2[1] - p1[1];  e1[2] = p2[2] - p1[2];
-  e2[0] = p3[0] - p2[0];  e2[1] = p3[1] - p2[1];  e2[2] = p3[2] - p2[2];
-  e3[0] = p1[0] - p3[0];  e3[1] = p1[1] - p3[1];  e3[2] = p1[2] - p3[2];
+	double ef11[3], ef12[3], ef13[3];
+	double ef21[3], ef22[3], ef23[3];
+	double ef31[3], ef32[3], ef33[3];
+	
+	p1[0] = P1[0] - P1[0];  p1[1] = P1[1] - P1[1];  p1[2] = P1[2] - P1[2];
+	p2[0] = P2[0] - P1[0];  p2[1] = P2[1] - P1[1];  p2[2] = P2[2] - P1[2];
+	p3[0] = P3[0] - P1[0];  p3[1] = P3[1] - P1[1];  p3[2] = P3[2] - P1[2];
+	
+	q1[0] = Q1[0] - P1[0];  q1[1] = Q1[1] - P1[1];  q1[2] = Q1[2] - P1[2];
+	q2[0] = Q2[0] - P1[0];  q2[1] = Q2[1] - P1[1];  q2[2] = Q2[2] - P1[2];
+	q3[0] = Q3[0] - P1[0];  q3[1] = Q3[1] - P1[1];  q3[2] = Q3[2] - P1[2];
+	
+	e1[0] = p2[0] - p1[0];  e1[1] = p2[1] - p1[1];  e1[2] = p2[2] - p1[2];
+	e2[0] = p3[0] - p2[0];  e2[1] = p3[1] - p2[1];  e2[2] = p3[2] - p2[2];
+	e3[0] = p1[0] - p3[0];  e3[1] = p1[1] - p3[1];  e3[2] = p1[2] - p3[2];
 
-  f1[0] = q2[0] - q1[0];  f1[1] = q2[1] - q1[1];  f1[2] = q2[2] - q1[2];
-  f2[0] = q3[0] - q2[0];  f2[1] = q3[1] - q2[1];  f2[2] = q3[2] - q2[2];
-  f3[0] = q1[0] - q3[0];  f3[1] = q1[1] - q3[1];  f3[2] = q1[2] - q3[2];
-  
-  VcrossV(n1, e1, e2);
-  VcrossV(m1, f1, f2);
+	f1[0] = q2[0] - q1[0];  f1[1] = q2[1] - q1[1];  f1[2] = q2[2] - q1[2];
+	f2[0] = q3[0] - q2[0];  f2[1] = q3[1] - q2[1];  f2[2] = q3[2] - q2[2];
+	f3[0] = q1[0] - q3[0];  f3[1] = q1[1] - q3[1];  f3[2] = q1[2] - q3[2];
+	
+	VcrossV(n1, e1, e2);
+	VcrossV(m1, f1, f2);
 
-  VcrossV(g1, e1, n1);
-  VcrossV(g2, e2, n1);
-  VcrossV(g3, e3, n1);
-  VcrossV(h1, f1, m1);
-  VcrossV(h2, f2, m1);
-  VcrossV(h3, f3, m1);
+	VcrossV(g1, e1, n1);
+	VcrossV(g2, e2, n1);
+	VcrossV(g3, e3, n1);
+	VcrossV(h1, f1, m1);
+	VcrossV(h2, f2, m1);
+	VcrossV(h3, f3, m1);
 
-  VcrossV(ef11, e1, f1);
-  VcrossV(ef12, e1, f2);
-  VcrossV(ef13, e1, f3);
-  VcrossV(ef21, e2, f1);
-  VcrossV(ef22, e2, f2);
-  VcrossV(ef23, e2, f3);
-  VcrossV(ef31, e3, f1);
-  VcrossV(ef32, e3, f2);
-  VcrossV(ef33, e3, f3);
-  
-  // now begin the series of tests
+	VcrossV(ef11, e1, f1);
+	VcrossV(ef12, e1, f2);
+	VcrossV(ef13, e1, f3);
+	VcrossV(ef21, e2, f1);
+	VcrossV(ef22, e2, f2);
+	VcrossV(ef23, e2, f3);
+	VcrossV(ef31, e3, f1);
+	VcrossV(ef32, e3, f2);
+	VcrossV(ef33, e3, f3);
+	
+	// now begin the series of tests
 
-  if (!project6(n1, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(m1, p1, p2, p3, q1, q2, q3)) return 0;
-  
-  if (!project6(ef11, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(ef12, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(ef13, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(ef21, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(ef22, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(ef23, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(ef31, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(ef32, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(ef33, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(n1, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(m1, p1, p2, p3, q1, q2, q3)) return 0;
+	
+	if (!project6(ef11, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(ef12, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(ef13, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(ef21, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(ef22, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(ef23, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(ef31, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(ef32, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(ef33, p1, p2, p3, q1, q2, q3)) return 0;
 
-  if (!project6(g1, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(g2, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(g3, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(h1, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(h2, p1, p2, p3, q1, q2, q3)) return 0;
-  if (!project6(h3, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(g1, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(g2, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(g3, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(h1, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(h2, p1, p2, p3, q1, q2, q3)) return 0;
+	if (!project6(h3, p1, p2, p3, q1, q2, q3)) return 0;
 
-  return 1;
+	return 1;
 }
 
-inline
-double
-TriDistance(double R[3][3], double T[3], const Tri *t1, const Tri *t2,
-            double p[3], double q[3])
+inline double TriDistance(double R[3][3], double T[3], const Tri *t1, const Tri *t2,
+						double p[3], double q[3])
 {
-  // transform tri 2 into same space as tri 1
+	// transform tri 2 into same space as tri 1
 
-  double tri1[3][3], tri2[3][3];
+	double tri1[3][3], tri2[3][3];
 
-  VcV(tri1[0], t1->p1);
-  VcV(tri1[1], t1->p2);
-  VcV(tri1[2], t1->p3);
-  MxVpV(tri2[0], R, t2->p1, T);
-  MxVpV(tri2[1], R, t2->p2, T);
-  MxVpV(tri2[2], R, t2->p3, T);
-                                
-  return TriDist(p,q,tri1,tri2);
+	VcV(tri1[0], t1->p1);
+	VcV(tri1[1], t1->p2);
+	VcV(tri1[2], t1->p3);
+	MxVpV(tri2[0], R, t2->p1, T);
+	MxVpV(tri2[1], R, t2->p2, T);
+	MxVpV(tri2[2], R, t2->p3, T);
+																
+	return TriDist(p,q,tri1,tri2);
 }
 
 
-void
-CollideRecurse(PQP_CollideResult *res,
-               const PQP_Model *o1, int b1, 
-               const PQP_Model *o2, int b2, int flag)
+void CollideRecurse(PQP_CollideResult *res,
+							 const PQP_Model *o1, int b1, 
+							 const PQP_Model *o2, int b2, int flag)
 {
-  // first thing, see if we're overlapping
+	// first thing, see if we're overlapping
 
-  res->num_bv_tests++;
+	res->num_bv_tests++;
 
-  //original PQP had this here
-  //if (!BV_Overlap2(res->R, res->T, o1->child(b1), o2->child(b2))) return;
+	//original PQP had this here
+	//if (!BV_Overlap2(res->R, res->T, o1->child(b1), o2->child(b2))) return;
 
-  // if we are, see if we test triangles next
+	// if we are, see if we test triangles next
 
-  int l1 = o1->child(b1)->Leaf();
-  int l2 = o2->child(b2)->Leaf();
+	int l1 = o1->child(b1)->Leaf();
+	int l2 = o2->child(b2)->Leaf();
 
-  if (l1 && l2) 
-  {
-    res->num_tri_tests++;
+	if (l1 && l2) 
+	{
+		res->num_tri_tests++;
 
-    // transform the points in b2 into space of b1, then compare
+		// transform the points in b2 into space of b1, then compare
 
-    Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
-    Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
-    double q1[3], q2[3], q3[3];
-    double *p1 = t1->p1;
-    double *p2 = t1->p2;
-    double *p3 = t1->p3;    
-    MxVpV(q1, res->R, t2->p1, res->T);
-    MxVpV(q2, res->R, t2->p2, res->T);
-    MxVpV(q3, res->R, t2->p3, res->T);
-    if (TriContact(p1, p2, p3, q1, q2, q3)) 
-    {
-      // add this to result
+		Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
+		Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
+		double q1[3], q2[3], q3[3];
+		double *p1 = t1->p1;
+		double *p2 = t1->p2;
+		double *p3 = t1->p3;    
+		MxVpV(q1, res->R, t2->p1, res->T);
+		MxVpV(q2, res->R, t2->p2, res->T);
+		MxVpV(q3, res->R, t2->p3, res->T);
+		if (TriContact(p1, p2, p3, q1, q2, q3)) 
+		{
+			// add this to result
 
-      res->Add(t1->id, t2->id);
-    }
-    return;
-  }
+			res->Add(t1->id, t2->id);
+		}
+		return;
+	}
 
-  //moving this out if both bbs are leafs
-  if (!BV_Overlap2(res->R, res->T, o1->child(b1), o2->child(b2))) return;
+	//moving this out if both bbs are leafs
+	if (!BV_Overlap2(res->R, res->T, o1->child(b1), o2->child(b2))) return;
 
-  // we dont, so decide whose children to visit next
+	// we dont, so decide whose children to visit next
 
-  double sz1 = o1->child(b1)->GetSize();
-  double sz2 = o2->child(b2)->GetSize();
-   
-  if (l2 || (!l1 && (sz1 > sz2)))
-  {
-    int c1 = o1->child(b1)->first_child;
-    int c2 = c1 + 1;
+	double sz1 = o1->child(b1)->GetSize();
+	double sz2 = o2->child(b2)->GetSize();
+	 
+	if (l2 || (!l1 && (sz1 > sz2)))
+	{
+		int c1 = o1->child(b1)->first_child;
+		int c2 = c1 + 1;
 
-    CollideRecurse(res,o1,c1,o2,b2,flag);
+		CollideRecurse(res,o1,c1,o2,b2,flag);
 
-    if ((flag == PQP_FIRST_CONTACT) && (res->num_pairs > 0)) return;
+		if ((flag == PQP_FIRST_CONTACT) && (res->num_pairs > 0)) return;
 
-    CollideRecurse(res,o1,c2,o2,b2,flag);
-  }
-  else 
-  {
-    int c1 = o2->child(b2)->first_child;
-    int c2 = c1 + 1;
+		CollideRecurse(res,o1,c2,o2,b2,flag);
+	}
+	else 
+	{
+		int c1 = o2->child(b2)->first_child;
+		int c2 = c1 + 1;
 
-    CollideRecurse(res,o1,b1,o2,c1,flag);
+		CollideRecurse(res,o1,b1,o2,c1,flag);
 
-    if ((flag == PQP_FIRST_CONTACT) && (res->num_pairs > 0)) return;
+		if ((flag == PQP_FIRST_CONTACT) && (res->num_pairs > 0)) return;
 
-    CollideRecurse(res,o1,b1,o2,c2,flag);
-  }
+		CollideRecurse(res,o1,b1,o2,c2,flag);
+	}
 }
 
-int 
-PQP_Collide(PQP_CollideResult *res,
-            double R1[3][3], double T1[3], const PQP_Model *o1,
-            double R2[3][3], double T2[3], const PQP_Model *o2,
-            int flag)
+int PQP_Collide(PQP_CollideResult *res,
+						double R1[3][3], double T1[3], const PQP_Model *o1,
+						double R2[3][3], double T2[3], const PQP_Model *o2,
+						int flag)
 {
-  // make sure that the models are built
+	// make sure that the models are built
 
-  if (o1->build_state != PQP_BUILD_STATE_PROCESSED) 
-    return PQP_ERR_UNPROCESSED_MODEL;
-  if (o2->build_state != PQP_BUILD_STATE_PROCESSED) 
-    return PQP_ERR_UNPROCESSED_MODEL;
+	if (o1->build_state != PQP_BUILD_STATE_PROCESSED) 
+		return PQP_ERR_UNPROCESSED_MODEL;
+	if (o2->build_state != PQP_BUILD_STATE_PROCESSED) 
+		return PQP_ERR_UNPROCESSED_MODEL;
 
-  // clear the stats
+	// clear the stats
 
-  res->num_bv_tests = 0;
-  res->num_tri_tests = 0;
-  
-  // don't release the memory, but reset the num_pairs counter
+	res->num_bv_tests = 0;
+	res->num_tri_tests = 0;
+	
+	// don't release the memory, but reset the num_pairs counter
 
-  res->num_pairs = 0;
-  
-  // Okay, compute what transform [R,T] that takes us from cs1 to cs2.
-  // [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
-  // First compute the rotation part, then translation part
+	res->num_pairs = 0;
+	
+	// Okay, compute what transform [R,T] that takes us from cs1 to cs2.
+	// [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
+	// First compute the rotation part, then translation part
 
-  MTxM(res->R,R1,R2);
-  double Ttemp[3];
-  VmV(Ttemp, T2, T1);  
-  MTxV(res->T, R1, Ttemp);
-  
-  // now start with both top level BVs  
+	MTxM(res->R,R1,R2);
+	double Ttemp[3];
+	VmV(Ttemp, T2, T1);  
+	MTxV(res->T, R1, Ttemp);
+	
+	// now start with both top level BVs  
 
-  CollideRecurse(res,o1,0,o2,0,flag);
-  
-  return PQP_OK; 
+	CollideRecurse(res,o1,0,o2,0,flag);
+	
+	return PQP_OK; 
 }
 
 #if PQP_BV_TYPE & RSS_TYPE // distance/tolerance only available with RSS
-                           // unless an OBB distance test is supplied in 
-                           // BV.cpp
+													 // unless an OBB distance test is supplied in 
+													 // BV.cpp
 
 // DISTANCE STUFF
 //
@@ -603,324 +590,324 @@ PQP_Collide(PQP_CollideResult *res,
 
 void
 DistanceRecurse(PQP_DistanceResult *res,
-                const PQP_Model *o1, int b1,
-                const PQP_Model *o2, int b2)
+								const PQP_Model *o1, int b1,
+								const PQP_Model *o2, int b2)
 {
-  double sz1 = o1->child(b1)->GetSize();
-  double sz2 = o2->child(b2)->GetSize();
-  int l1 = o1->child(b1)->Leaf();
-  int l2 = o2->child(b2)->Leaf();
+	double sz1 = o1->child(b1)->GetSize();
+	double sz2 = o2->child(b2)->GetSize();
+	int l1 = o1->child(b1)->Leaf();
+	int l2 = o2->child(b2)->Leaf();
 
-  if (l1 && l2)
-  {
-    // both leaves.  Test the triangles beneath them.
+	if (l1 && l2)
+	{
+		// both leaves.  Test the triangles beneath them.
 
-    res->num_tri_tests++;
+		res->num_tri_tests++;
 
-    double p[3], q[3];
+		double p[3], q[3];
 
-    Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
-    Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
+		Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
+		Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
 
-    double d = TriDistance(res->R,res->T,t1,t2,p,q);
-  
-    if (d < res->distance) 
-    {
-      res->distance = d;
+		double d = TriDistance(res->R,res->T,t1,t2,p,q);
+	
+		if (d < res->distance) 
+		{
+			res->distance = d;
 
-      VcV(res->p1, p);         // p already in c.s. 1
-      VcV(res->p2, q);         // q must be transformed 
-                               // into c.s. 2 later
-      res->t1 = -o1->child(b1)->first_child - 1;
-      res->t2 = -o2->child(b2)->first_child - 1;
-    }
+			VcV(res->p1, p);         // p already in c.s. 1
+			VcV(res->p2, q);         // q must be transformed 
+															 // into c.s. 2 later
+			res->t1 = -o1->child(b1)->first_child - 1;
+			res->t2 = -o2->child(b2)->first_child - 1;
+		}
 
-    return;
-  }
+		return;
+	}
 
-  // First, perform distance tests on the children. Then traverse 
-  // them recursively, but test the closer pair first, the further 
-  // pair second.
+	// First, perform distance tests on the children. Then traverse 
+	// them recursively, but test the closer pair first, the further 
+	// pair second.
 
-  int a1,a2,c1,c2;  // new bv tests 'a' and 'c'
+	int a1,a2,c1,c2;  // new bv tests 'a' and 'c'
 //  double R1[3][3], T1[3], R2[3][3], T2[3], Ttemp[3];
 
-  if (l2 || (!l1 && (sz1 > sz2)))
-  {
-    // visit the children of b1
+	if (l2 || (!l1 && (sz1 > sz2)))
+	{
+		// visit the children of b1
 
-    a1 = o1->child(b1)->first_child;
-    a2 = b2;
-    c1 = o1->child(b1)->first_child+1;
-    c2 = b2;
-  }
-  else 
-  {
-    // visit the children of b2
+		a1 = o1->child(b1)->first_child;
+		a2 = b2;
+		c1 = o1->child(b1)->first_child+1;
+		c2 = b2;
+	}
+	else 
+	{
+		// visit the children of b2
 
-    a1 = b1;
-    a2 = o2->child(b2)->first_child;
-    c1 = b1;
-    c2 = o2->child(b2)->first_child+1;
+		a1 = b1;
+		a2 = o2->child(b2)->first_child;
+		c1 = b1;
+		c2 = o2->child(b2)->first_child+1;
 
-  }
+	}
 
-  res->num_bv_tests += 2;
+	res->num_bv_tests += 2;
 
-  double d1 = BV_Distance2(res->R, res->T, o1->child(a1), o2->child(a2));
-  double d2 = BV_Distance2(res->R, res->T, o1->child(c1), o2->child(c2));
+	double d1 = BV_Distance2(res->R, res->T, o1->child(a1), o2->child(a2));
+	double d2 = BV_Distance2(res->R, res->T, o1->child(c1), o2->child(c2));
 
-  if (d2 < d1)
-  {
-    if ((d2 < (res->distance - res->abs_err)) || 
-        (d2*(1 + res->rel_err) < res->distance)) 
-    {      
-      DistanceRecurse(res, o1, c1, o2, c2);      
-    }
+	if (d2 < d1)
+	{
+		if ((d2 < (res->distance - res->abs_err)) || 
+				(d2*(1 + res->rel_err) < res->distance)) 
+		{      
+			DistanceRecurse(res, o1, c1, o2, c2);      
+		}
 
-    if ((d1 < (res->distance - res->abs_err)) || 
-        (d1*(1 + res->rel_err) < res->distance)) 
-    {      
-      DistanceRecurse(res, o1, a1, o2, a2);
-    }
-  }
-  else 
-  {
-    if ((d1 < (res->distance - res->abs_err)) || 
-        (d1*(1 + res->rel_err) < res->distance)) 
-    {      
-      DistanceRecurse(res, o1, a1, o2, a2);
-    }
+		if ((d1 < (res->distance - res->abs_err)) || 
+				(d1*(1 + res->rel_err) < res->distance)) 
+		{      
+			DistanceRecurse(res, o1, a1, o2, a2);
+		}
+	}
+	else 
+	{
+		if ((d1 < (res->distance - res->abs_err)) || 
+				(d1*(1 + res->rel_err) < res->distance)) 
+		{      
+			DistanceRecurse(res, o1, a1, o2, a2);
+		}
 
-    if ((d2 < (res->distance - res->abs_err)) || 
-        (d2*(1 + res->rel_err) < res->distance)) 
-    {      
-      DistanceRecurse(res, o1, c1, o2, c2);      
-    }
-  }
+		if ((d2 < (res->distance - res->abs_err)) || 
+				(d2*(1 + res->rel_err) < res->distance)) 
+		{      
+			DistanceRecurse(res, o1, c1, o2, c2);      
+		}
+	}
 }
 
 void
 DistanceQueueRecurse(PQP_DistanceResult *res, 
-                     const PQP_Model *o1, int b1,
-                     const PQP_Model *o2, int b2)
+										 const PQP_Model *o1, int b1,
+										 const PQP_Model *o2, int b2)
 {
-  BVTQ bvtq(res->qsize);
+	BVTQ bvtq(res->qsize);
 
-  BVT min_test;
-  min_test.b1 = b1;
-  min_test.b2 = b2;
+	BVT min_test;
+	min_test.b1 = b1;
+	min_test.b2 = b2;
 
-  while(1) 
-  {  
-    int l1 = o1->child(min_test.b1)->Leaf();
-    int l2 = o2->child(min_test.b2)->Leaf();
-    
-    if (l1 && l2) 
-    {  
-      // both leaves.  Test the triangles beneath them.
+	while(1) 
+	{  
+		int l1 = o1->child(min_test.b1)->Leaf();
+		int l2 = o2->child(min_test.b2)->Leaf();
+		
+		if (l1 && l2) 
+		{  
+			// both leaves.  Test the triangles beneath them.
 
-      res->num_tri_tests++;
+			res->num_tri_tests++;
 
-      double p[3], q[3];
+			double p[3], q[3];
 
-      Tri *t1 = &o1->tris[-o1->child(min_test.b1)->first_child - 1];
-      Tri *t2 = &o2->tris[-o2->child(min_test.b2)->first_child - 1];
+			Tri *t1 = &o1->tris[-o1->child(min_test.b1)->first_child - 1];
+			Tri *t2 = &o2->tris[-o2->child(min_test.b2)->first_child - 1];
 
-      double d = TriDistance(res->R,res->T,t1,t2,p,q);
-  
-      if (d < res->distance)
-      {
-        res->distance = d;
+			double d = TriDistance(res->R,res->T,t1,t2,p,q);
+	
+			if (d < res->distance)
+			{
+				res->distance = d;
 
-        VcV(res->p1, p);         // p already in c.s. 1
-        VcV(res->p2, q);         // q must be transformed 
-                                 // into c.s. 2 later
+				VcV(res->p1, p);         // p already in c.s. 1
+				VcV(res->p2, q);         // q must be transformed 
+																 // into c.s. 2 later
 	res->t1 = -o1->child(b1)->first_child - 1;
 	res->t2 = -o2->child(b2)->first_child - 1;
-      }
-    }		 
-    else if (bvtq.GetNumTests() == bvtq.GetSize() - 1) 
-    {  
-      // queue can't get two more tests, recur
-      
-      DistanceQueueRecurse(res,o1,min_test.b1,o2,min_test.b2);
-    }
-    else 
-    {  
-      // decide how to descend to children
-      
-      double sz1 = o1->child(min_test.b1)->GetSize();
-      double sz2 = o2->child(min_test.b2)->GetSize();
+			}
+		}		 
+		else if (bvtq.GetNumTests() == bvtq.GetSize() - 1) 
+		{  
+			// queue can't get two more tests, recur
+			
+			DistanceQueueRecurse(res,o1,min_test.b1,o2,min_test.b2);
+		}
+		else 
+		{  
+			// decide how to descend to children
+			
+			double sz1 = o1->child(min_test.b1)->GetSize();
+			double sz2 = o2->child(min_test.b2)->GetSize();
 
-      res->num_bv_tests += 2;
+			res->num_bv_tests += 2;
  
-      BVT bvt1,bvt2;
+			BVT bvt1,bvt2;
 //      double Ttemp[3];
 
-      if (l2 || (!l1 && (sz1 > sz2)))	
-      {  
-        // put new tests on queue consisting of min_test.b2 
-        // with children of min_test.b1 
-      
-        int c1 = o1->child(min_test.b1)->first_child;
-        int c2 = c1 + 1;
+			if (l2 || (!l1 && (sz1 > sz2)))	
+			{  
+				// put new tests on queue consisting of min_test.b2 
+				// with children of min_test.b1 
+			
+				int c1 = o1->child(min_test.b1)->first_child;
+				int c2 = c1 + 1;
 
-        // init bv test 1
+				// init bv test 1
 
-        bvt1.b1 = c1;
-        bvt1.b2 = min_test.b2;
-        bvt1.d = BV_Distance2(res->R,res->T,
-                            o1->child(bvt1.b1),o2->child(bvt1.b2));
+				bvt1.b1 = c1;
+				bvt1.b2 = min_test.b2;
+				bvt1.d = BV_Distance2(res->R,res->T,
+														o1->child(bvt1.b1),o2->child(bvt1.b2));
 
-        // init bv test 2
+				// init bv test 2
 
-        bvt2.b1 = c2;
-        bvt2.b2 = min_test.b2;
-        bvt2.d = BV_Distance2(res->R,res->T,
-                            o1->child(bvt2.b1),o2->child(bvt2.b2));
-      }
-      else 
-      {
-        // put new tests on queue consisting of min_test.b1 
-        // with children of min_test.b2
-      
-        int c1 = o2->child(min_test.b2)->first_child;
-        int c2 = c1 + 1;
+				bvt2.b1 = c2;
+				bvt2.b2 = min_test.b2;
+				bvt2.d = BV_Distance2(res->R,res->T,
+														o1->child(bvt2.b1),o2->child(bvt2.b2));
+			}
+			else 
+			{
+				// put new tests on queue consisting of min_test.b1 
+				// with children of min_test.b2
+			
+				int c1 = o2->child(min_test.b2)->first_child;
+				int c2 = c1 + 1;
 
-        // init bv test 1
+				// init bv test 1
 
-        bvt1.b1 = min_test.b1;
-        bvt1.b2 = c1;
-        bvt1.d = BV_Distance2(res->R,res->T,
-                            o1->child(bvt1.b1),o2->child(bvt1.b2));
+				bvt1.b1 = min_test.b1;
+				bvt1.b2 = c1;
+				bvt1.d = BV_Distance2(res->R,res->T,
+														o1->child(bvt1.b1),o2->child(bvt1.b2));
 
-        // init bv test 2
+				// init bv test 2
 
-        bvt2.b1 = min_test.b1;
-        bvt2.b2 = c2;
-        bvt2.d = BV_Distance2(res->R,res->T,
-                            o1->child(bvt2.b1),o2->child(bvt2.b2));
-      }
+				bvt2.b1 = min_test.b1;
+				bvt2.b2 = c2;
+				bvt2.d = BV_Distance2(res->R,res->T,
+														o1->child(bvt2.b1),o2->child(bvt2.b2));
+			}
 
-      bvtq.AddTest(bvt1);	
-      bvtq.AddTest(bvt2);
-    }
+			bvtq.AddTest(bvt1);	
+			bvtq.AddTest(bvt2);
+		}
 
-    if (bvtq.Empty())
-    {
-      break;
-    }
-    else
-    {
-      min_test = bvtq.ExtractMinTest();
+		if (bvtq.Empty())
+		{
+			break;
+		}
+		else
+		{
+			min_test = bvtq.ExtractMinTest();
 
-      if ((min_test.d + res->abs_err >= res->distance) && 
-         ((min_test.d * (1 + res->rel_err)) >= res->distance)) 
-      {
-        break;
-      }
-    }
-  }  
+			if ((min_test.d + res->abs_err >= res->distance) && 
+				 ((min_test.d * (1 + res->rel_err)) >= res->distance)) 
+			{
+				break;
+			}
+		}
+	}  
 }	
 
 int 
 PQP_Distance(PQP_DistanceResult *res,
-             double R1[3][3], double T1[3], const PQP_Model *o1,
-             double R2[3][3], double T2[3], const PQP_Model *o2,
-             double rel_err, double abs_err,
-             int qsize,double init_bound)
+						 double R1[3][3], double T1[3], const PQP_Model *o1,
+						 double R2[3][3], double T2[3], const PQP_Model *o2,
+						 double rel_err, double abs_err,
+						 int qsize,double init_bound)
 {
-  
-  
-  // make sure that the models are built
+	
+	
+	// make sure that the models are built
 
-  if (o1->build_state != PQP_BUILD_STATE_PROCESSED) 
-    return PQP_ERR_UNPROCESSED_MODEL;
-  if (o2->build_state != PQP_BUILD_STATE_PROCESSED) 
-    return PQP_ERR_UNPROCESSED_MODEL;
+	if (o1->build_state != PQP_BUILD_STATE_PROCESSED) 
+		return PQP_ERR_UNPROCESSED_MODEL;
+	if (o2->build_state != PQP_BUILD_STATE_PROCESSED) 
+		return PQP_ERR_UNPROCESSED_MODEL;
 
-  // Okay, compute what transform [R,T] that takes us from cs2 to cs1.
-  // [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
-  // First compute the rotation part, then translation part
+	// Okay, compute what transform [R,T] that takes us from cs2 to cs1.
+	// [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
+	// First compute the rotation part, then translation part
 
-  MTxM(res->R,R1,R2);
-  double Ttemp[3];
-  VmV(Ttemp, T2, T1);  
-  MTxV(res->T, R1, Ttemp);
-  
-  // establish initial upper bound using last triangles which 
-  // provided the minimum distance
+	MTxM(res->R,R1,R2);
+	double Ttemp[3];
+	VmV(Ttemp, T2, T1);  
+	MTxV(res->T, R1, Ttemp);
+	
+	// establish initial upper bound using last triangles which 
+	// provided the minimum distance
 
-  if(init_bound < 0) {
-    if(res->t1 < 0) res->t1 = 0;
-    if(res->t2 < 0) res->t2 = 0;
-    if(res->t1 >= o1->num_tris) res->t1 = 0;
-    if(res->t2 >= o2->num_tris) res->t2 = 0;
-    double p[3],q[3];
-    res->distance = TriDistance(res->R,res->T,&o1->tris[res->t1],&o2->tris[res->t2],p,q);
-    VcV(res->p1,p);
-    VcV(res->p2,q);
-    /*
-    assert(o1->num_tris < 100000);
-    assert(o2->num_tris < 100000);
-    assert(o1->num_tris > res->t1);
-    assert(o2->num_tris > res->t2);
-    assert(res->t1 >= 0);
-    assert(res->t2 >= 0);
-    if(res->distance == 0) {
-      LOG4CXX_INFO(KrisLibrary::logger(),"Init distance "<<res->distance);
-      LOG4CXX_INFO(KrisLibrary::logger(),"P = "<<p[0]<<" "<<p[1]<<" "<<p[2]);
-      LOG4CXX_INFO(KrisLibrary::logger(),"Q = "<<q[0]<<" "<<q[1]<<" "<<q[2]);
-      LOG4CXX_INFO(KrisLibrary::logger(),"T1.a = "<<o1->tris[res->t1].p1[0]<<" "<<o1->tris[res->t1].p1[1]<<" "<<o1->tris[res->t1].p1[2]);
-      LOG4CXX_INFO(KrisLibrary::logger(),"T1.b = "<<o1->tris[res->t1].p2[0]<<" "<<o1->tris[res->t1].p2[1]<<" "<<o1->tris[res->t1].p2[2]);
-      LOG4CXX_INFO(KrisLibrary::logger(),"T1.c = "<<o1->tris[res->t1].p3[0]<<" "<<o1->tris[res->t1].p3[1]<<" "<<o1->tris[res->t1].p3[2]);
-      LOG4CXX_INFO(KrisLibrary::logger(),"T2.a = "<<o2->tris[res->t2].p1[0]<<" "<<o2->tris[res->t2].p1[1]<<" "<<o2->tris[res->t2].p1[2]);
-      LOG4CXX_INFO(KrisLibrary::logger(),"T2.b = "<<o2->tris[res->t2].p2[0]<<" "<<o2->tris[res->t2].p2[1]<<" "<<o2->tris[res->t2].p2[2]);
-      LOG4CXX_INFO(KrisLibrary::logger(),"T2.c = "<<o2->tris[res->t2].p3[0]<<" "<<o2->tris[res->t2].p3[1]<<" "<<o2->tris[res->t2].p3[2]);
-      LOG4CXX_INFO(KrisLibrary::logger(),"Translation "<<res->T[0]<<" "<<res->T[1]<<" "<<res->T[2]);
-    }
-    */
-  }
-  else if(init_bound == 0.0) {
-    res->distance = 0;
-    return PQP_OK;
-  }
-  else {
-    res->distance = init_bound;
-  }
+	if(init_bound < 0) {
+		if(res->t1 < 0) res->t1 = 0;
+		if(res->t2 < 0) res->t2 = 0;
+		if(res->t1 >= o1->num_tris) res->t1 = 0;
+		if(res->t2 >= o2->num_tris) res->t2 = 0;
+		double p[3],q[3];
+		res->distance = TriDistance(res->R,res->T,&o1->tris[res->t1],&o2->tris[res->t2],p,q);
+		VcV(res->p1,p);
+		VcV(res->p2,q);
+		/*
+		assert(o1->num_tris < 100000);
+		assert(o2->num_tris < 100000);
+		assert(o1->num_tris > res->t1);
+		assert(o2->num_tris > res->t2);
+		assert(res->t1 >= 0);
+		assert(res->t2 >= 0);
+		if(res->distance == 0) {
+			LOG4CXX_INFO(KrisLibrary::logger(),"Init distance "<<res->distance);
+			LOG4CXX_INFO(KrisLibrary::logger(),"P = "<<p[0]<<" "<<p[1]<<" "<<p[2]);
+			LOG4CXX_INFO(KrisLibrary::logger(),"Q = "<<q[0]<<" "<<q[1]<<" "<<q[2]);
+			LOG4CXX_INFO(KrisLibrary::logger(),"T1.a = "<<o1->tris[res->t1].p1[0]<<" "<<o1->tris[res->t1].p1[1]<<" "<<o1->tris[res->t1].p1[2]);
+			LOG4CXX_INFO(KrisLibrary::logger(),"T1.b = "<<o1->tris[res->t1].p2[0]<<" "<<o1->tris[res->t1].p2[1]<<" "<<o1->tris[res->t1].p2[2]);
+			LOG4CXX_INFO(KrisLibrary::logger(),"T1.c = "<<o1->tris[res->t1].p3[0]<<" "<<o1->tris[res->t1].p3[1]<<" "<<o1->tris[res->t1].p3[2]);
+			LOG4CXX_INFO(KrisLibrary::logger(),"T2.a = "<<o2->tris[res->t2].p1[0]<<" "<<o2->tris[res->t2].p1[1]<<" "<<o2->tris[res->t2].p1[2]);
+			LOG4CXX_INFO(KrisLibrary::logger(),"T2.b = "<<o2->tris[res->t2].p2[0]<<" "<<o2->tris[res->t2].p2[1]<<" "<<o2->tris[res->t2].p2[2]);
+			LOG4CXX_INFO(KrisLibrary::logger(),"T2.c = "<<o2->tris[res->t2].p3[0]<<" "<<o2->tris[res->t2].p3[1]<<" "<<o2->tris[res->t2].p3[2]);
+			LOG4CXX_INFO(KrisLibrary::logger(),"Translation "<<res->T[0]<<" "<<res->T[1]<<" "<<res->T[2]);
+		}
+		*/
+	}
+	else if(init_bound == 0.0) {
+		res->distance = 0;
+		return PQP_OK;
+	}
+	else {
+		res->distance = init_bound;
+	}
 
-  // initialize error bounds
+	// initialize error bounds
 
-  res->abs_err = abs_err;
-  res->rel_err = rel_err;
-  
-  // clear the stats
+	res->abs_err = abs_err;
+	res->rel_err = rel_err;
+	
+	// clear the stats
 
-  res->num_bv_tests = 0;
-  res->num_tri_tests = 0;
-  
-    // choose routine according to queue size
-  
-  if (qsize <= 2)
-  {
-    DistanceRecurse(res,o1,0,o2,0);    
-  }
-  else 
-  { 
-    res->qsize = qsize;
+	res->num_bv_tests = 0;
+	res->num_tri_tests = 0;
+	
+		// choose routine according to queue size
+	
+	if (qsize <= 2)
+	{
+		DistanceRecurse(res,o1,0,o2,0);    
+	}
+	else 
+	{ 
+		res->qsize = qsize;
 
-    DistanceQueueRecurse(res,o1,0,o2,0);
-  }
+		DistanceQueueRecurse(res,o1,0,o2,0);
+	}
 
-  if(res->distance != init_bound) 
-  {
-  // res->p2 is in cs 1 ; transform it to cs 2
-    double u[3];
-    VmV(u, res->p2, res->T);
-    MTxV(res->p2, res->R, u);
-  }
-  return PQP_OK;
+	if(res->distance != init_bound) 
+	{
+	// res->p2 is in cs 1 ; transform it to cs 2
+		double u[3];
+		VmV(u, res->p2, res->T);
+		MTxV(res->p2, res->R, u);
+	}
+	return PQP_OK;
 }
 
 // Tolerance Stuff
@@ -928,272 +915,272 @@ PQP_Distance(PQP_DistanceResult *res,
 //---------------------------------------------------------------------------
 void 
 ToleranceRecurse(PQP_ToleranceResult *res, 
-                 const PQP_Model *o1, int b1, const PQP_Model *o2, int b2)
+								 const PQP_Model *o1, int b1, const PQP_Model *o2, int b2)
 {
-  double sz1 = o1->child(b1)->GetSize();
-  double sz2 = o2->child(b2)->GetSize();
-  int l1 = o1->child(b1)->Leaf();
-  int l2 = o2->child(b2)->Leaf();
+	double sz1 = o1->child(b1)->GetSize();
+	double sz2 = o2->child(b2)->GetSize();
+	int l1 = o1->child(b1)->Leaf();
+	int l2 = o2->child(b2)->Leaf();
 
-  if (l1 && l2) 
-  {
-    // both leaves - find if tri pair within tolerance
-    
-    res->num_tri_tests++;
+	if (l1 && l2) 
+	{
+		// both leaves - find if tri pair within tolerance
+		
+		res->num_tri_tests++;
 
-    double p[3], q[3];
+		double p[3], q[3];
 
-    Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
-    Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
+		Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
+		Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
 
-    double d = TriDistance(res->R,res->T,t1,t2,p,q);
-    
-    if (d <= res->tolerance)  
-    {  
-      // triangle pair distance less than tolerance
+		double d = TriDistance(res->R,res->T,t1,t2,p,q);
+		
+		if (d <= res->tolerance)  
+		{  
+			// triangle pair distance less than tolerance
 
-      res->closer_than_tolerance = 1;
-      res->distance = d;
-      VcV(res->p1, p);         // p already in c.s. 1
-      VcV(res->p2, q);         // q must be transformed 
-                               // into c.s. 2 later
+			res->closer_than_tolerance = 1;
+			res->distance = d;
+			VcV(res->p1, p);         // p already in c.s. 1
+			VcV(res->p2, q);         // q must be transformed 
+															 // into c.s. 2 later
 
-      res->t1 = -o1->child(b1)->first_child - 1;
-      res->t2 = -o2->child(b2)->first_child - 1;
-    }
+			res->t1 = -o1->child(b1)->first_child - 1;
+			res->t2 = -o2->child(b2)->first_child - 1;
+		}
 
-    return;
-  }
+		return;
+	}
 
-  int a1,a2,c1,c2;  // new bv tests 'a' and 'c'
+	int a1,a2,c1,c2;  // new bv tests 'a' and 'c'
 
-  if (l2 || (!l1 && (sz1 > sz2)))
-  {
-    // visit the children of b1
+	if (l2 || (!l1 && (sz1 > sz2)))
+	{
+		// visit the children of b1
 
-    a1 = o1->child(b1)->first_child;
-    a2 = b2;
-    c1 = o1->child(b1)->first_child+1;
-    c2 = b2;
-  }
-  else 
-  {
-    // visit the children of b2
+		a1 = o1->child(b1)->first_child;
+		a2 = b2;
+		c1 = o1->child(b1)->first_child+1;
+		c2 = b2;
+	}
+	else 
+	{
+		// visit the children of b2
 
-    a1 = b1;
-    a2 = o2->child(b2)->first_child;
-    c1 = b1;
-    c2 = o2->child(b2)->first_child+1;
-  }
+		a1 = b1;
+		a2 = o2->child(b2)->first_child;
+		c1 = b1;
+		c2 = o2->child(b2)->first_child+1;
+	}
 
-  res->num_bv_tests += 2;
+	res->num_bv_tests += 2;
 
-  double d1 = BV_Distance2(res->R, res->T, o1->child(a1), o2->child(a2));
-  double d2 = BV_Distance2(res->R, res->T, o1->child(c1), o2->child(c2));
+	double d1 = BV_Distance2(res->R, res->T, o1->child(a1), o2->child(a2));
+	double d2 = BV_Distance2(res->R, res->T, o1->child(c1), o2->child(c2));
 
-  if (d2 < d1) 
-  {
-    if (d2 <= res->tolerance) ToleranceRecurse(res, o1, c1, o2, c2);
-    if (res->closer_than_tolerance) return;
-    if (d1 <= res->tolerance) ToleranceRecurse(res, o1, a1, o2, a2);
-  }
-  else 
-  {
-    if (d1 <= res->tolerance) ToleranceRecurse(res, o1, a1, o2, a2);
-    if (res->closer_than_tolerance) return;
-    if (d2 <= res->tolerance) ToleranceRecurse(res, o1, c1, o2, c2);
-  }
+	if (d2 < d1) 
+	{
+		if (d2 <= res->tolerance) ToleranceRecurse(res, o1, c1, o2, c2);
+		if (res->closer_than_tolerance) return;
+		if (d1 <= res->tolerance) ToleranceRecurse(res, o1, a1, o2, a2);
+	}
+	else 
+	{
+		if (d1 <= res->tolerance) ToleranceRecurse(res, o1, a1, o2, a2);
+		if (res->closer_than_tolerance) return;
+		if (d2 <= res->tolerance) ToleranceRecurse(res, o1, c1, o2, c2);
+	}
 }
 
 void
 ToleranceQueueRecurse(PQP_ToleranceResult *res,
-                      const PQP_Model *o1, int b1,
-                      const PQP_Model *o2, int b2)
+											const PQP_Model *o1, int b1,
+											const PQP_Model *o2, int b2)
 {
-  BVTQ bvtq(res->qsize);
-  BVT min_test;
-  min_test.b1 = b1;
-  min_test.b2 = b2;
+	BVTQ bvtq(res->qsize);
+	BVT min_test;
+	min_test.b1 = b1;
+	min_test.b2 = b2;
 
-  while(1)
-  {  
-    int l1 = o1->child(min_test.b1)->Leaf();
-    int l2 = o2->child(min_test.b2)->Leaf();
-    
-    if (l1 && l2) 
-    {  
-      // both leaves - find if tri pair within tolerance
-    
-      res->num_tri_tests++;
+	while(1)
+	{  
+		int l1 = o1->child(min_test.b1)->Leaf();
+		int l2 = o2->child(min_test.b2)->Leaf();
+		
+		if (l1 && l2) 
+		{  
+			// both leaves - find if tri pair within tolerance
+		
+			res->num_tri_tests++;
 
-      double p[3], q[3];
+			double p[3], q[3];
 
-      Tri *t1 = &o1->tris[-o1->child(min_test.b1)->first_child - 1];
-      Tri *t2 = &o2->tris[-o2->child(min_test.b2)->first_child - 1];
+			Tri *t1 = &o1->tris[-o1->child(min_test.b1)->first_child - 1];
+			Tri *t2 = &o2->tris[-o2->child(min_test.b2)->first_child - 1];
 
-      double d = TriDistance(res->R,res->T,t1,t2,p,q);
-    
-      if (d <= res->tolerance)  
-      {  
-        // triangle pair distance less than tolerance
+			double d = TriDistance(res->R,res->T,t1,t2,p,q);
+		
+			if (d <= res->tolerance)  
+			{  
+				// triangle pair distance less than tolerance
 
-        res->closer_than_tolerance = 1;
-        res->distance = d;
-        VcV(res->p1, p);         // p already in c.s. 1
-        VcV(res->p2, q);         // q must be transformed 
-                                 // into c.s. 2 later
+				res->closer_than_tolerance = 1;
+				res->distance = d;
+				VcV(res->p1, p);         // p already in c.s. 1
+				VcV(res->p2, q);         // q must be transformed 
+																 // into c.s. 2 later
 	res->t1 = -o1->child(b1)->first_child - 1;
 	res->t2 = -o2->child(b2)->first_child - 1;
-        return;
-      }
-    }
-    else if (bvtq.GetNumTests() == bvtq.GetSize() - 1)
-    {  
-      // queue can't get two more tests, recur
-      
-      ToleranceQueueRecurse(res,
-                            o1,min_test.b1,o2,min_test.b2);
-      if (res->closer_than_tolerance == 1) return;
-    }
-    else 
-    {  
-      // decide how to descend to children
-      
-      double sz1 = o1->child(min_test.b1)->GetSize();
-      double sz2 = o2->child(min_test.b2)->GetSize();
+				return;
+			}
+		}
+		else if (bvtq.GetNumTests() == bvtq.GetSize() - 1)
+		{  
+			// queue can't get two more tests, recur
+			
+			ToleranceQueueRecurse(res,
+														o1,min_test.b1,o2,min_test.b2);
+			if (res->closer_than_tolerance == 1) return;
+		}
+		else 
+		{  
+			// decide how to descend to children
+			
+			double sz1 = o1->child(min_test.b1)->GetSize();
+			double sz2 = o2->child(min_test.b2)->GetSize();
 
-      res->num_bv_tests += 2;
-      
-      BVT bvt1,bvt2;
+			res->num_bv_tests += 2;
+			
+			BVT bvt1,bvt2;
 //      double Ttemp[3];
 
-      if (l2 || (!l1 && (sz1 > sz2)))	
-      {
-	      // add two new tests to queue, consisting of min_test.b2
-        // with the children of min_test.b1
+			if (l2 || (!l1 && (sz1 > sz2)))	
+			{
+				// add two new tests to queue, consisting of min_test.b2
+				// with the children of min_test.b1
 
-        int c1 = o1->child(min_test.b1)->first_child;
-        int c2 = c1 + 1;
+				int c1 = o1->child(min_test.b1)->first_child;
+				int c2 = c1 + 1;
 
-        // init bv test 1
+				// init bv test 1
 
-        bvt1.b1 = c1;
-        bvt1.b2 = min_test.b2;
-        bvt1.d = BV_Distance2(res->R,res->T,
-                            o1->child(bvt1.b1),o2->child(bvt1.b2));
+				bvt1.b1 = c1;
+				bvt1.b2 = min_test.b2;
+				bvt1.d = BV_Distance2(res->R,res->T,
+														o1->child(bvt1.b1),o2->child(bvt1.b2));
 
-	      // init bv test 2
+				// init bv test 2
 
 	bvt2.b1 = c2;
 	bvt2.b2 = min_test.b2;
-        bvt2.d = BV_Distance2(res->R,res->T,
-                            o1->child(bvt2.b1),o2->child(bvt2.b2));
-      }
-      else 
-      {
-        // add two new tests to queue, consisting of min_test.b1
-        // with the children of min_test.b2
+				bvt2.d = BV_Distance2(res->R,res->T,
+														o1->child(bvt2.b1),o2->child(bvt2.b2));
+			}
+			else 
+			{
+				// add two new tests to queue, consisting of min_test.b1
+				// with the children of min_test.b2
 
-        int c1 = o2->child(min_test.b2)->first_child;
-        int c2 = c1 + 1;
+				int c1 = o2->child(min_test.b2)->first_child;
+				int c2 = c1 + 1;
 
-        // init bv test 1
+				// init bv test 1
 
-        bvt1.b1 = min_test.b1;
-        bvt1.b2 = c1;
-        bvt1.d = BV_Distance2(res->R,res->T,
-                            o1->child(bvt1.b1),o2->child(bvt1.b2));
+				bvt1.b1 = min_test.b1;
+				bvt1.b2 = c1;
+				bvt1.d = BV_Distance2(res->R,res->T,
+														o1->child(bvt1.b1),o2->child(bvt1.b2));
 
-        // init bv test 2
+				// init bv test 2
 
-        bvt2.b1 = min_test.b1;
-        bvt2.b2 = c2;
-        bvt2.d = BV_Distance2(res->R,res->T,
-                            o1->child(bvt2.b1),o2->child(bvt2.b2));
-      }
+				bvt2.b1 = min_test.b1;
+				bvt2.b2 = c2;
+				bvt2.d = BV_Distance2(res->R,res->T,
+														o1->child(bvt2.b1),o2->child(bvt2.b2));
+			}
 
-      // put children tests in queue
+			// put children tests in queue
 
-      if (bvt1.d <= res->tolerance) bvtq.AddTest(bvt1);
-      if (bvt2.d <= res->tolerance) bvtq.AddTest(bvt2);
-    }
+			if (bvt1.d <= res->tolerance) bvtq.AddTest(bvt1);
+			if (bvt2.d <= res->tolerance) bvtq.AddTest(bvt2);
+		}
 
-    if (bvtq.Empty() || (bvtq.MinTest() > res->tolerance)) 
-    {
-      res->closer_than_tolerance = 0;
-      return;
-    }
-    else 
-    {
-      min_test = bvtq.ExtractMinTest();
-    }
-  }  
+		if (bvtq.Empty() || (bvtq.MinTest() > res->tolerance)) 
+		{
+			res->closer_than_tolerance = 0;
+			return;
+		}
+		else 
+		{
+			min_test = bvtq.ExtractMinTest();
+		}
+	}  
 }	
 
 int
 PQP_Tolerance(PQP_ToleranceResult *res,
-              double R1[3][3], double T1[3], const PQP_Model *o1,
-              double R2[3][3], double T2[3], const PQP_Model *o2,
-              double tolerance,
-              int qsize)
+							double R1[3][3], double T1[3], const PQP_Model *o1,
+							double R2[3][3], double T2[3], const PQP_Model *o2,
+							double tolerance,
+							int qsize)
 {
-  // make sure that the models are built
+	// make sure that the models are built
 
-  if (o1->build_state != PQP_BUILD_STATE_PROCESSED) 
-    return PQP_ERR_UNPROCESSED_MODEL;
-  if (o2->build_state != PQP_BUILD_STATE_PROCESSED) 
-    return PQP_ERR_UNPROCESSED_MODEL;
-  
-  // Compute the transform [R,T] that takes us from cs2 to cs1.
-  // [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
+	if (o1->build_state != PQP_BUILD_STATE_PROCESSED) 
+		return PQP_ERR_UNPROCESSED_MODEL;
+	if (o2->build_state != PQP_BUILD_STATE_PROCESSED) 
+		return PQP_ERR_UNPROCESSED_MODEL;
+	
+	// Compute the transform [R,T] that takes us from cs2 to cs1.
+	// [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
 
-  MTxM(res->R,R1,R2);
-  double Ttemp[3];
-  VmV(Ttemp, T2, T1);
-  MTxV(res->T, R1, Ttemp);
+	MTxM(res->R,R1,R2);
+	double Ttemp[3];
+	VmV(Ttemp, T2, T1);
+	MTxV(res->T, R1, Ttemp);
 
-  // set tolerance, used to prune the search
+	// set tolerance, used to prune the search
 
-  if (tolerance < 0.0) tolerance = 0.0;
-  res->tolerance = tolerance;
-  
-  // clear the stats
+	if (tolerance < 0.0) tolerance = 0.0;
+	res->tolerance = tolerance;
+	
+	// clear the stats
 
-  res->num_bv_tests = 0;
-  res->num_tri_tests = 0;
+	res->num_bv_tests = 0;
+	res->num_tri_tests = 0;
 
-  // initially assume not closer than tolerance
+	// initially assume not closer than tolerance
 
-  res->closer_than_tolerance = 0;
-  
-  // compute the transform from o1->child(0) to o2->child(0)
+	res->closer_than_tolerance = 0;
+	
+	// compute the transform from o1->child(0) to o2->child(0)
 
-  // find a distance lower bound for trivial reject
+	// find a distance lower bound for trivial reject
 
-  double d = BV_Distance2(res->R, res->T, o1->child(0), o2->child(0));
-  
-  if (d <= res->tolerance)
-  {
-    // more work needed - choose routine according to queue size
+	double d = BV_Distance2(res->R, res->T, o1->child(0), o2->child(0));
+	
+	if (d <= res->tolerance)
+	{
+		// more work needed - choose routine according to queue size
 
-    if (qsize <= 2) 
-    {
-      ToleranceRecurse(res, o1, 0, o2, 0);
-    }
-    else 
-    {
-      res->qsize = qsize;
-      ToleranceQueueRecurse(res, o1, 0, o2, 0);
-    }
-  }
+		if (qsize <= 2) 
+		{
+			ToleranceRecurse(res, o1, 0, o2, 0);
+		}
+		else 
+		{
+			res->qsize = qsize;
+			ToleranceQueueRecurse(res, o1, 0, o2, 0);
+		}
+	}
 
-  // res->p2 is in cs 1 ; transform it to cs 2
+	// res->p2 is in cs 1 ; transform it to cs 2
 
-  double u[3];
-  VmV(u, res->p2, res->T);
-  MTxV(res->p2, res->R, u);
+	double u[3];
+	VmV(u, res->p2, res->T);
+	MTxV(res->p2, res->R, u);
 
-  return PQP_OK;
+	return PQP_OK;
 }
 
 
@@ -1201,209 +1188,209 @@ PQP_Tolerance(PQP_ToleranceResult *res,
 
 void 
 ToleranceRecurse2(PQP_ToleranceResult *res, 
-		  const PQP_Model *o1, int b1, const PQP_Model *o2, int b2, PQP_ToleranceAllResult& allRes)
+			const PQP_Model *o1, int b1, const PQP_Model *o2, int b2, PQP_ToleranceAllResult& allRes)
 {
-  int l1 = o1->child(b1)->Leaf();
-  int l2 = o2->child(b2)->Leaf();
+	int l1 = o1->child(b1)->Leaf();
+	int l2 = o2->child(b2)->Leaf();
 
-  if (l1 && l2) 
-  {
-    // both leaves - find if tri pair within tolerance
-    
-    res->num_tri_tests++;
+	if (l1 && l2) 
+	{
+		// both leaves - find if tri pair within tolerance
+		
+		res->num_tri_tests++;
 
-    double p[3], q[3];
+		double p[3], q[3];
 
-    int ti1=-o1->child(b1)->first_child - 1;
-    int ti2=-o2->child(b2)->first_child - 1;
-    //LOG4CXX_INFO(KrisLibrary::logger(),"Testing leaves "<<ti1<<" "<<ti2);
-    Tri *t1 = &o1->tris[ti1];
-    Tri *t2 = &o2->tris[ti2];
+		int ti1=-o1->child(b1)->first_child - 1;
+		int ti2=-o2->child(b2)->first_child - 1;
+		//LOG4CXX_INFO(KrisLibrary::logger(),"Testing leaves "<<ti1<<" "<<ti2);
+		Tri *t1 = &o1->tris[ti1];
+		Tri *t2 = &o2->tris[ti2];
 
-    double d = TriDistance(res->R,res->T,t1,t2,p,q);
-    
-    if (d <= res->tolerance)  
-    {  
-      // triangle pair distance less than tolerance
-      //LOG4CXX_INFO(KrisLibrary::logger(),"Triangle pair "<<ti1<<" "<<ti2<<" within tolerance, distance "<<d);
-      res->closer_than_tolerance = 1;
-      if(d < res->distance) {
+		double d = TriDistance(res->R,res->T,t1,t2,p,q);
+		
+		if (d <= res->tolerance)  
+		{  
+			// triangle pair distance less than tolerance
+			//LOG4CXX_INFO(KrisLibrary::logger(),"Triangle pair "<<ti1<<" "<<ti2<<" within tolerance, distance "<<d);
+			res->closer_than_tolerance = 1;
+			if(d < res->distance) {
 	res->distance = d;
 	VcV(res->p1, p);         // p already in c.s. 1
 	VcV(res->p2, q);         // q must be transformed 
-                                 // into c.s. 2 later
-      }
-      //mark it in the list
-      if(allRes.triDist1.count(t1->id)==0 || d < allRes.triDist1[t1->id]) {
+																 // into c.s. 2 later
+			}
+			//mark it in the list
+			if(allRes.triDist1.count(t1->id)==0 || d < allRes.triDist1[t1->id]) {
 	allRes.triDist1[t1->id] = d;
 	allRes.triPartner1[t1->id]=t2->id;
 	VcV(allRes.triCp1[t1->id].p1,p);
 	VcV(allRes.triCp1[t1->id].p2,q);
-      }
-      if(allRes.triDist2.count(t2->id)==0 || d < allRes.triDist2[t2->id]) {
+			}
+			if(allRes.triDist2.count(t2->id)==0 || d < allRes.triDist2[t2->id]) {
 	allRes.triDist2[t2->id] = d;
 	allRes.triPartner2[t2->id]=t1->id;
 	VcV(allRes.triCp2[t2->id].p1,p);
 	VcV(allRes.triCp2[t2->id].p2,q);
-      }
-    }
-    return;
-  }
+			}
+		}
+		return;
+	}
 
-  int a1,a2,c1,c2;  // new bv tests 'a' and 'c'
-  double sz1 = o1->child(b1)->GetSize();
-  double sz2 = o2->child(b2)->GetSize();
+	int a1,a2,c1,c2;  // new bv tests 'a' and 'c'
+	double sz1 = o1->child(b1)->GetSize();
+	double sz2 = o2->child(b2)->GetSize();
 
-  double lim1=res->tolerance,lim2=res->tolerance;
-  if(l2) {  //clip points of interest by existing per-triangle tolerance
-    int ti2=-o2->child(b2)->first_child - 1;
-    if(allRes.triDist2.count(o2->tris[ti2].id)!=0)
-      lim1=allRes.triDist2[o2->tris[ti2].id];
-  }
-  if(l1) {  //clip points of interest by existing per-triangle tolerance
-    int ti1=-o1->child(b1)->first_child - 1;
-    if(allRes.triDist1.count(o1->tris[ti1].id)!=0)
-      lim2=allRes.triDist1[o1->tris[ti1].id];
-  }
-  if (l2 || (!l1 && (sz1 > sz2)))
-  {
-    // visit the children of b1 
-    a1 = o1->child(b1)->first_child;
-    a2 = b2;
-    c1 = o1->child(b1)->first_child+1;
-    c2 = b2;
-   }
-  else 
-  {
-    // visit the children of b2
-    a1 = b1;
-    a2 = o2->child(b2)->first_child;
-    c1 = b1;
-    c2 = o2->child(b2)->first_child+1;
-  }
+	double lim1=res->tolerance,lim2=res->tolerance;
+	if(l2) {  //clip points of interest by existing per-triangle tolerance
+		int ti2=-o2->child(b2)->first_child - 1;
+		if(allRes.triDist2.count(o2->tris[ti2].id)!=0)
+			lim1=allRes.triDist2[o2->tris[ti2].id];
+	}
+	if(l1) {  //clip points of interest by existing per-triangle tolerance
+		int ti1=-o1->child(b1)->first_child - 1;
+		if(allRes.triDist1.count(o1->tris[ti1].id)!=0)
+			lim2=allRes.triDist1[o1->tris[ti1].id];
+	}
+	if (l2 || (!l1 && (sz1 > sz2)))
+	{
+		// visit the children of b1 
+		a1 = o1->child(b1)->first_child;
+		a2 = b2;
+		c1 = o1->child(b1)->first_child+1;
+		c2 = b2;
+	 }
+	else 
+	{
+		// visit the children of b2
+		a1 = b1;
+		a2 = o2->child(b2)->first_child;
+		c1 = b1;
+		c2 = o2->child(b2)->first_child+1;
+	}
 
-  res->num_bv_tests += 2;
+	res->num_bv_tests += 2;
 
-  double d1 = BV_Distance2(res->R,res->T, o1->child(a1), o2->child(a2));
-  double d2 = BV_Distance2(res->R,res->T, o1->child(c1), o2->child(c2));
+	double d1 = BV_Distance2(res->R,res->T, o1->child(a1), o2->child(a2));
+	double d2 = BV_Distance2(res->R,res->T, o1->child(c1), o2->child(c2));
 
-  if (d2 < d1) 
-  {
-    if (d2 <= lim2) ToleranceRecurse2(res, o1, c1, o2, c2, allRes);
-    if (d1 <= lim1) ToleranceRecurse2(res, o1, a1, o2, a2, allRes);
-  }
-  else 
-  {
-    if (d1 <= lim1) ToleranceRecurse2(res, o1, a1, o2, a2, allRes);
-    if (d2 <= lim2) ToleranceRecurse2(res, o1, c1, o2, c2, allRes);
-  }
+	if (d2 < d1) 
+	{
+		if (d2 <= lim2) ToleranceRecurse2(res, o1, c1, o2, c2, allRes);
+		if (d1 <= lim1) ToleranceRecurse2(res, o1, a1, o2, a2, allRes);
+	}
+	else 
+	{
+		if (d1 <= lim1) ToleranceRecurse2(res, o1, a1, o2, a2, allRes);
+		if (d2 <= lim2) ToleranceRecurse2(res, o1, c1, o2, c2, allRes);
+	}
 }
 
 
 int
 PQP_ToleranceAll(PQP_ToleranceResult* res,
-	       double R1[3][3], double T1[3], const PQP_Model *o1,
-	       double R2[3][3], double T2[3], const PQP_Model *o2,
-	       double tolerance,PQP_ToleranceAllResult& allRes)
+				 double R1[3][3], double T1[3], const PQP_Model *o1,
+				 double R2[3][3], double T2[3], const PQP_Model *o2,
+				 double tolerance,PQP_ToleranceAllResult& allRes)
 {
-  // make sure that the models are built
-  if (o1->build_state != 2) 
-    return PQP_ERR_UNPROCESSED_MODEL;
-  if (o2->build_state != 2) 
-    return PQP_ERR_UNPROCESSED_MODEL;
+	// make sure that the models are built
+	if (o1->build_state != 2) 
+		return PQP_ERR_UNPROCESSED_MODEL;
+	if (o2->build_state != 2) 
+		return PQP_ERR_UNPROCESSED_MODEL;
 
-  allRes.triDist1.clear();
-  allRes.triPartner1.clear();
-  allRes.triCp1.clear();
-  allRes.triDist2.clear();
-  allRes.triPartner2.clear();
-  allRes.triCp2.clear();
-    /*
-    allRes.triDist1.resize(o1->num_tris);
-    allRes.triPartner1.resize(o1->num_tris);
-    allRes.triCp1.resize(o1->num_tris);
-    allRes.triDist2.resize(o2->num_tris);
-    allRes.triPartner2.resize(o2->num_tris);
-    allRes.triCp2.resize(o2->num_tris);
-    fill(allRes.triDist1.begin(),allRes.triDist1.end(),tolerance);
-    fill(allRes.triDist2.begin(),allRes.triDist2.end(),tolerance);
-    fill(allRes.triPartner1.begin(),allRes.triPartner1.end(),-1);
-    fill(allRes.triPartner2.begin(),allRes.triPartner2.end(),-1);
-    */
+	allRes.triDist1.clear();
+	allRes.triPartner1.clear();
+	allRes.triCp1.clear();
+	allRes.triDist2.clear();
+	allRes.triPartner2.clear();
+	allRes.triCp2.clear();
+		/*
+		allRes.triDist1.resize(o1->num_tris);
+		allRes.triPartner1.resize(o1->num_tris);
+		allRes.triCp1.resize(o1->num_tris);
+		allRes.triDist2.resize(o2->num_tris);
+		allRes.triPartner2.resize(o2->num_tris);
+		allRes.triCp2.resize(o2->num_tris);
+		fill(allRes.triDist1.begin(),allRes.triDist1.end(),tolerance);
+		fill(allRes.triDist2.begin(),allRes.triDist2.end(),tolerance);
+		fill(allRes.triPartner1.begin(),allRes.triPartner1.end(),-1);
+		fill(allRes.triPartner2.begin(),allRes.triPartner2.end(),-1);
+		*/
 
-  // Compute the transform [R,T] that takes us from cs2 to cs1.
-  // [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
+	// Compute the transform [R,T] that takes us from cs2 to cs1.
+	// [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
 
-  MTxM(res->R,R1,R2);
-  double Ttemp[3];
-  VmV(Ttemp, T2, T1);
-  MTxV(res->T, R1, Ttemp);
+	MTxM(res->R,R1,R2);
+	double Ttemp[3];
+	VmV(Ttemp, T2, T1);
+	MTxV(res->T, R1, Ttemp);
 
-  // set tolerance, used to prune the search
+	// set tolerance, used to prune the search
 
-  if (tolerance < 0.0) tolerance = 0.0;
-  res->tolerance = tolerance;
-  res->distance = tolerance;
-  
-  // clear the stats
+	if (tolerance < 0.0) tolerance = 0.0;
+	res->tolerance = tolerance;
+	res->distance = tolerance;
+	
+	// clear the stats
 
-  res->num_bv_tests = 0;
-  res->num_tri_tests = 0;
+	res->num_bv_tests = 0;
+	res->num_tri_tests = 0;
 
-  // initially assume not closer than tolerance
+	// initially assume not closer than tolerance
 
-  res->closer_than_tolerance = 0;
-  
-  // find a distance lower bound for trivial reject
+	res->closer_than_tolerance = 0;
+	
+	// find a distance lower bound for trivial reject
 
-  res->num_bv_tests += 2;
-  double d = BV_Distance2(res->R, res->T, o1->child(0), o2->child(0));
-  
-  if (d <= res->tolerance)
-  {
-    ToleranceRecurse2(res, o1, 0, o2, 0, allRes);
+	res->num_bv_tests += 2;
+	double d = BV_Distance2(res->R, res->T, o1->child(0), o2->child(0));
+	
+	if (d <= res->tolerance)
+	{
+		ToleranceRecurse2(res, o1, 0, o2, 0, allRes);
 
-    for(std::map<int,PQP_ClosestPoints>::iterator i=allRes.triCp1.begin();i!=allRes.triCp1.end();i++) {
-      // res->p2 is in cs 1 ; transform it to cs 2 
-      double u[3];
-      VmV(u, i->second.p2, res->T);
-      MTxV(i->second.p2, res->R, u);
-    }
-    for(std::map<int,PQP_ClosestPoints >::iterator i=allRes.triCp2.begin();i!=allRes.triCp2.end();i++) {
-      // res->p2 is in cs 1 ; transform it to cs 2 
-      double u[3];
-      VmV(u, i->second.p2, res->T);
-      MTxV(i->second.p2, res->R, u);
-    }
-    /*
-    for(size_t i=0;i<allRes.triCp1.size();i++) {
-      if(allRes.triPartner1[i] >= 0) {
+		for(std::map<int,PQP_ClosestPoints>::iterator i=allRes.triCp1.begin();i!=allRes.triCp1.end();i++) {
+			// res->p2 is in cs 1 ; transform it to cs 2 
+			double u[3];
+			VmV(u, i->second.p2, res->T);
+			MTxV(i->second.p2, res->R, u);
+		}
+		for(std::map<int,PQP_ClosestPoints >::iterator i=allRes.triCp2.begin();i!=allRes.triCp2.end();i++) {
+			// res->p2 is in cs 1 ; transform it to cs 2 
+			double u[3];
+			VmV(u, i->second.p2, res->T);
+			MTxV(i->second.p2, res->R, u);
+		}
+		/*
+		for(size_t i=0;i<allRes.triCp1.size();i++) {
+			if(allRes.triPartner1[i] >= 0) {
 	// res->p2 is in cs 1 ; transform it to cs 2 
 	double u[3];
 	VmV(u, allRes.triCp1[i].second, res->T);
 	MTxV(allRes.triCp1[i].second, res->R, u);
-      }
-    }
-    for(size_t i=0;i<allRes.triCp2.size();i++) {
-      if(allRes.triPartner2[i] >= 0) {
+			}
+		}
+		for(size_t i=0;i<allRes.triCp2.size();i++) {
+			if(allRes.triPartner2[i] >= 0) {
 	// res->p2 is in cs 1 ; transform it to cs 2 
 	double u[3];
 	VmV(u, allRes.triCp2[i].second, res->T);
 	MTxV(allRes.triCp2[i].second, res->R, u);
-      }
-    }
-    */
-  }
+			}
+		}
+		*/
+	}
 
-  // res->p2 is in cs 1 ; transform it to cs 2
+	// res->p2 is in cs 1 ; transform it to cs 2
 
-  double u[3];
-  VmV(u, res->p2, res->T);
-  MTxV(res->p2, res->R, u);
+	double u[3];
+	VmV(u, res->p2, res->T);
+	MTxV(res->p2, res->R, u);
 
-  //LOG4CXX_INFO(KrisLibrary::logger(),"Res num bv tests "<<res->num_bv_tests<<", num tri tests "<<res->num_tri_tests);
+	//LOG4CXX_INFO(KrisLibrary::logger(),"Res num bv tests "<<res->num_bv_tests<<", num tri tests "<<res->num_tri_tests);
 
-  return PQP_OK;
+	return PQP_OK;
 }
 
 
