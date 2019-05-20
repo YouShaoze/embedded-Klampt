@@ -48,7 +48,7 @@
 
 \**************************************************************************/
 
-#include <KrisLibrary/Logger.h>
+//#include <KrisLibrary/Logger.h>
 #include <stdio.h>
 #include <string.h>
 #include "PQP.h"
@@ -109,8 +109,8 @@ int PQP_Model::BeginModel(int n)
   tris = new Tri[n];
   if (!tris) 
   {
-        LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array on "
-                    "BeginModel() call!");
+//        LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array on "
+//                    "BeginModel() call!");
     return PQP_ERR_MODEL_OUT_OF_MEMORY;  
   }
 
@@ -118,10 +118,10 @@ int PQP_Model::BeginModel(int n)
 
   if (build_state != PQP_BUILD_STATE_EMPTY)
   {
-        LOG4CXX_ERROR(KrisLibrary::logger(),
-            "PQP Warning! Called BeginModel() on a PQP_Model that \n"
-            "was not empty. This model was cleared and previous\n"
-            "triangle additions were lost.");
+//        LOG4CXX_ERROR(KrisLibrary::logger(),
+//            "PQP Warning! Called BeginModel() on a PQP_Model that \n"
+//            "was not empty. This model was cleared and previous\n"
+//            "triangle additions were lost.");
     build_state = PQP_BUILD_STATE_BEGUN;
     return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
   }
@@ -142,10 +142,10 @@ PQP_Model::AddTri(const double *p1,
   }
   else if (build_state == PQP_BUILD_STATE_PROCESSED)
   {
-        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Warning! Called AddTri() on PQP_Model \n"
-                   "object that was already ended. AddTri() was\n"
-                   "ignored.  Must do a BeginModel() to clear the\n"
-                   "model for addition of new triangles");
+//        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Warning! Called AddTri() on PQP_Model \n"
+//                   "object that was already ended. AddTri() was\n"
+//                   "ignored.  Must do a BeginModel() to clear the\n"
+//                   "model for addition of new triangles");
     return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
   }
         
@@ -157,8 +157,8 @@ PQP_Model::AddTri(const double *p1,
     temp = new Tri[num_tris_alloced*2];
     if (!temp)
     {
-            LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array on"
-	              " AddTri() call!");
+//            LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array on"
+//	              " AddTri() call!");
       return PQP_ERR_MODEL_OUT_OF_MEMORY;  
     }
     memcpy(temp, tris, sizeof(Tri)*num_tris);
@@ -193,10 +193,10 @@ PQP_Model::EndModel()
 {
   if (build_state == PQP_BUILD_STATE_PROCESSED)
   {
-        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Warning! Called EndModel() on PQP_Model \n"
-                   "object that was already ended. EndModel() was\n"
-                   "ignored.  Must do a BeginModel() to clear the\n"
-                   "model for addition of new triangles");
+//        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Warning! Called EndModel() on PQP_Model \n"
+//                   "object that was already ended. EndModel() was\n"
+//                   "ignored.  Must do a BeginModel() to clear the\n"
+//                   "model for addition of new triangles");
     return PQP_ERR_BUILD_OUT_OF_SEQUENCE;
   }
 
@@ -204,8 +204,8 @@ PQP_Model::EndModel()
 
   if (num_tris == 0)
   {
-        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Error! EndModel() called on model with"
-                   " no triangles");
+//        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Error! EndModel() called on model with"
+//                   " no triangles");
     return PQP_ERR_BUILD_EMPTY_MODEL;
   }
 
@@ -216,8 +216,8 @@ PQP_Model::EndModel()
     Tri *new_tris = new Tri[num_tris];
     if (!new_tris) 
     {
-            LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array "
-                      "in EndModel() call!");
+//            LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error!  Out of memory for tri array "
+//                      "in EndModel() call!");
       return PQP_ERR_MODEL_OUT_OF_MEMORY;  
     }
     memcpy(new_tris, tris, sizeof(Tri)*num_tris);
@@ -231,8 +231,8 @@ PQP_Model::EndModel()
   b = new BV[2*num_tris - 1];
   if (!b)
   {
-        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Error! out of memory for BV array "
-                   "in EndModel()");
+//        LOG4CXX_ERROR(KrisLibrary::logger(),"PQP Error! out of memory for BV array "
+//                   "in EndModel()");
     return PQP_ERR_MODEL_OUT_OF_MEMORY;
   }
   num_bvs_alloced = 2*num_tris - 1;
@@ -256,9 +256,9 @@ PQP_Model::MemUsage(int msg) const
 
   if (msg) 
   {
-        LOG4CXX_ERROR(KrisLibrary::logger(),"Total for model "<< this<<": "<< total_mem);
-        LOG4CXX_ERROR(KrisLibrary::logger(),"BVs: "<<num_bvs<<" alloced, take "<<sizeof(BV)<<" bytes each"); 
-        LOG4CXX_ERROR(KrisLibrary::logger(),"Tris: "<<num_tris<<" alloced, take "<<sizeof(Tri)<<" bytes each"); 
+//        LOG4CXX_ERROR(KrisLibrary::logger(),"Total for model "<< this<<": "<< total_mem);
+//        LOG4CXX_ERROR(KrisLibrary::logger(),"BVs: "<<num_bvs<<" alloced, take "<<sizeof(BV)<<" bytes each");
+//        LOG4CXX_ERROR(KrisLibrary::logger(),"Tris: "<<num_tris<<" alloced, take "<<sizeof(Tri)<<" bytes each");
   }
   
   return total_mem;
@@ -297,9 +297,9 @@ PQP_CollideResult::SizeTo(int n)
 
   if (n < num_pairs) 
   {
-        LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error: Internal error in "
-                    "'PQP_CollideResult::SizeTo(int n)'");
-        LOG4CXX_ERROR(KrisLibrary::logger(), "       n = "<< n<<", but num_pairs = "<< num_pairs);
+//        LOG4CXX_ERROR(KrisLibrary::logger(), "PQP Error: Internal error in "
+//                    "'PQP_CollideResult::SizeTo(int n)'");
+//        LOG4CXX_ERROR(KrisLibrary::logger(), "       n = "<< n<<", but num_pairs = "<< num_pairs);
     return;
   }
   
