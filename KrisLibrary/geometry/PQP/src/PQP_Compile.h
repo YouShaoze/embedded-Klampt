@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 16:11:48
+* @Last Modified time: 2019-05-20 16:37:33
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -74,7 +74,6 @@ inline float fabs(float x) { return (float)fabs((double)x); }
 //
 //-------------------------------------------------------------------------
 
-typedef double double;
 
 //-------------------------------------------------------------------------
 //

@@ -1,3 +1,13 @@
+/*
+* @File Name Build.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\Build.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:29:26
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -43,7 +53,6 @@
 
 #include "PQP.h"
 
-int
-build_model(PQP_Model *m);
+int build_model(PQP_Model *m);
 
 #endif

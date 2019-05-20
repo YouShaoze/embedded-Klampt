@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 16:11:56
+* @Last Modified time: 2019-05-20 16:37:59
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -130,7 +130,7 @@ struct PQP_CollideResult
   int Id2(int k) const { return pairs[k].id2; }
 };
 
-#if PQP_BV_TYPE & RSS_TYPE // distance/tolerance are only available with RSS
+
 
 struct PQP_DistanceResult 
 {
@@ -227,4 +227,4 @@ struct PQP_ToleranceAllResult
   std::map<int,PQP_ClosestPoints> triCp1,triCp2;   //closest points per triangle
 };
 
-#endif
+

@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 16:11:41
+* @Last Modified time: 2019-05-20 16:37:12
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -220,8 +220,6 @@ PQP_Collide(PQP_CollideResult *result,
             int flag = PQP_ALL_CONTACTS);
 
 
-#if PQP_BV_TYPE & RSS_TYPE  // this is true by default,
-                            // and explained in PQP_Compile.h
 
 //----------------------------------------------------------------------------
 //
@@ -349,7 +347,7 @@ PQP_ToleranceAll(PQP_ToleranceResult* res,
 		 double R2[3][3], double T2[3], const PQP_Model *o2,
 		 double tolerance,PQP_ToleranceAllResult& allRes);
 
-#endif 
+
 #endif
 
 

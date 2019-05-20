@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 16:10:27
+* @Last Modified time: 2019-05-20 16:30:47
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -59,16 +59,14 @@ struct BV
 {
   double R[3][3];     // orientation of RSS & OBB
 
-#if PQP_BV_TYPE & RSS_TYPE
+
   double Tr[3];       // position of rectangle
   double l[2];        // side lengths of rectangle
   double r;           // radius of sphere summed with rectangle to form RSS
-#endif
 
-#if PQP_BV_TYPE & OBB_TYPE
   double To[3];       // position of obb
   double d[3];        // (half) dimensions of obb
-#endif
+
 
   int first_child;      // positive value is index of first_child bv
                         // negative value is -(index + 1) of triangle
@@ -81,15 +79,11 @@ struct BV
   void     FitToPointsLocal(const double (*pts)[3],int num_pts);
 };
 
-inline
-double 
-BV::GetSize() const
+inline double BV::GetSize() const
 {
-#if PQP_BV_TYPE & RSS_TYPE
+
   return (sqrt(l[0]*l[0] + l[1]*l[1]) + 2*r);
-#else
-  return (d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
-#endif
+
 }
 
 /*  Deprecated
@@ -102,13 +96,11 @@ BV_Distance(double R[3][3], double T[3], BV *b1, BV *b2);
 #endif
 */
 
-int
-BV_Overlap2(double R[3][3], double T[3], const BV *b1, const BV *b2);
+int BV_Overlap2(double R[3][3], double T[3], const BV *b1, const BV *b2);
 
-#if PQP_BV_TYPE & RSS_TYPE
-double
-BV_Distance2(double R[3][3], double T[3], const BV *b1, const BV *b2);
-#endif
+
+double BV_Distance2(double R[3][3], double T[3], const BV *b1, const BV *b2);
+
 
 #endif
 

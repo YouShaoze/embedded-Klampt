@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 16:11:31
+* @Last Modified time: 2019-05-20 16:29:05
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -90,8 +90,7 @@ PQP_Model::~PQP_Model()
     delete [] tris;
 }
 
-int
-PQP_Model::BeginModel(int n)
+int PQP_Model::BeginModel(int n)
 {
   // reset to initial state if necessary
 
