@@ -1,3 +1,13 @@
+/*
+* @File Name OBB_Disjoint.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\OBB_Disjoint.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:11:17
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -45,7 +55,7 @@
 #include "PQP_Compile.h"
 
 // int
-// obb_disjoint(PQP_REAL B[3][3], PQP_REAL T[3], PQP_REAL a[3], PQP_REAL b[3]);
+// obb_disjoint(double B[3][3], double T[3], double a[3], double b[3]);
 //
 // This is a test between two boxes, box A and box B.  It is assumed that
 // the coordinate system is aligned and centered on box A.  The 3x3
@@ -59,12 +69,12 @@
 
 inline
 int
-obb_disjoint(const PQP_REAL B[3][3], const PQP_REAL T[3], const PQP_REAL a[3], const PQP_REAL b[3])
+obb_disjoint(const double B[3][3], const double T[3], const double a[3], const double b[3])
 {
-  register PQP_REAL t, s;
+  register double t, s;
   //register int r;
-  PQP_REAL Bf[3][3];
-  const PQP_REAL reps = (PQP_REAL)1e-6;
+  double Bf[3][3];
+  const double reps = (double)1e-6;
   
   // Bf = fabs(B)
   Bf[0][0] = myfabs(B[0][0]);  Bf[0][0] += reps;

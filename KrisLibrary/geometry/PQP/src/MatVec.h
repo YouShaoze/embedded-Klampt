@@ -1,3 +1,13 @@
+/*
+* @File Name MatVec.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\MatVec.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:10:58
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -46,7 +56,7 @@
 #include "PQP_Compile.h"
 
 #ifndef M_PI
-const PQP_REAL M_PI = (PQP_REAL)3.14159265359;
+const double M_PI = (double)3.14159265359;
 #endif
 
 #ifdef gnu
@@ -77,7 +87,7 @@ const PQP_REAL M_PI = (PQP_REAL)3.14159265359;
 
 inline
 void
-Mprintg(const PQP_REAL M[3][3])
+Mprintg(const double M[3][3])
 {
   LOG4CXX_INFO(KrisLibrary::logger(),
    M[0][0] <<" "<< M[0][1]<<" "<< M[0][2]<<"\n"<<
@@ -88,7 +98,7 @@ Mprintg(const PQP_REAL M[3][3])
 
 inline
 void
-Mfprint(FILE *f, const PQP_REAL M[3][3])
+Mfprint(FILE *f, const double M[3][3])
 {
   fprintf(f, "%g %g %g\n%g %g %g\n%g %g %g\n",
 	 M[0][0], M[0][1], M[0][2],
@@ -98,7 +108,7 @@ Mfprint(FILE *f, const PQP_REAL M[3][3])
 
 inline
 void
-Mprint(const PQP_REAL M[3][3])
+Mprint(const double M[3][3])
 {
   LOG4CXX_INFO(KrisLibrary::logger(),
 	 M[0][0] <<" "<< M[0][1]<<" "<< M[0][2]<<"\n"<<
@@ -108,28 +118,28 @@ Mprint(const PQP_REAL M[3][3])
 
 inline
 void
-Vprintg(const PQP_REAL V[3])
+Vprintg(const double V[3])
 {
   LOG4CXX_INFO(KrisLibrary::logger(),""<< V[0]<<" "<< V[1]<<" "<< V[2]);
 }
 
 inline
 void
-Vfprint(FILE *f, const PQP_REAL V[3])
+Vfprint(FILE *f, const double V[3])
 {
   fprintf(f, "%g %g %g\n", V[0], V[1], V[2]);
 }
 
 inline
 void
-Vprint(const PQP_REAL V[3])
+Vprint(const double V[3])
 {
   LOG4CXX_INFO(KrisLibrary::logger(),""<< V[0]<<" "<< V[1]<<" "<< V[2]);
 }
 
 inline
 void
-Midentity(PQP_REAL M[3][3])
+Midentity(double M[3][3])
 {
   M[0][0] = M[1][1] = M[2][2] = 1.0;
   M[0][1] = M[1][2] = M[2][0] = 0.0;
@@ -138,14 +148,14 @@ Midentity(PQP_REAL M[3][3])
 
 inline
 void
-Videntity(PQP_REAL T[3])
+Videntity(double T[3])
 {
   T[0] = T[1] = T[2] = 0.0;
 }
 
 inline
 void
-McM(PQP_REAL Mr[3][3], const PQP_REAL M[3][3])
+McM(double Mr[3][3], const double M[3][3])
 {
   Mr[0][0] = M[0][0];  Mr[0][1] = M[0][1];  Mr[0][2] = M[0][2];
   Mr[1][0] = M[1][0];  Mr[1][1] = M[1][1];  Mr[1][2] = M[1][2];
@@ -154,7 +164,7 @@ McM(PQP_REAL Mr[3][3], const PQP_REAL M[3][3])
 
 inline
 void
-MTcM(PQP_REAL Mr[3][3], const PQP_REAL M[3][3])
+MTcM(double Mr[3][3], const double M[3][3])
 {
   Mr[0][0] = M[0][0];  Mr[1][0] = M[0][1];  Mr[2][0] = M[0][2];
   Mr[0][1] = M[1][0];  Mr[1][1] = M[1][1];  Mr[2][1] = M[1][2];
@@ -163,14 +173,14 @@ MTcM(PQP_REAL Mr[3][3], const PQP_REAL M[3][3])
 
 inline
 void
-VcV(PQP_REAL Vr[3], const PQP_REAL V[3])
+VcV(double Vr[3], const double V[3])
 {
   Vr[0] = V[0];  Vr[1] = V[1];  Vr[2] = V[2];
 }
 
 inline
 void
-McolcV(PQP_REAL Vr[3], const PQP_REAL M[3][3], int c)
+McolcV(double Vr[3], const double M[3][3], int c)
 {
   Vr[0] = M[0][c];
   Vr[1] = M[1][c];
@@ -179,7 +189,7 @@ McolcV(PQP_REAL Vr[3], const PQP_REAL M[3][3], int c)
 
 inline
 void
-McolcMcol(PQP_REAL Mr[3][3], int cr, const PQP_REAL M[3][3], int c)
+McolcMcol(double Mr[3][3], int cr, const double M[3][3], int c)
 {
   Mr[0][cr] = M[0][c];
   Mr[1][cr] = M[1][c];
@@ -188,7 +198,7 @@ McolcMcol(PQP_REAL Mr[3][3], int cr, const PQP_REAL M[3][3], int c)
 
 inline
 void
-MxMpV(PQP_REAL Mr[3][3], const PQP_REAL M1[3][3], const PQP_REAL M2[3][3], const PQP_REAL T[3])
+MxMpV(double Mr[3][3], const double M1[3][3], const double M2[3][3], const double T[3])
 {
   Mr[0][0] = (M1[0][0] * M2[0][0] +
 	      M1[0][1] * M2[1][0] +
@@ -230,7 +240,7 @@ MxMpV(PQP_REAL Mr[3][3], const PQP_REAL M1[3][3], const PQP_REAL M2[3][3], const
 
 inline
 void
-MxM(PQP_REAL Mr[3][3], const PQP_REAL M1[3][3], const PQP_REAL M2[3][3])
+MxM(double Mr[3][3], const double M1[3][3], const double M2[3][3])
 {
   Mr[0][0] = (M1[0][0] * M2[0][0] +
 	      M1[0][1] * M2[1][0] +
@@ -264,7 +274,7 @@ MxM(PQP_REAL Mr[3][3], const PQP_REAL M1[3][3], const PQP_REAL M2[3][3])
 
 inline
 void
-MxMT(PQP_REAL Mr[3][3], const PQP_REAL M1[3][3], const PQP_REAL M2[3][3])
+MxMT(double Mr[3][3], const double M1[3][3], const double M2[3][3])
 {
   Mr[0][0] = (M1[0][0] * M2[0][0] +
 	      M1[0][1] * M2[0][1] +
@@ -297,7 +307,7 @@ MxMT(PQP_REAL Mr[3][3], const PQP_REAL M1[3][3], const PQP_REAL M2[3][3])
 
 inline
 void
-MTxM(PQP_REAL Mr[3][3], const PQP_REAL M1[3][3], const PQP_REAL M2[3][3])
+MTxM(double Mr[3][3], const double M1[3][3], const double M2[3][3])
 {
   Mr[0][0] = (M1[0][0] * M2[0][0] +
 	      M1[1][0] * M2[1][0] +
@@ -330,7 +340,7 @@ MTxM(PQP_REAL Mr[3][3], const PQP_REAL M1[3][3], const PQP_REAL M2[3][3])
 
 inline
 void
-MxV(PQP_REAL Vr[3], const PQP_REAL M1[3][3], const PQP_REAL V1[3])
+MxV(double Vr[3], const double M1[3][3], const double V1[3])
 {
   Vr[0] = (M1[0][0] * V1[0] +
 	   M1[0][1] * V1[1] + 
@@ -346,7 +356,7 @@ MxV(PQP_REAL Vr[3], const PQP_REAL M1[3][3], const PQP_REAL V1[3])
 
 inline
 void
-MxVpV(PQP_REAL Vr[3], const PQP_REAL M1[3][3], const PQP_REAL V1[3], const PQP_REAL V2[3])
+MxVpV(double Vr[3], const double M1[3][3], const double V1[3], const double V2[3])
 {
   Vr[0] = (M1[0][0] * V1[0] +
 	   M1[0][1] * V1[1] + 
@@ -365,7 +375,7 @@ MxVpV(PQP_REAL Vr[3], const PQP_REAL M1[3][3], const PQP_REAL V1[3], const PQP_R
 
 inline
 void
-sMxVpV(PQP_REAL Vr[3], PQP_REAL s1, const PQP_REAL M1[3][3], const PQP_REAL V1[3], const PQP_REAL V2[3])
+sMxVpV(double Vr[3], double s1, const double M1[3][3], const double V1[3], const double V2[3])
 {
   Vr[0] = s1 * (M1[0][0] * V1[0] +
 		M1[0][1] * V1[1] + 
@@ -383,7 +393,7 @@ sMxVpV(PQP_REAL Vr[3], PQP_REAL s1, const PQP_REAL M1[3][3], const PQP_REAL V1[3
 
 inline
 void
-MTxV(PQP_REAL Vr[3], const PQP_REAL M1[3][3], const PQP_REAL V1[3])
+MTxV(double Vr[3], const double M1[3][3], const double V1[3])
 {
   Vr[0] = (M1[0][0] * V1[0] +
 	   M1[1][0] * V1[1] + 
@@ -398,7 +408,7 @@ MTxV(PQP_REAL Vr[3], const PQP_REAL M1[3][3], const PQP_REAL V1[3])
 
 inline
 void
-sMTxV(PQP_REAL Vr[3], PQP_REAL s1, const PQP_REAL M1[3][3], const PQP_REAL V1[3])
+sMTxV(double Vr[3], double s1, const double M1[3][3], const double V1[3])
 {
   Vr[0] = s1*(M1[0][0] * V1[0] +
 	      M1[1][0] * V1[1] + 
@@ -413,7 +423,7 @@ sMTxV(PQP_REAL Vr[3], PQP_REAL s1, const PQP_REAL M1[3][3], const PQP_REAL V1[3]
 
 inline
 void
-sMxV(PQP_REAL Vr[3], PQP_REAL s1, const PQP_REAL M1[3][3], const PQP_REAL V1[3])
+sMxV(double Vr[3], double s1, const double M1[3][3], const double V1[3])
 {
   Vr[0] = s1*(M1[0][0] * V1[0] +
 	      M1[0][1] * V1[1] + 
@@ -429,7 +439,7 @@ sMxV(PQP_REAL Vr[3], PQP_REAL s1, const PQP_REAL M1[3][3], const PQP_REAL V1[3])
 
 inline
 void
-VmV(PQP_REAL Vr[3], const PQP_REAL V1[3], const PQP_REAL V2[3])
+VmV(double Vr[3], const double V1[3], const double V2[3])
 {
   Vr[0] = V1[0] - V2[0];
   Vr[1] = V1[1] - V2[1];
@@ -438,7 +448,7 @@ VmV(PQP_REAL Vr[3], const PQP_REAL V1[3], const PQP_REAL V2[3])
 
 inline
 void
-VpV(PQP_REAL Vr[3], const PQP_REAL V1[3], const PQP_REAL V2[3])
+VpV(double Vr[3], const double V1[3], const double V2[3])
 {
   Vr[0] = V1[0] + V2[0];
   Vr[1] = V1[1] + V2[1];
@@ -447,7 +457,7 @@ VpV(PQP_REAL Vr[3], const PQP_REAL V1[3], const PQP_REAL V2[3])
 
 inline
 void
-VpVxS(PQP_REAL Vr[3], const PQP_REAL V1[3], const PQP_REAL V2[3], PQP_REAL s)
+VpVxS(double Vr[3], const double V1[3], const double V2[3], double s)
 {
   Vr[0] = V1[0] + V2[0] * s;
   Vr[1] = V1[1] + V2[1] * s;
@@ -456,7 +466,7 @@ VpVxS(PQP_REAL Vr[3], const PQP_REAL V1[3], const PQP_REAL V2[3], PQP_REAL s)
 
 inline 
 void
-MskewV(PQP_REAL M[3][3], const PQP_REAL v[3])
+MskewV(double M[3][3], const double v[3])
 {
   M[0][0] = M[1][1] = M[2][2] = 0.0;
   M[1][0] = v[2];
@@ -470,7 +480,7 @@ MskewV(PQP_REAL M[3][3], const PQP_REAL v[3])
 
 inline
 void
-VcrossV(PQP_REAL Vr[3], const PQP_REAL V1[3], const PQP_REAL V2[3])
+VcrossV(double Vr[3], const double V1[3], const double V2[3])
 {
   Vr[0] = V1[1]*V2[2] - V1[2]*V2[1];
   Vr[1] = V1[2]*V2[0] - V1[0]*V2[2];
@@ -478,32 +488,32 @@ VcrossV(PQP_REAL Vr[3], const PQP_REAL V1[3], const PQP_REAL V2[3])
 }
 
 inline
-PQP_REAL
-Vlength(PQP_REAL V[3])
+double
+Vlength(double V[3])
 {
   return sqrt(V[0]*V[0] + V[1]*V[1] + V[2]*V[2]);
 }
 
 inline
 void
-Vnormalize(PQP_REAL V[3])
+Vnormalize(double V[3])
 {
-  PQP_REAL d = (PQP_REAL)1.0 / sqrt(V[0]*V[0] + V[1]*V[1] + V[2]*V[2]);
+  double d = (double)1.0 / sqrt(V[0]*V[0] + V[1]*V[1] + V[2]*V[2]);
   V[0] *= d;
   V[1] *= d;
   V[2] *= d;
 }
 
 inline
-PQP_REAL
-VdotV(const PQP_REAL V1[3], const PQP_REAL V2[3])
+double
+VdotV(const double V1[3], const double V2[3])
 {
   return (V1[0]*V2[0] + V1[1]*V2[1] + V1[2]*V2[2]);
 }
 
 inline
-PQP_REAL
-VdistV2(const PQP_REAL V1[3], const PQP_REAL V2[3])
+double
+VdistV2(const double V1[3], const double V2[3])
 {
   return ( (V1[0]-V2[0]) * (V1[0]-V2[0]) + 
 	   (V1[1]-V2[1]) * (V1[1]-V2[1]) + 
@@ -512,7 +522,7 @@ VdistV2(const PQP_REAL V1[3], const PQP_REAL V2[3])
 
 inline
 void
-VxS(PQP_REAL Vr[3], const PQP_REAL V[3], PQP_REAL s)
+VxS(double Vr[3], const double V[3], double s)
 {
   Vr[0] = V[0] * s;
   Vr[1] = V[1] * s;
@@ -521,7 +531,7 @@ VxS(PQP_REAL Vr[3], const PQP_REAL V[3], PQP_REAL s)
 
 inline
 void
-MRotZ(PQP_REAL Mr[3][3], PQP_REAL t)
+MRotZ(double Mr[3][3], double t)
 {
   Mr[0][0] = cos(t);
   Mr[1][0] = sin(t);
@@ -534,7 +544,7 @@ MRotZ(PQP_REAL Mr[3][3], PQP_REAL t)
 
 inline
 void
-MRotX(PQP_REAL Mr[3][3], PQP_REAL t)
+MRotX(double Mr[3][3], double t)
 {
   Mr[1][1] = cos(t);
   Mr[2][1] = sin(t);
@@ -547,7 +557,7 @@ MRotX(PQP_REAL Mr[3][3], PQP_REAL t)
 
 inline
 void
-MRotY(PQP_REAL Mr[3][3], PQP_REAL t)
+MRotY(double Mr[3][3], double t)
 {
   Mr[2][2] = cos(t);
   Mr[0][2] = sin(t);
@@ -560,7 +570,7 @@ MRotY(PQP_REAL Mr[3][3], PQP_REAL t)
 
 inline
 void
-MVtoOGL(double oglm[16], const PQP_REAL R[3][3], const PQP_REAL T[3])
+MVtoOGL(double oglm[16], const double R[3][3], const double T[3])
 {
   oglm[0] = (double)R[0][0]; 
   oglm[1] = (double)R[1][0]; 
@@ -582,23 +592,23 @@ MVtoOGL(double oglm[16], const PQP_REAL R[3][3], const PQP_REAL T[3])
 
 inline 
 void
-OGLtoMV(PQP_REAL R[3][3], PQP_REAL T[3], const double oglm[16])
+OGLtoMV(double R[3][3], double T[3], const double oglm[16])
 {
-  R[0][0] = (PQP_REAL)oglm[0];
-  R[1][0] = (PQP_REAL)oglm[1];
-  R[2][0] = (PQP_REAL)oglm[2];
+  R[0][0] = (double)oglm[0];
+  R[1][0] = (double)oglm[1];
+  R[2][0] = (double)oglm[2];
 
-  R[0][1] = (PQP_REAL)oglm[4];
-  R[1][1] = (PQP_REAL)oglm[5];
-  R[2][1] = (PQP_REAL)oglm[6];
+  R[0][1] = (double)oglm[4];
+  R[1][1] = (double)oglm[5];
+  R[2][1] = (double)oglm[6];
 
-  R[0][2] = (PQP_REAL)oglm[8];
-  R[1][2] = (PQP_REAL)oglm[9];
-  R[2][2] = (PQP_REAL)oglm[10];
+  R[0][2] = (double)oglm[8];
+  R[1][2] = (double)oglm[9];
+  R[2][2] = (double)oglm[10];
 
-  T[0] = (PQP_REAL)oglm[12];
-  T[1] = (PQP_REAL)oglm[13];
-  T[2] = (PQP_REAL)oglm[14];
+  T[0] = (double)oglm[12];
+  T[1] = (double)oglm[13];
+  T[2] = (double)oglm[14];
 }
 
 // taken from quatlib, written by Richard Holloway
@@ -609,10 +619,10 @@ const int QW = 3;
 
 inline
 void 
-MRotQ(PQP_REAL destMatrix[3][3], PQP_REAL srcQuat[4])
+MRotQ(double destMatrix[3][3], double srcQuat[4])
 {
-  PQP_REAL  s;
-  PQP_REAL  xs, ys, zs,
+  double  s;
+  double  xs, ys, zs,
     	    wx, wy, wz,
 	        xx, xy, xz,
 	        yy, yz, zz;
@@ -622,7 +632,7 @@ MRotQ(PQP_REAL destMatrix[3][3], PQP_REAL srcQuat[4])
    *   srcQuat[QX], etc. 
    */
 
-  s = (PQP_REAL)2.0 / (srcQuat[QX]*srcQuat[QX] + srcQuat[QY]*srcQuat[QY] + 
+  s = (double)2.0 / (srcQuat[QX]*srcQuat[QX] + srcQuat[QY]*srcQuat[QY] + 
     	     srcQuat[QZ]*srcQuat[QZ] + srcQuat[QW]*srcQuat[QW]);
 
   xs = srcQuat[QX] * s;   ys = srcQuat[QY] * s;   zs = srcQuat[QZ] * s;
@@ -630,22 +640,22 @@ MRotQ(PQP_REAL destMatrix[3][3], PQP_REAL srcQuat[4])
   xx = srcQuat[QX] * xs;  xy = srcQuat[QX] * ys;  xz = srcQuat[QX] * zs;
   yy = srcQuat[QY] * ys;  yz = srcQuat[QY] * zs;  zz = srcQuat[QZ] * zs;
 
-  destMatrix[QX][QX] = (PQP_REAL)1.0 - (yy + zz);
+  destMatrix[QX][QX] = (double)1.0 - (yy + zz);
   destMatrix[QX][QY] = xy + wz;
   destMatrix[QX][QZ] = xz - wy;
 
   destMatrix[QY][QX] = xy - wz;
-  destMatrix[QY][QY] = (PQP_REAL)1.0 - (xx + zz);
+  destMatrix[QY][QY] = (double)1.0 - (xx + zz);
   destMatrix[QY][QZ] = yz + wx;
 
   destMatrix[QZ][QX] = xz + wy;
   destMatrix[QZ][QY] = yz - wx;
-  destMatrix[QZ][QZ] = (PQP_REAL)1.0 - (xx + yy);
+  destMatrix[QZ][QZ] = (double)1.0 - (xx + yy);
 } 
 
 inline
 void
-Mqinverse(PQP_REAL Mr[3][3], PQP_REAL m[3][3])
+Mqinverse(double Mr[3][3], double m[3][3])
 {
   int i,j;
 
@@ -670,15 +680,15 @@ Mqinverse(PQP_REAL Mr[3][3], PQP_REAL m[3][3])
 
 int
 inline
-Meigen(PQP_REAL vout[3][3], PQP_REAL dout[3], PQP_REAL a[3][3])
+Meigen(double vout[3][3], double dout[3], double a[3][3])
 {
   int i;
-  PQP_REAL tresh,theta,tau,t,sm,s,h,g,c;
+  double tresh,theta,tau,t,sm,s,h,g,c;
   int nrot;
-  PQP_REAL b[3];
-  PQP_REAL z[3];
-  PQP_REAL v[3][3];
-  PQP_REAL d[3];
+  double b[3];
+  double z[3];
+  double v[3][3];
+  double d[3];
 
   v[0][0] = v[1][1] = v[2][2] = 1.0;
   v[0][1] = v[1][2] = v[2][0] = 0.0;
@@ -787,16 +797,16 @@ Meigen(PQP_REAL vout[3][3], PQP_REAL dout[3], PQP_REAL a[3][3])
 
 void
 inline
-Meigen(PQP_REAL vout[3][3], PQP_REAL dout[3], PQP_REAL a[3][3])
+Meigen(double vout[3][3], double dout[3], double a[3][3])
 {
   int n = 3;
   int j,iq,ip,i;
-  PQP_REAL tresh,theta,tau,t,sm,s,h,g,c;
+  double tresh,theta,tau,t,sm,s,h,g,c;
   int nrot;
-  PQP_REAL b[3];
-  PQP_REAL z[3];
-  PQP_REAL v[3][3];
-  PQP_REAL d[3];
+  double b[3];
+  double z[3];
+  double v[3][3];
+  double d[3];
   
   Midentity(v);
   for(ip=0; ip<n; ip++) 
@@ -821,12 +831,12 @@ Meigen(PQP_REAL vout[3][3], PQP_REAL dout[3], PQP_REAL a[3][3])
 	}
       
       
-      if (i < 3) tresh=(PQP_REAL)0.2*sm/(n*n);
+      if (i < 3) tresh=(double)0.2*sm/(n*n);
       else tresh=0.0;
       
       for(ip=0; ip<n; ip++) for(iq=ip+1; iq<n; iq++)
 	{
-	  g = (PQP_REAL)100.0*fabs(a[ip][iq]);
+	  g = (double)100.0*fabs(a[ip][iq]);
 	  if (i>3 && 
 	      fabs(d[ip])+g==fabs(d[ip]) && 
 	      fabs(d[iq])+g==fabs(d[iq]))
@@ -837,13 +847,13 @@ Meigen(PQP_REAL vout[3][3], PQP_REAL dout[3], PQP_REAL a[3][3])
 	      if (fabs(h)+g == fabs(h)) t=(a[ip][iq])/h;
 	      else
 		{
-		  theta=(PQP_REAL)0.5*h/(a[ip][iq]);
-		  t=(PQP_REAL)(1.0/(fabs(theta)+sqrt(1.0+theta*theta)));
+		  theta=(double)0.5*h/(a[ip][iq]);
+		  t=(double)(1.0/(fabs(theta)+sqrt(1.0+theta*theta)));
 		  if (theta < 0.0) t = -t;
 		}
-	      c=(PQP_REAL)1.0/sqrt(1+t*t);
+	      c=(double)1.0/sqrt(1+t*t);
 	      s=t*c;
-	      tau=s/((PQP_REAL)1.0+c);
+	      tau=s/((double)1.0+c);
 	      h=t*a[ip][iq];
 	      z[ip] -= h;
 	      z[iq] += h;

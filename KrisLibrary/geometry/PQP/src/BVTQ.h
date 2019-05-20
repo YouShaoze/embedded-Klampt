@@ -1,3 +1,13 @@
+/*
+* @File Name BVTQ.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\BVTQ.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:10:35
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -61,7 +71,7 @@ Parent(int c)
 
 struct BVT 
 { 
-  PQP_REAL d;       // distance between the bvs
+  double d;       // distance between the bvs
   int b1, b2;       // bv numbers - b1 is from model 1, b2 from model 2
   int pindex;       // the index of the pointer that points to this -
                     // needed when filling the hole left by an ExtractMin
@@ -86,7 +96,7 @@ public:
   int Empty() { return (numtests == 0); }
   int GetNumTests() { return numtests; }
   int GetSize() { return size; }
-  PQP_REAL MinTest() { return bvtp[0]->d; }
+  double MinTest() { return bvtp[0]->d; }
   BVT ExtractMinTest();
   void AddTest(BVT &);
 };

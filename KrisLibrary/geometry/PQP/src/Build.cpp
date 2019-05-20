@@ -1,3 +1,13 @@
+/*
+* @File Name Build.cpp
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\Build.cpp
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:09:54
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -46,18 +56,18 @@
 
 
 
-PQP_REAL max(PQP_REAL a, PQP_REAL b, PQP_REAL c, PQP_REAL d)
+double max(double a, double b, double c, double d)
 {
-  PQP_REAL t = a;
+  double t = a;
   if (b > t) t = b;
   if (c > t) t = c;
   if (d > t) t = d;
   return t;
 }
 
-PQP_REAL min(PQP_REAL a, PQP_REAL b, PQP_REAL c, PQP_REAL d)
+double min(double a, double b, double c, double d)
 {
-  PQP_REAL t = a;
+  double t = a;
   if (b < t) t = b;
   if (c < t) t = c;
   if (d < t) t = d;
@@ -65,7 +75,7 @@ PQP_REAL min(PQP_REAL a, PQP_REAL b, PQP_REAL c, PQP_REAL d)
 }
 
 void
-get_centroid_triverts(PQP_REAL c[3], Tri *tris, int num_tris)
+get_centroid_triverts(double c[3], Tri *tris, int num_tris)
 {
   int i;
 
@@ -74,16 +84,16 @@ get_centroid_triverts(PQP_REAL c[3], Tri *tris, int num_tris)
   // get center of mass
   for(i=0; i<num_tris; i++)
   {
-    PQP_REAL *p1 = tris[i].p1;
-    PQP_REAL *p2 = tris[i].p2;
-    PQP_REAL *p3 = tris[i].p3;
+    double *p1 = tris[i].p1;
+    double *p2 = tris[i].p2;
+    double *p3 = tris[i].p3;
 
     c[0] += p1[0] + p2[0] + p3[0];
     c[1] += p1[1] + p2[1] + p3[1];
     c[2] += p1[2] + p2[2] + p3[2];      
   }
 
-  PQP_REAL n = (PQP_REAL)(3 * num_tris);
+  double n = (double)(3 * num_tris);
 
   c[0] /= n;
   c[1] /= n;
@@ -91,11 +101,11 @@ get_centroid_triverts(PQP_REAL c[3], Tri *tris, int num_tris)
 }
 
 void
-get_covariance_triverts(PQP_REAL M[3][3], Tri *tris, int num_tris)
+get_covariance_triverts(double M[3][3], Tri *tris, int num_tris)
 {
   int i;
-  PQP_REAL S1[3];
-  PQP_REAL S2[3][3];
+  double S1[3];
+  double S2[3][3];
 
   S1[0] = S1[1] = S1[2] = 0.0;
   S2[0][0] = S2[1][0] = S2[2][0] = 0.0;
@@ -105,9 +115,9 @@ get_covariance_triverts(PQP_REAL M[3][3], Tri *tris, int num_tris)
   // get center of mass
   for(i=0; i<num_tris; i++)
   {
-    PQP_REAL *p1 = tris[i].p1;
-    PQP_REAL *p2 = tris[i].p2;
-    PQP_REAL *p3 = tris[i].p3;
+    double *p1 = tris[i].p1;
+    double *p2 = tris[i].p2;
+    double *p3 = tris[i].p3;
 
     S1[0] += p1[0] + p2[0] + p3[0];
     S1[1] += p1[1] + p2[1] + p3[1];
@@ -133,7 +143,7 @@ get_covariance_triverts(PQP_REAL M[3][3], Tri *tris, int num_tris)
                  p3[1] * p3[2]);
   }
 
-  PQP_REAL n = (PQP_REAL)(3 * num_tris);
+  double n = (double)(3 * num_tris);
 
   // now get covariances
 
@@ -155,12 +165,12 @@ get_covariance_triverts(PQP_REAL M[3][3], Tri *tris, int num_tris)
 // Returns the number of tris in the first half
 
 int 
-split_tris(Tri *tris, int num_tris, PQP_REAL a[3], PQP_REAL c)
+split_tris(Tri *tris, int num_tris, double a[3], double c)
 {
   int i;
   int c1 = 0;
-  PQP_REAL p[3];
-  PQP_REAL x;
+  double p[3];
+  double x;
   Tri temp;
 
   for(i = 0; i < num_tris; i++)
@@ -208,7 +218,7 @@ build_recurse(PQP_Model *m, int bn, int first_tri, int num_tris)
 
   // compute a rotation matrix
 
-  PQP_REAL C[3][3], E[3][3], R[3][3], s[3], axis[3], mean[3], coord;
+  double C[3][3], E[3][3], R[3][3], s[3], axis[3], mean[3], coord;
 
   get_covariance_triverts(C,&m->tris[first_tri],num_tris);
 

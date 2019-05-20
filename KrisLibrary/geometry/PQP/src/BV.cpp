@@ -1,3 +1,13 @@
+/*
+* @File Name BV.cpp
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\BV.cpp
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:10:15
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -56,15 +66,15 @@ BV::~BV()
 
 static
 inline 
-PQP_REAL 
-MaxOfTwo(PQP_REAL a, PQP_REAL b) 
+double 
+MaxOfTwo(double a, double b) 
 {
   if (a > b) return a;
   return b;
 }
 
 void
-BV::FitToTris(PQP_REAL O[3][3], const Tri *tris, int num_tris)
+BV::FitToTris(double O[3][3], const Tri *tris, int num_tris)
 {
   // store orientation
 
@@ -72,7 +82,7 @@ BV::FitToTris(PQP_REAL O[3][3], const Tri *tris, int num_tris)
  
 #if PQP_BV_TYPE & RSS_TYPE
   int num_points = 3*num_tris;
-  PQP_REAL (*P)[3] = new PQP_REAL[num_points][3];
+  double (*P)[3] = new double[num_points][3];
 
   int i;
   int point = 0;
@@ -94,7 +104,7 @@ BV::FitToTris(PQP_REAL O[3][3], const Tri *tris, int num_tris)
 
   // project points of tris to R coordinates
 
-  PQP_REAL minx, maxx, miny, maxy, minz, maxz, c[3];
+  double minx, maxx, miny, maxy, minz, maxz, c[3];
   int i;
 
   MTxV(c,R,tris[0].p1);
@@ -125,22 +135,22 @@ BV::FitToTris(PQP_REAL O[3][3], const Tri *tris, int num_tris)
     if (c[2] < minz) minz = c[2];
     else if (c[2] > maxz) maxz = c[2];
   }
-  c[0] = (PQP_REAL)0.5*(maxx + minx);
-  c[1] = (PQP_REAL)0.5*(maxy + miny);
-  c[2] = (PQP_REAL)0.5*(maxz + minz);
+  c[0] = (double)0.5*(maxx + minx);
+  c[1] = (double)0.5*(maxy + miny);
+  c[2] = (double)0.5*(maxz + minz);
   MxV(To,R,c);
 
-  d[0] = (PQP_REAL)0.5*(maxx - minx);
-  d[1] = (PQP_REAL)0.5*(maxy - miny);
-  d[2] = (PQP_REAL)0.5*(maxz - minz);
+  d[0] = (double)0.5*(maxx - minx);
+  d[1] = (double)0.5*(maxy - miny);
+  d[2] = (double)0.5*(maxz - minz);
 #endif
 }
 
-void BV::FitToPointsLocal(const PQP_REAL (*P)[3],int num_points)
+void BV::FitToPointsLocal(const double (*P)[3],int num_points)
 {
   // project points of tris to R coordinates
 
-  PQP_REAL minx, maxx, miny, maxy, minz, maxz, c[3];
+  double minx, maxx, miny, maxy, minz, maxz, c[3];
   int i;
 
 #if PQP_BV_TYPE & OBB_TYPE
@@ -156,29 +166,29 @@ void BV::FitToPointsLocal(const PQP_REAL (*P)[3],int num_points)
     if (P[i][2] < minz) minz = P[i][2];
     else if (P[i][2] > maxz) maxz = P[i][2];
   }
-  c[0] = (PQP_REAL)0.5*(maxx + minx);
-  c[1] = (PQP_REAL)0.5*(maxy + miny);
-  c[2] = (PQP_REAL)0.5*(maxz + minz);
+  c[0] = (double)0.5*(maxx + minx);
+  c[1] = (double)0.5*(maxy + miny);
+  c[2] = (double)0.5*(maxz + minz);
   MxV(To,R,c);
 
-  d[0] = (PQP_REAL)0.5*(maxx - minx);
-  d[1] = (PQP_REAL)0.5*(maxy - miny);
-  d[2] = (PQP_REAL)0.5*(maxz - minz);
+  d[0] = (double)0.5*(maxx - minx);
+  d[1] = (double)0.5*(maxy - miny);
+  d[2] = (double)0.5*(maxz - minz);
 #endif
 
 #if PQP_BV_TYPE & RSS_TYPE
   // compute thickness, which determines radius, and z of rectangle corner
   
-  PQP_REAL cz,radsqr;
+  double cz,radsqr;
   minz = maxz = P[0][2];
   for (i = 1; i < num_points; i++) 
   {
     if (P[i][2] < minz) minz = P[i][2];
     else if (P[i][2] > maxz) maxz = P[i][2];
   }
-  r = (PQP_REAL)0.5*(maxz - minz);
+  r = (double)0.5*(maxz - minz);
   radsqr = r*r;
-  cz = (PQP_REAL)0.5*(maxz + minz);
+  cz = (double)0.5*(maxz + minz);
 
   // compute an initial length of rectangle along x direction
 
@@ -191,7 +201,7 @@ void BV::FitToPointsLocal(const PQP_REAL (*P)[3],int num_points)
     if (P[i][0] < P[minindex][0]) minindex = i; 
     else if (P[i][0] > P[maxindex][0]) maxindex = i;
   }
-  PQP_REAL x, dz;
+  double x, dz;
   dz = P[minindex][2] - cz;
   minx = P[minindex][0] + sqrt(MaxOfTwo(radsqr - dz*dz,0));
   dz = P[maxindex][2] - cz;
@@ -231,7 +241,7 @@ void BV::FitToPointsLocal(const PQP_REAL (*P)[3],int num_points)
     if (P[i][1] < P[minindex][1]) minindex = i;
     else if (P[i][1] > P[maxindex][1]) maxindex = i;
   }
-  PQP_REAL y;
+  double y;
   dz = P[minindex][2] - cz;
   miny = P[minindex][1] + sqrt(MaxOfTwo(radsqr - dz*dz,0));
   dz = P[maxindex][2] - cz;
@@ -264,8 +274,8 @@ void BV::FitToPointsLocal(const PQP_REAL (*P)[3],int num_points)
   // corners may have some points which are not covered - grow lengths if
   // necessary
   
-  PQP_REAL dx, dy, u, t;
-  PQP_REAL a = sqrt((PQP_REAL)0.5);
+  double dx, dy, u, t;
+  double a = sqrt((double)0.5);
   for (i = 0; i < num_points; i++) 
   {
     if (P[i][0] > maxx) 
@@ -350,36 +360,36 @@ void BV::FitToPointsLocal(const PQP_REAL (*P)[3],int num_points)
 
 /*
 int 
-BV_Overlap(PQP_REAL R[3][3], PQP_REAL T[3], BV *b1, BV *b2)
+BV_Overlap(double R[3][3], double T[3], BV *b1, BV *b2)
 {
 #if PQP_BV_TYPE & OBB_TYPE
   return (obb_disjoint(R,T,b1->d,b2->d) == 0);
 #else
-  PQP_REAL dist = RectDist(R,T,b1->l,b2->l);
+  double dist = RectDist(R,T,b1->l,b2->l);
   if (dist <= (b1->r + b2->r)) return 1;
   return 0;
 #endif
 }
 
 #if PQP_BV_TYPE & RSS_TYPE
-PQP_REAL
-BV_Distance(PQP_REAL R[3][3], PQP_REAL T[3], BV *b1, BV *b2)
+double
+BV_Distance(double R[3][3], double T[3], BV *b1, BV *b2)
 {
-  PQP_REAL dist = RectDist(R,T,b1->l,b2->l);
+  double dist = RectDist(R,T,b1->l,b2->l);
   dist -= (b1->r + b2->r);
-  return (dist < (PQP_REAL)0.0)? (PQP_REAL)0.0 : dist;
+  return (dist < (double)0.0)? (double)0.0 : dist;
 }
 #endif
 */
 
 
 //performs tranformation A^{-1}*B*C
-inline void TransformMulAInvBC(const PQP_REAL Ra[3][3], const PQP_REAL Ta[3],
-			       const PQP_REAL Rb[3][3], const PQP_REAL Tb[3],
-			       const PQP_REAL Rc[3][3], const PQP_REAL Tc[3],
-			       PQP_REAL R[3][3], PQP_REAL T[3])
+inline void TransformMulAInvBC(const double Ra[3][3], const double Ta[3],
+			       const double Rb[3][3], const double Tb[3],
+			       const double Rc[3][3], const double Tc[3],
+			       double R[3][3], double T[3])
 {
-  PQP_REAL Rtemp[3][3],Ttemp[3];
+  double Rtemp[3][3],Ttemp[3];
   //multiply BC
   MxM(Rtemp,Rb,Rc);
   MxV(Ttemp,Rb,Tc);
@@ -393,32 +403,32 @@ inline void TransformMulAInvBC(const PQP_REAL Ra[3][3], const PQP_REAL Ta[3],
 }
 
 int 
-BV_Overlap2(PQP_REAL R[3][3], PQP_REAL T[3], const BV *b1, const BV *b2)
+BV_Overlap2(double R[3][3], double T[3], const BV *b1, const BV *b2)
 {
   //T1^-1 * T * T2
-  PQP_REAL Rtemp[3][3];
-  PQP_REAL Ttemp[3];
+  double Rtemp[3][3];
+  double Ttemp[3];
 #if PQP_BV_TYPE & OBB_TYPE
   TransformMulAInvBC(b1->R,b1->To,R,T,b2->R,b2->To,Rtemp,Ttemp);
   return (obb_disjoint(Rtemp,Ttemp,b1->d,b2->d) == 0);
 #else
   TransformMulAInvBC(b1->R,b1->Tr,R,T,b2->R,b2->Tr,Rtemp,Ttemp);
-  PQP_REAL dist = RectDist(Rtemp,Ttemp,b1->l,b2->l);
+  double dist = RectDist(Rtemp,Ttemp,b1->l,b2->l);
   if (dist <= (b1->r + b2->r)) return 1;
   return 0;
 #endif
 }
 
 #if PQP_BV_TYPE & RSS_TYPE
-PQP_REAL
-BV_Distance2(PQP_REAL R[3][3], PQP_REAL T[3], const BV *b1, const BV *b2)
+double
+BV_Distance2(double R[3][3], double T[3], const BV *b1, const BV *b2)
 {
   //T1^-1 * T * T2
-  PQP_REAL Rtemp[3][3];
-  PQP_REAL Ttemp[3];
+  double Rtemp[3][3];
+  double Ttemp[3];
   TransformMulAInvBC(b1->R,b1->Tr,R,T,b2->R,b2->Tr,Rtemp,Ttemp);
-  PQP_REAL dist = RectDist(Rtemp,Ttemp,b1->l,b2->l);
+  double dist = RectDist(Rtemp,Ttemp,b1->l,b2->l);
   dist -= (b1->r + b2->r);
-  return (dist < (PQP_REAL)0.0)? (PQP_REAL)0.0 : dist;
+  return (dist < (double)0.0)? (double)0.0 : dist;
 }
 #endif

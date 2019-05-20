@@ -1,3 +1,13 @@
+/*
+* @File Name RectDist.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\RectDist.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:12:02
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -51,7 +61,7 @@
 
 inline 
 void
-ClipToRange(PQP_REAL &val, const PQP_REAL &a, const PQP_REAL &b)
+ClipToRange(double &val, const double &a, const double &b)
 {
   if (val < a) val = a;
   else if (val > b) val = b;
@@ -88,13 +98,13 @@ ClipToRange(PQP_REAL &val, const PQP_REAL &a, const PQP_REAL &b)
 
 inline
 void 
-SegCoords(PQP_REAL& t, PQP_REAL& u, 
-          const PQP_REAL& a, const PQP_REAL& b, 
-          const PQP_REAL& A_dot_B, 
-          const PQP_REAL& A_dot_T, 
-          const PQP_REAL& B_dot_T)
+SegCoords(double& t, double& u, 
+          const double& a, const double& b, 
+          const double& A_dot_B, 
+          const double& A_dot_T, 
+          const double& B_dot_T)
 {  
-  PQP_REAL denom = 1 - (A_dot_B)*(A_dot_B);
+  double denom = 1 - (A_dot_B)*(A_dot_B);
 
   if (denom == 0) t = 0;
   else
@@ -130,17 +140,17 @@ SegCoords(PQP_REAL& t, PQP_REAL& u,
 
 inline
 int 
-InVoronoi(const PQP_REAL &a, 
-          const PQP_REAL &b,  
-          const PQP_REAL &Anorm_dot_B, 
-          const PQP_REAL &Anorm_dot_T,  
-          const PQP_REAL &A_dot_B,
-          const PQP_REAL &A_dot_T,
-          const PQP_REAL &B_dot_T)
+InVoronoi(const double &a, 
+          const double &b,  
+          const double &Anorm_dot_B, 
+          const double &Anorm_dot_T,  
+          const double &A_dot_B,
+          const double &A_dot_T,
+          const double &B_dot_T)
 { 
   if (myfabs(Anorm_dot_B) < 1e-7) return 0;
 
-  PQP_REAL t, u, v;
+  double t, u, v;
  
   u = -Anorm_dot_T / Anorm_dot_B; 
   ClipToRange(u,0,b); 
@@ -173,19 +183,19 @@ InVoronoi(const PQP_REAL &a,
 // a[2] are the side lengths of A, b[2] are the side lengths of B
 
 inline
-PQP_REAL
-RectDist(const PQP_REAL Rab[3][3], const PQP_REAL Tab[3], 
-          const PQP_REAL a[2], const PQP_REAL b[2])
+double
+RectDist(const double Rab[3][3], const double Tab[3], 
+          const double a[2], const double b[2])
 {
-  PQP_REAL A0_dot_B0, A0_dot_B1, A1_dot_B0, A1_dot_B1;
+  double A0_dot_B0, A0_dot_B1, A1_dot_B0, A1_dot_B1;
 
   A0_dot_B0 = Rab[0][0];
   A0_dot_B1 = Rab[0][1];
   A1_dot_B0 = Rab[1][0];
   A1_dot_B1 = Rab[1][1];
 
-  PQP_REAL aA0_dot_B0, aA0_dot_B1, aA1_dot_B0, aA1_dot_B1;
-  PQP_REAL bA0_dot_B0, bA0_dot_B1, bA1_dot_B0, bA1_dot_B1; 
+  double aA0_dot_B0, aA0_dot_B1, aA1_dot_B0, aA1_dot_B1;
+  double bA0_dot_B0, bA0_dot_B1, bA1_dot_B0, bA1_dot_B1; 
  
   aA0_dot_B0 = a[0]*A0_dot_B0;
   aA0_dot_B1 = a[0]*A0_dot_B1;
@@ -196,16 +206,16 @@ RectDist(const PQP_REAL Rab[3][3], const PQP_REAL Tab[3],
   bA0_dot_B1 = b[1]*A0_dot_B1;
   bA1_dot_B1 = b[1]*A1_dot_B1;
 
-  PQP_REAL Tba[3];
+  double Tba[3];
   MTxV(Tba,Rab,Tab);
 
-  PQP_REAL S[3], t, u;
+  double S[3], t, u;
 
   // determine if any edge pair contains the closest points
 
-  PQP_REAL ALL_x, ALU_x, AUL_x, AUU_x;
-  PQP_REAL BLL_x, BLU_x, BUL_x, BUU_x;
-  PQP_REAL LA1_lx, LA1_ux, UA1_lx, UA1_ux, LB1_lx, LB1_ux, UB1_lx, UB1_ux;
+  double ALL_x, ALU_x, AUL_x, AUU_x;
+  double BLL_x, BLU_x, BUL_x, BUU_x;
+  double LA1_lx, LA1_ux, UA1_lx, UA1_ux, LB1_lx, LB1_ux, UB1_lx, UB1_ux;
 
   ALL_x = -Tba[0];
   ALU_x = ALL_x + aA1_dot_B0;
@@ -339,14 +349,14 @@ RectDist(const PQP_REAL Rab[3][3], const PQP_REAL Tab[3],
     }
   }
 
-  PQP_REAL ALL_y, ALU_y, AUL_y, AUU_y;
+  double ALL_y, ALU_y, AUL_y, AUU_y;
 
   ALL_y = -Tba[1];
   ALU_y = ALL_y + aA1_dot_B1;
   AUL_y = ALL_y + aA0_dot_B1;
   AUU_y = ALU_y + aA0_dot_B1;
   
-  PQP_REAL LA1_ly, LA1_uy, UA1_ly, UA1_uy, LB0_lx, LB0_ux, UB0_lx, UB0_ux;
+  double LA1_ly, LA1_uy, UA1_ly, UA1_uy, LB0_lx, LB0_ux, UB0_lx, UB0_ux;
 
   if (ALL_y < ALU_y)
   { 
@@ -467,14 +477,14 @@ RectDist(const PQP_REAL Rab[3][3], const PQP_REAL Tab[3],
     }
   }
 
-  PQP_REAL BLL_y, BLU_y, BUL_y, BUU_y;
+  double BLL_y, BLU_y, BUL_y, BUU_y;
 
   BLL_y = Tab[1];
   BLU_y = BLL_y + bA1_dot_B1;
   BUL_y = BLL_y + bA1_dot_B0;
   BUU_y = BLU_y + bA1_dot_B0;
 
-  PQP_REAL LA0_lx, LA0_ux, UA0_lx, UA0_ux, LB1_ly, LB1_uy, UB1_ly, UB1_uy;
+  double LA0_lx, LA0_ux, UA0_lx, UA0_ux, LB1_ly, LB1_uy, UB1_ly, UB1_uy;
 
   if (ALL_x < AUL_x)
   {
@@ -595,7 +605,7 @@ RectDist(const PQP_REAL Rab[3][3], const PQP_REAL Tab[3],
     }
   }
 
-  PQP_REAL LA0_ly, LA0_uy, UA0_ly, UA0_uy, LB0_ly, LB0_uy, UB0_ly, UB0_uy;
+  double LA0_ly, LA0_uy, UA0_ly, UA0_uy, LB0_ly, LB0_uy, UB0_ly, UB0_uy;
 
   if (ALL_y < AUL_y)
   {
@@ -718,7 +728,7 @@ RectDist(const PQP_REAL Rab[3][3], const PQP_REAL Tab[3],
 
   // no edges passed, take max separation along face normals
 
-  PQP_REAL sep1, sep2;
+  double sep1, sep2;
  
   if (Tab[2] > 0.0)
   {
@@ -746,7 +756,7 @@ RectDist(const PQP_REAL Rab[3][3], const PQP_REAL Tab[3],
     if (Rab[1][2] > 0.0) sep2 -= a[1]*Rab[1][2];
   }
 
-  PQP_REAL sep = (sep1 > sep2? sep1 : sep2);
+  double sep = (sep1 > sep2? sep1 : sep2);
   return (sep > 0? sep : 0);
 }
 

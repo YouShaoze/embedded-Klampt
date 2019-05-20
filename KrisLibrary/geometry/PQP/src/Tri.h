@@ -1,3 +1,13 @@
+/*
+* @File Name Tri.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\Tri.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:12:09
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -45,9 +55,9 @@
 
 struct Tri
 {
-  PQP_REAL p1[3];
-  PQP_REAL p2[3];
-  PQP_REAL p3[3];
+  double p1[3];
+  double p2[3];
+  double p3[3];
   int id;
 };
 

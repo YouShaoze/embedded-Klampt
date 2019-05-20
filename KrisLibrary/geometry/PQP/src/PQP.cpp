@@ -1,3 +1,13 @@
+/*
+* @File Name PQP.cpp
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\PQP.cpp
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:11:31
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -122,9 +132,9 @@ PQP_Model::BeginModel(int n)
 }
 
 int
-PQP_Model::AddTri(const PQP_REAL *p1, 
-                  const PQP_REAL *p2, 
-                  const PQP_REAL *p3, 
+PQP_Model::AddTri(const double *p1, 
+                  const double *p2, 
+                  const double *p3, 
                   int id)
 {
   if (build_state == PQP_BUILD_STATE_EMPTY)
@@ -322,41 +332,41 @@ PQP_CollideResult::Add(int a, int b)
 // TRIANGLE OVERLAP TEST
        
 inline
-PQP_REAL
-max(PQP_REAL a, PQP_REAL b, PQP_REAL c)
+double
+max(double a, double b, double c)
 {
-  PQP_REAL t = a;
+  double t = a;
   if (b > t) t = b;
   if (c > t) t = c;
   return t;
 }
 
 inline
-PQP_REAL
-min(PQP_REAL a, PQP_REAL b, PQP_REAL c)
+double
+min(double a, double b, double c)
 {
-  PQP_REAL t = a;
+  double t = a;
   if (b < t) t = b;
   if (c < t) t = c;
   return t;
 }
 
 int
-project6(PQP_REAL *ax, 
-         PQP_REAL *p1, PQP_REAL *p2, PQP_REAL *p3, 
-         PQP_REAL *q1, PQP_REAL *q2, PQP_REAL *q3)
+project6(double *ax, 
+         double *p1, double *p2, double *p3, 
+         double *q1, double *q2, double *q3)
 {
-  PQP_REAL P1 = VdotV(ax, p1);
-  PQP_REAL P2 = VdotV(ax, p2);
-  PQP_REAL P3 = VdotV(ax, p3);
-  PQP_REAL Q1 = VdotV(ax, q1);
-  PQP_REAL Q2 = VdotV(ax, q2);
-  PQP_REAL Q3 = VdotV(ax, q3);
+  double P1 = VdotV(ax, p1);
+  double P2 = VdotV(ax, p2);
+  double P3 = VdotV(ax, p3);
+  double Q1 = VdotV(ax, q1);
+  double Q2 = VdotV(ax, q2);
+  double Q3 = VdotV(ax, q3);
   
-  PQP_REAL mx1 = max(P1, P2, P3);
-  PQP_REAL mn1 = min(P1, P2, P3);
-  PQP_REAL mx2 = max(Q1, Q2, Q3);
-  PQP_REAL mn2 = min(Q1, Q2, Q3);
+  double mx1 = max(P1, P2, P3);
+  double mn1 = min(P1, P2, P3);
+  double mx2 = max(Q1, Q2, Q3);
+  double mn2 = min(Q1, Q2, Q3);
 
   if (mn1 > mx2) return 0;
   if (mn2 > mx1) return 0;
@@ -367,8 +377,8 @@ project6(PQP_REAL *ax,
 // uses no divisions
 // works on coplanar triangles
 int 
-TriContact(const PQP_REAL *P1, const PQP_REAL *P2, const PQP_REAL *P3,
-           const PQP_REAL *Q1, const PQP_REAL *Q2, const PQP_REAL *Q3) 
+TriContact(const double *P1, const double *P2, const double *P3,
+           const double *Q1, const double *Q2, const double *Q3) 
 {
 
   // One triangle is (p1,p2,p3).  Other is (q1,q2,q3).
@@ -380,17 +390,17 @@ TriContact(const PQP_REAL *P1, const PQP_REAL *P2, const PQP_REAL *P3,
   //
   // First thing we do is establish a new c.s. so that p1 is at (0,0,0).
 
-  PQP_REAL p1[3], p2[3], p3[3];
-  PQP_REAL q1[3], q2[3], q3[3];
-  PQP_REAL e1[3], e2[3], e3[3];
-  PQP_REAL f1[3], f2[3], f3[3];
-  PQP_REAL g1[3], g2[3], g3[3];
-  PQP_REAL h1[3], h2[3], h3[3];
-  PQP_REAL n1[3], m1[3];
+  double p1[3], p2[3], p3[3];
+  double q1[3], q2[3], q3[3];
+  double e1[3], e2[3], e3[3];
+  double f1[3], f2[3], f3[3];
+  double g1[3], g2[3], g3[3];
+  double h1[3], h2[3], h3[3];
+  double n1[3], m1[3];
 
-  PQP_REAL ef11[3], ef12[3], ef13[3];
-  PQP_REAL ef21[3], ef22[3], ef23[3];
-  PQP_REAL ef31[3], ef32[3], ef33[3];
+  double ef11[3], ef12[3], ef13[3];
+  double ef21[3], ef22[3], ef23[3];
+  double ef31[3], ef32[3], ef33[3];
   
   p1[0] = P1[0] - P1[0];  p1[1] = P1[1] - P1[1];  p1[2] = P1[2] - P1[2];
   p2[0] = P2[0] - P1[0];  p2[1] = P2[1] - P1[1];  p2[2] = P2[2] - P1[2];
@@ -454,13 +464,13 @@ TriContact(const PQP_REAL *P1, const PQP_REAL *P2, const PQP_REAL *P3,
 }
 
 inline
-PQP_REAL
-TriDistance(PQP_REAL R[3][3], PQP_REAL T[3], const Tri *t1, const Tri *t2,
-            PQP_REAL p[3], PQP_REAL q[3])
+double
+TriDistance(double R[3][3], double T[3], const Tri *t1, const Tri *t2,
+            double p[3], double q[3])
 {
   // transform tri 2 into same space as tri 1
 
-  PQP_REAL tri1[3][3], tri2[3][3];
+  double tri1[3][3], tri2[3][3];
 
   VcV(tri1[0], t1->p1);
   VcV(tri1[1], t1->p2);
@@ -498,10 +508,10 @@ CollideRecurse(PQP_CollideResult *res,
 
     Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
     Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
-    PQP_REAL q1[3], q2[3], q3[3];
-    PQP_REAL *p1 = t1->p1;
-    PQP_REAL *p2 = t1->p2;
-    PQP_REAL *p3 = t1->p3;    
+    double q1[3], q2[3], q3[3];
+    double *p1 = t1->p1;
+    double *p2 = t1->p2;
+    double *p3 = t1->p3;    
     MxVpV(q1, res->R, t2->p1, res->T);
     MxVpV(q2, res->R, t2->p2, res->T);
     MxVpV(q3, res->R, t2->p3, res->T);
@@ -519,8 +529,8 @@ CollideRecurse(PQP_CollideResult *res,
 
   // we dont, so decide whose children to visit next
 
-  PQP_REAL sz1 = o1->child(b1)->GetSize();
-  PQP_REAL sz2 = o2->child(b2)->GetSize();
+  double sz1 = o1->child(b1)->GetSize();
+  double sz2 = o2->child(b2)->GetSize();
    
   if (l2 || (!l1 && (sz1 > sz2)))
   {
@@ -548,8 +558,8 @@ CollideRecurse(PQP_CollideResult *res,
 
 int 
 PQP_Collide(PQP_CollideResult *res,
-            PQP_REAL R1[3][3], PQP_REAL T1[3], const PQP_Model *o1,
-            PQP_REAL R2[3][3], PQP_REAL T2[3], const PQP_Model *o2,
+            double R1[3][3], double T1[3], const PQP_Model *o1,
+            double R2[3][3], double T2[3], const PQP_Model *o2,
             int flag)
 {
   // make sure that the models are built
@@ -573,7 +583,7 @@ PQP_Collide(PQP_CollideResult *res,
   // First compute the rotation part, then translation part
 
   MTxM(res->R,R1,R2);
-  PQP_REAL Ttemp[3];
+  double Ttemp[3];
   VmV(Ttemp, T2, T1);  
   MTxV(res->T, R1, Ttemp);
   
@@ -597,8 +607,8 @@ DistanceRecurse(PQP_DistanceResult *res,
                 const PQP_Model *o1, int b1,
                 const PQP_Model *o2, int b2)
 {
-  PQP_REAL sz1 = o1->child(b1)->GetSize();
-  PQP_REAL sz2 = o2->child(b2)->GetSize();
+  double sz1 = o1->child(b1)->GetSize();
+  double sz2 = o2->child(b2)->GetSize();
   int l1 = o1->child(b1)->Leaf();
   int l2 = o2->child(b2)->Leaf();
 
@@ -608,12 +618,12 @@ DistanceRecurse(PQP_DistanceResult *res,
 
     res->num_tri_tests++;
 
-    PQP_REAL p[3], q[3];
+    double p[3], q[3];
 
     Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
     Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
 
-    PQP_REAL d = TriDistance(res->R,res->T,t1,t2,p,q);
+    double d = TriDistance(res->R,res->T,t1,t2,p,q);
   
     if (d < res->distance) 
     {
@@ -634,7 +644,7 @@ DistanceRecurse(PQP_DistanceResult *res,
   // pair second.
 
   int a1,a2,c1,c2;  // new bv tests 'a' and 'c'
-  PQP_REAL R1[3][3], T1[3], R2[3][3], T2[3], Ttemp[3];
+  double R1[3][3], T1[3], R2[3][3], T2[3], Ttemp[3];
 
   if (l2 || (!l1 && (sz1 > sz2)))
   {
@@ -658,8 +668,8 @@ DistanceRecurse(PQP_DistanceResult *res,
 
   res->num_bv_tests += 2;
 
-  PQP_REAL d1 = BV_Distance2(res->R, res->T, o1->child(a1), o2->child(a2));
-  PQP_REAL d2 = BV_Distance2(res->R, res->T, o1->child(c1), o2->child(c2));
+  double d1 = BV_Distance2(res->R, res->T, o1->child(a1), o2->child(a2));
+  double d2 = BV_Distance2(res->R, res->T, o1->child(c1), o2->child(c2));
 
   if (d2 < d1)
   {
@@ -713,12 +723,12 @@ DistanceQueueRecurse(PQP_DistanceResult *res,
 
       res->num_tri_tests++;
 
-      PQP_REAL p[3], q[3];
+      double p[3], q[3];
 
       Tri *t1 = &o1->tris[-o1->child(min_test.b1)->first_child - 1];
       Tri *t2 = &o2->tris[-o2->child(min_test.b2)->first_child - 1];
 
-      PQP_REAL d = TriDistance(res->R,res->T,t1,t2,p,q);
+      double d = TriDistance(res->R,res->T,t1,t2,p,q);
   
       if (d < res->distance)
       {
@@ -741,13 +751,13 @@ DistanceQueueRecurse(PQP_DistanceResult *res,
     {  
       // decide how to descend to children
       
-      PQP_REAL sz1 = o1->child(min_test.b1)->GetSize();
-      PQP_REAL sz2 = o2->child(min_test.b2)->GetSize();
+      double sz1 = o1->child(min_test.b1)->GetSize();
+      double sz2 = o2->child(min_test.b2)->GetSize();
 
       res->num_bv_tests += 2;
  
       BVT bvt1,bvt2;
-      PQP_REAL Ttemp[3];
+      double Ttemp[3];
 
       if (l2 || (!l1 && (sz1 > sz2)))	
       {  
@@ -817,10 +827,10 @@ DistanceQueueRecurse(PQP_DistanceResult *res,
 
 int 
 PQP_Distance(PQP_DistanceResult *res,
-             PQP_REAL R1[3][3], PQP_REAL T1[3], const PQP_Model *o1,
-             PQP_REAL R2[3][3], PQP_REAL T2[3], const PQP_Model *o2,
-             PQP_REAL rel_err, PQP_REAL abs_err,
-             int qsize,PQP_REAL init_bound)
+             double R1[3][3], double T1[3], const PQP_Model *o1,
+             double R2[3][3], double T2[3], const PQP_Model *o2,
+             double rel_err, double abs_err,
+             int qsize,double init_bound)
 {
   
   
@@ -836,7 +846,7 @@ PQP_Distance(PQP_DistanceResult *res,
   // First compute the rotation part, then translation part
 
   MTxM(res->R,R1,R2);
-  PQP_REAL Ttemp[3];
+  double Ttemp[3];
   VmV(Ttemp, T2, T1);  
   MTxV(res->T, R1, Ttemp);
   
@@ -848,7 +858,7 @@ PQP_Distance(PQP_DistanceResult *res,
     if(res->t2 < 0) res->t2 = 0;
     if(res->t1 >= o1->num_tris) res->t1 = 0;
     if(res->t2 >= o2->num_tris) res->t2 = 0;
-    PQP_REAL p[3],q[3];
+    double p[3],q[3];
     res->distance = TriDistance(res->R,res->T,&o1->tris[res->t1],&o2->tris[res->t2],p,q);
     VcV(res->p1,p);
     VcV(res->p2,q);
@@ -907,7 +917,7 @@ PQP_Distance(PQP_DistanceResult *res,
   if(res->distance != init_bound) 
   {
   // res->p2 is in cs 1 ; transform it to cs 2
-    PQP_REAL u[3];
+    double u[3];
     VmV(u, res->p2, res->T);
     MTxV(res->p2, res->R, u);
   }
@@ -921,8 +931,8 @@ void
 ToleranceRecurse(PQP_ToleranceResult *res, 
                  const PQP_Model *o1, int b1, const PQP_Model *o2, int b2)
 {
-  PQP_REAL sz1 = o1->child(b1)->GetSize();
-  PQP_REAL sz2 = o2->child(b2)->GetSize();
+  double sz1 = o1->child(b1)->GetSize();
+  double sz2 = o2->child(b2)->GetSize();
   int l1 = o1->child(b1)->Leaf();
   int l2 = o2->child(b2)->Leaf();
 
@@ -932,12 +942,12 @@ ToleranceRecurse(PQP_ToleranceResult *res,
     
     res->num_tri_tests++;
 
-    PQP_REAL p[3], q[3];
+    double p[3], q[3];
 
     Tri *t1 = &o1->tris[-o1->child(b1)->first_child - 1];
     Tri *t2 = &o2->tris[-o2->child(b2)->first_child - 1];
 
-    PQP_REAL d = TriDistance(res->R,res->T,t1,t2,p,q);
+    double d = TriDistance(res->R,res->T,t1,t2,p,q);
     
     if (d <= res->tolerance)  
     {  
@@ -979,8 +989,8 @@ ToleranceRecurse(PQP_ToleranceResult *res,
 
   res->num_bv_tests += 2;
 
-  PQP_REAL d1 = BV_Distance2(res->R, res->T, o1->child(a1), o2->child(a2));
-  PQP_REAL d2 = BV_Distance2(res->R, res->T, o1->child(c1), o2->child(c2));
+  double d1 = BV_Distance2(res->R, res->T, o1->child(a1), o2->child(a2));
+  double d2 = BV_Distance2(res->R, res->T, o1->child(c1), o2->child(c2));
 
   if (d2 < d1) 
   {
@@ -1017,12 +1027,12 @@ ToleranceQueueRecurse(PQP_ToleranceResult *res,
     
       res->num_tri_tests++;
 
-      PQP_REAL p[3], q[3];
+      double p[3], q[3];
 
       Tri *t1 = &o1->tris[-o1->child(min_test.b1)->first_child - 1];
       Tri *t2 = &o2->tris[-o2->child(min_test.b2)->first_child - 1];
 
-      PQP_REAL d = TriDistance(res->R,res->T,t1,t2,p,q);
+      double d = TriDistance(res->R,res->T,t1,t2,p,q);
     
       if (d <= res->tolerance)  
       {  
@@ -1050,13 +1060,13 @@ ToleranceQueueRecurse(PQP_ToleranceResult *res,
     {  
       // decide how to descend to children
       
-      PQP_REAL sz1 = o1->child(min_test.b1)->GetSize();
-      PQP_REAL sz2 = o2->child(min_test.b2)->GetSize();
+      double sz1 = o1->child(min_test.b1)->GetSize();
+      double sz2 = o2->child(min_test.b2)->GetSize();
 
       res->num_bv_tests += 2;
       
       BVT bvt1,bvt2;
-      PQP_REAL Ttemp[3];
+      double Ttemp[3];
 
       if (l2 || (!l1 && (sz1 > sz2)))	
       {
@@ -1123,9 +1133,9 @@ ToleranceQueueRecurse(PQP_ToleranceResult *res,
 
 int
 PQP_Tolerance(PQP_ToleranceResult *res,
-              PQP_REAL R1[3][3], PQP_REAL T1[3], const PQP_Model *o1,
-              PQP_REAL R2[3][3], PQP_REAL T2[3], const PQP_Model *o2,
-              PQP_REAL tolerance,
+              double R1[3][3], double T1[3], const PQP_Model *o1,
+              double R2[3][3], double T2[3], const PQP_Model *o2,
+              double tolerance,
               int qsize)
 {
   // make sure that the models are built
@@ -1139,7 +1149,7 @@ PQP_Tolerance(PQP_ToleranceResult *res,
   // [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
 
   MTxM(res->R,R1,R2);
-  PQP_REAL Ttemp[3];
+  double Ttemp[3];
   VmV(Ttemp, T2, T1);
   MTxV(res->T, R1, Ttemp);
 
@@ -1161,7 +1171,7 @@ PQP_Tolerance(PQP_ToleranceResult *res,
 
   // find a distance lower bound for trivial reject
 
-  PQP_REAL d = BV_Distance2(res->R, res->T, o1->child(0), o2->child(0));
+  double d = BV_Distance2(res->R, res->T, o1->child(0), o2->child(0));
   
   if (d <= res->tolerance)
   {
@@ -1180,7 +1190,7 @@ PQP_Tolerance(PQP_ToleranceResult *res,
 
   // res->p2 is in cs 1 ; transform it to cs 2
 
-  PQP_REAL u[3];
+  double u[3];
   VmV(u, res->p2, res->T);
   MTxV(res->p2, res->R, u);
 
@@ -1203,7 +1213,7 @@ ToleranceRecurse2(PQP_ToleranceResult *res,
     
     res->num_tri_tests++;
 
-    PQP_REAL p[3], q[3];
+    double p[3], q[3];
 
     int ti1=-o1->child(b1)->first_child - 1;
     int ti2=-o2->child(b2)->first_child - 1;
@@ -1211,7 +1221,7 @@ ToleranceRecurse2(PQP_ToleranceResult *res,
     Tri *t1 = &o1->tris[ti1];
     Tri *t2 = &o2->tris[ti2];
 
-    PQP_REAL d = TriDistance(res->R,res->T,t1,t2,p,q);
+    double d = TriDistance(res->R,res->T,t1,t2,p,q);
     
     if (d <= res->tolerance)  
     {  
@@ -1242,10 +1252,10 @@ ToleranceRecurse2(PQP_ToleranceResult *res,
   }
 
   int a1,a2,c1,c2;  // new bv tests 'a' and 'c'
-  PQP_REAL sz1 = o1->child(b1)->GetSize();
-  PQP_REAL sz2 = o2->child(b2)->GetSize();
+  double sz1 = o1->child(b1)->GetSize();
+  double sz2 = o2->child(b2)->GetSize();
 
-  PQP_REAL lim1=res->tolerance,lim2=res->tolerance;
+  double lim1=res->tolerance,lim2=res->tolerance;
   if(l2) {  //clip points of interest by existing per-triangle tolerance
     int ti2=-o2->child(b2)->first_child - 1;
     if(allRes.triDist2.count(o2->tris[ti2].id)!=0)
@@ -1275,8 +1285,8 @@ ToleranceRecurse2(PQP_ToleranceResult *res,
 
   res->num_bv_tests += 2;
 
-  PQP_REAL d1 = BV_Distance2(res->R,res->T, o1->child(a1), o2->child(a2));
-  PQP_REAL d2 = BV_Distance2(res->R,res->T, o1->child(c1), o2->child(c2));
+  double d1 = BV_Distance2(res->R,res->T, o1->child(a1), o2->child(a2));
+  double d2 = BV_Distance2(res->R,res->T, o1->child(c1), o2->child(c2));
 
   if (d2 < d1) 
   {
@@ -1293,9 +1303,9 @@ ToleranceRecurse2(PQP_ToleranceResult *res,
 
 int
 PQP_ToleranceAll(PQP_ToleranceResult* res,
-	       PQP_REAL R1[3][3], PQP_REAL T1[3], const PQP_Model *o1,
-	       PQP_REAL R2[3][3], PQP_REAL T2[3], const PQP_Model *o2,
-	       PQP_REAL tolerance,PQP_ToleranceAllResult& allRes)
+	       double R1[3][3], double T1[3], const PQP_Model *o1,
+	       double R2[3][3], double T2[3], const PQP_Model *o2,
+	       double tolerance,PQP_ToleranceAllResult& allRes)
 {
   // make sure that the models are built
   if (o1->build_state != 2) 
@@ -1326,7 +1336,7 @@ PQP_ToleranceAll(PQP_ToleranceResult* res,
   // [R,T] = [R1,T1]'[R2,T2] = [R1',-R1'T][R2,T2] = [R1'R2, R1'(T2-T1)]
 
   MTxM(res->R,R1,R2);
-  PQP_REAL Ttemp[3];
+  double Ttemp[3];
   VmV(Ttemp, T2, T1);
   MTxV(res->T, R1, Ttemp);
 
@@ -1348,7 +1358,7 @@ PQP_ToleranceAll(PQP_ToleranceResult* res,
   // find a distance lower bound for trivial reject
 
   res->num_bv_tests += 2;
-  PQP_REAL d = BV_Distance2(res->R, res->T, o1->child(0), o2->child(0));
+  double d = BV_Distance2(res->R, res->T, o1->child(0), o2->child(0));
   
   if (d <= res->tolerance)
   {
@@ -1356,13 +1366,13 @@ PQP_ToleranceAll(PQP_ToleranceResult* res,
 
     for(std::map<int,PQP_ClosestPoints>::iterator i=allRes.triCp1.begin();i!=allRes.triCp1.end();i++) {
       // res->p2 is in cs 1 ; transform it to cs 2 
-      PQP_REAL u[3];
+      double u[3];
       VmV(u, i->second.p2, res->T);
       MTxV(i->second.p2, res->R, u);
     }
     for(std::map<int,PQP_ClosestPoints >::iterator i=allRes.triCp2.begin();i!=allRes.triCp2.end();i++) {
       // res->p2 is in cs 1 ; transform it to cs 2 
-      PQP_REAL u[3];
+      double u[3];
       VmV(u, i->second.p2, res->T);
       MTxV(i->second.p2, res->R, u);
     }
@@ -1370,7 +1380,7 @@ PQP_ToleranceAll(PQP_ToleranceResult* res,
     for(size_t i=0;i<allRes.triCp1.size();i++) {
       if(allRes.triPartner1[i] >= 0) {
 	// res->p2 is in cs 1 ; transform it to cs 2 
-	PQP_REAL u[3];
+	double u[3];
 	VmV(u, allRes.triCp1[i].second, res->T);
 	MTxV(allRes.triCp1[i].second, res->R, u);
       }
@@ -1378,7 +1388,7 @@ PQP_ToleranceAll(PQP_ToleranceResult* res,
     for(size_t i=0;i<allRes.triCp2.size();i++) {
       if(allRes.triPartner2[i] >= 0) {
 	// res->p2 is in cs 1 ; transform it to cs 2 
-	PQP_REAL u[3];
+	double u[3];
 	VmV(u, allRes.triCp2[i].second, res->T);
 	MTxV(allRes.triCp2[i].second, res->R, u);
       }
@@ -1388,7 +1398,7 @@ PQP_ToleranceAll(PQP_ToleranceResult* res,
 
   // res->p2 is in cs 1 ; transform it to cs 2
 
-  PQP_REAL u[3];
+  double u[3];
   VmV(u, res->p2, res->T);
   MTxV(res->p2, res->R, u);
 

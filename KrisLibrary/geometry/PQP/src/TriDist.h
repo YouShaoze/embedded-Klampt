@@ -1,3 +1,13 @@
+/*
+* @File Name TriDist.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\TriDist.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:12:19
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -56,8 +66,8 @@
 // coincident points on the intersection of the triangles, as might 
 // be expected.
 
-PQP_REAL 
-TriDist(PQP_REAL p[3], PQP_REAL q[3], 
-        const PQP_REAL s[3][3], const PQP_REAL t[3][3]);
+double 
+TriDist(double p[3], double q[3], 
+        const double s[3][3], const double t[3][3]);
 
 #endif

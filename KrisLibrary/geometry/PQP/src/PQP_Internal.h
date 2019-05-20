@@ -1,3 +1,13 @@
+/*
+* @File Name PQP_Internal.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\PQP_Internal.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:11:56
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -67,7 +77,7 @@ public:
   int BeginModel(int num_tris = 8); // preallocate for num_tris triangles;
                                     // the parameter is optional, since
                                     // arrays are reallocated as needed
-  int AddTri(const PQP_REAL *p1, const PQP_REAL *p2, const PQP_REAL *p3, 
+  int AddTri(const double *p1, const double *p2, const double *p3, 
              int id);
   int EndModel();
   int MemUsage(int msg) const;  // returns model mem usage.  
@@ -89,8 +99,8 @@ struct PQP_CollideResult
 
   // xform from model 1 to model 2
 
-  PQP_REAL R[3][3];
-  PQP_REAL T[3];
+  double R[3][3];
+  double T[3];
 
   int num_pairs_alloced;
   int num_pairs;
@@ -131,15 +141,15 @@ struct PQP_DistanceResult
 
   // xform from model 1 to model 2
 
-  PQP_REAL R[3][3];
-  PQP_REAL T[3];
+  double R[3][3];
+  double T[3];
 
-  PQP_REAL rel_err; 
-  PQP_REAL abs_err; 
+  double rel_err; 
+  double abs_err; 
 
-  PQP_REAL distance;
-  PQP_REAL p1[3]; 
-  PQP_REAL p2[3];
+  double distance;
+  double p1[3]; 
+  double p2[3];
   int t1,t2;     // triangle indices of the closest pair
   int tid1,tid2; // id's of the triangles of the closest pair
   int qsize;
@@ -152,11 +162,11 @@ struct PQP_DistanceResult
   // The following distance and points established the minimum distance
   // for the models, within the relative and absolute error bounds 
   // specified.
-  // Points are defined: PQP_REAL p1[3], p2[3];
+  // Points are defined: double p1[3], p2[3];
 
-  PQP_REAL Distance() const { return distance; }
-  const PQP_REAL *P1() const { return p1; }
-  const PQP_REAL *P2() const { return p2; }
+  double Distance() const { return distance; }
+  const double *P1() const { return p1; }
+  const double *P2() const { return p2; }
 };
 
 struct PQP_ToleranceResult 
@@ -168,15 +178,15 @@ struct PQP_ToleranceResult
 
   // xform from model 1 to model 2
 
-  PQP_REAL R[3][3];
-  PQP_REAL T[3];
+  double R[3][3];
+  double T[3];
 
   int    closer_than_tolerance;   
-  PQP_REAL tolerance;      
+  double tolerance;      
 
-  PQP_REAL distance;
-  PQP_REAL p1[3]; 
-  PQP_REAL p2[3]; 
+  double distance;
+  double p1[3]; 
+  double p2[3]; 
   int t1,t2;     // triangle indices of the closest pair
   int tid1,tid2; // id's of the triangles of the closest pair
   int qsize;
@@ -190,9 +200,9 @@ struct PQP_ToleranceResult
   // and distance were what established this.  Otherwise, 
   // distance and point values are not meaningful.
 
-  PQP_REAL Distance() { return distance; }
-  const PQP_REAL *P1() { return p1; }
-  const PQP_REAL *P2() { return p2; }
+  double Distance() { return distance; }
+  const double *P1() { return p1; }
+  const double *P2() { return p2; }
 
   // boolean says whether models are closer than tolerance distance
 
@@ -201,18 +211,18 @@ struct PQP_ToleranceResult
 
 struct PQP_ClosestPoints
 {
-  PQP_REAL p1[3];
-  PQP_REAL p2[3];
+  double p1[3];
+  double p2[3];
 };
 
 struct PQP_ToleranceAllResult
 {
   /*
-  std::vector<PQP_REAL> triDist1,triDist2;       //closest distance per triangle
+  std::vector<double> triDist1,triDist2;       //closest distance per triangle
   std::vector<int> triPartner1,triPartner2;  //closest triangle on the other
   std::vector<PQP_ClosestPoints> triCp1,triCp2;   //closest points per triangle
   */
-  std::map<int,PQP_REAL> triDist1,triDist2;       //closest distance per triangle
+  std::map<int,double> triDist1,triDist2;       //closest distance per triangle
   std::map<int,int> triPartner1,triPartner2;  //closest triangle on the other
   std::map<int,PQP_ClosestPoints> triCp1,triCp2;   //closest points per triangle
 };

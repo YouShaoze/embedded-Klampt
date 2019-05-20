@@ -1,3 +1,13 @@
+/*
+* @File Name BV.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\BV.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:10:27
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -47,17 +57,17 @@
 
 struct BV
 {
-  PQP_REAL R[3][3];     // orientation of RSS & OBB
+  double R[3][3];     // orientation of RSS & OBB
 
 #if PQP_BV_TYPE & RSS_TYPE
-  PQP_REAL Tr[3];       // position of rectangle
-  PQP_REAL l[2];        // side lengths of rectangle
-  PQP_REAL r;           // radius of sphere summed with rectangle to form RSS
+  double Tr[3];       // position of rectangle
+  double l[2];        // side lengths of rectangle
+  double r;           // radius of sphere summed with rectangle to form RSS
 #endif
 
 #if PQP_BV_TYPE & OBB_TYPE
-  PQP_REAL To[3];       // position of obb
-  PQP_REAL d[3];        // (half) dimensions of obb
+  double To[3];       // position of obb
+  double d[3];        // (half) dimensions of obb
 #endif
 
   int first_child;      // positive value is index of first_child bv
@@ -66,13 +76,13 @@ struct BV
   BV();
   ~BV();
   int      Leaf() const   { return first_child < 0; }
-  PQP_REAL GetSize() const; 
-  void     FitToTris(PQP_REAL O[3][3], const Tri *tris, int num_tris);
-  void     FitToPointsLocal(const PQP_REAL (*pts)[3],int num_pts);
+  double GetSize() const; 
+  void     FitToTris(double O[3][3], const Tri *tris, int num_tris);
+  void     FitToPointsLocal(const double (*pts)[3],int num_pts);
 };
 
 inline
-PQP_REAL 
+double 
 BV::GetSize() const
 {
 #if PQP_BV_TYPE & RSS_TYPE
@@ -84,20 +94,20 @@ BV::GetSize() const
 
 /*  Deprecated
 int
-BV_Overlap(PQP_REAL R[3][3], PQP_REAL T[3], BV *b1, BV *b2);
+BV_Overlap(double R[3][3], double T[3], BV *b1, BV *b2);
 
 #if PQP_BV_TYPE & RSS_TYPE
-PQP_REAL
-BV_Distance(PQP_REAL R[3][3], PQP_REAL T[3], BV *b1, BV *b2);
+double
+BV_Distance(double R[3][3], double T[3], BV *b1, BV *b2);
 #endif
 */
 
 int
-BV_Overlap2(PQP_REAL R[3][3], PQP_REAL T[3], const BV *b1, const BV *b2);
+BV_Overlap2(double R[3][3], double T[3], const BV *b1, const BV *b2);
 
 #if PQP_BV_TYPE & RSS_TYPE
-PQP_REAL
-BV_Distance2(PQP_REAL R[3][3], PQP_REAL T[3], const BV *b1, const BV *b2);
+double
+BV_Distance2(double R[3][3], double T[3], const BV *b1, const BV *b2);
 #endif
 
 #endif

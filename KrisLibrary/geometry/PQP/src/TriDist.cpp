@@ -1,3 +1,13 @@
+/*
+* @File Name TriDist.cpp
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\TriDist.cpp
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:12:14
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -64,13 +74,13 @@
 //--------------------------------------------------------------------------
 
 void
-SegPoints(PQP_REAL VEC[3], 
-	  PQP_REAL X[3], PQP_REAL Y[3],             // closest points
-          const PQP_REAL P[3], const PQP_REAL A[3], // seg 1 origin, vector
-          const PQP_REAL Q[3], const PQP_REAL B[3]) // seg 2 origin, vector
+SegPoints(double VEC[3], 
+	  double X[3], double Y[3],             // closest points
+          const double P[3], const double A[3], // seg 1 origin, vector
+          const double Q[3], const double B[3]) // seg 2 origin, vector
 {
-  PQP_REAL T[3], A_dot_A, B_dot_B, A_dot_B, A_dot_T, B_dot_T;
-  PQP_REAL TMP[3];
+  double T[3], A_dot_A, B_dot_B, A_dot_B, A_dot_T, B_dot_T;
+  double TMP[3];
 
   VmV(T,Q,P);
   A_dot_A = VdotV(A,A);
@@ -82,12 +92,12 @@ SegPoints(PQP_REAL VEC[3],
   // t parameterizes ray P,A 
   // u parameterizes ray Q,B 
 
-  PQP_REAL t,u;
+  double t,u;
 
   // compute t for the closest point on ray P,A to
   // ray Q,B
 
-  PQP_REAL denom = A_dot_A*B_dot_B - A_dot_B*A_dot_B;
+  double denom = A_dot_A*B_dot_B - A_dot_B*A_dot_B;
 
   t = (A_dot_T*B_dot_B - B_dot_T*A_dot_B) / denom;
 
@@ -184,14 +194,14 @@ SegPoints(PQP_REAL VEC[3],
 // be expected.
 //--------------------------------------------------------------------------
 
-PQP_REAL 
-TriDist(PQP_REAL P[3], PQP_REAL Q[3],
-        const PQP_REAL S[3][3], const PQP_REAL T[3][3])  
+double 
+TriDist(double P[3], double Q[3],
+        const double S[3][3], const double T[3][3])  
 {
   // Compute vectors along the 6 sides
 
-  PQP_REAL Sv[3][3], Tv[3][3];
-  PQP_REAL VEC[3];
+  double Sv[3][3], Tv[3][3];
+  double VEC[3];
 
   VmV(Sv[0],S[1],S[0]);
   VmV(Sv[1],S[2],S[1]);
@@ -209,9 +219,9 @@ TriDist(PQP_REAL P[3], PQP_REAL Q[3],
   // Even if these tests fail, it may be helpful to know the closest
   // points found, and whether the triangles were shown disjoint
 
-  PQP_REAL V[3];
-  PQP_REAL Z[3];
-  PQP_REAL minP[3], minQ[3], mindd;
+  double V[3];
+  double Z[3];
+  double minP[3], minQ[3], mindd;
   int shown_disjoint = 0;
 
   mindd = VdistV2(S[0],T[0]) + 1;  // Set first minimum safely high
@@ -226,7 +236,7 @@ TriDist(PQP_REAL P[3], PQP_REAL Q[3],
       SegPoints(VEC,P,Q,S[i],Sv[i],T[j],Tv[j]);
       
       VmV(V,Q,P);
-      PQP_REAL dd = VdotV(V,V);
+      double dd = VdotV(V,V);
 
       // Verify this closest point pair only if the distance 
       // squared is less than the minimum found thus far.
@@ -238,13 +248,13 @@ TriDist(PQP_REAL P[3], PQP_REAL Q[3],
         mindd = dd;
 
         VmV(Z,S[(i+2)%3],P);
-        PQP_REAL a = VdotV(Z,VEC);
+        double a = VdotV(Z,VEC);
         VmV(Z,T[(j+2)%3],Q);
-        PQP_REAL b = VdotV(Z,VEC);
+        double b = VdotV(Z,VEC);
 
         if ((a <= 0) && (b >= 0)) return sqrt(dd);
 
-        PQP_REAL p = VdotV(V, VEC);
+        double p = VdotV(V, VEC);
 
         if (a < 0) a = 0;
         if (b > 0) b = 0;
@@ -269,7 +279,7 @@ TriDist(PQP_REAL P[3], PQP_REAL Q[3],
 
   // First check for case 1
 
-  PQP_REAL Sn[3], Snl;       
+  double Sn[3], Snl;       
   VcrossV(Sn,Sv[0],Sv[1]); // Compute normal to S triangle
   Snl = VdotV(Sn,Sn);      // Compute square of length of normal
   
@@ -279,7 +289,7 @@ TriDist(PQP_REAL P[3], PQP_REAL Q[3],
   {
     // Get projection lengths of T points
 
-    PQP_REAL Tp[3]; 
+    double Tp[3]; 
 
     VmV(V,S[0],T[0]);
     Tp[0] = VdotV(V,Sn);
@@ -338,13 +348,13 @@ TriDist(PQP_REAL P[3], PQP_REAL Q[3],
     }
   }
 
-  PQP_REAL Tn[3], Tnl;       
+  double Tn[3], Tnl;       
   VcrossV(Tn,Tv[0],Tv[1]); 
   Tnl = VdotV(Tn,Tn);      
   
   if (Tnl > 1e-15)  
   {
-    PQP_REAL Sp[3]; 
+    double Sp[3]; 
 
     VmV(V,T[0],S[0]);
     Sp[0] = VdotV(V,Tn);

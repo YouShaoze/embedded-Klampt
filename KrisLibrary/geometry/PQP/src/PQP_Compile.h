@@ -1,3 +1,13 @@
+/*
+* @File Name PQP_Compile.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\PQP_Compile.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:11:48
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -41,7 +51,7 @@
 #ifndef PQP_COMPILE_H
 #define PQP_COMPILE_H
 
-// prevents compiler warnings when PQP_REAL is float
+// prevents compiler warnings when double is float
 
 /*
 #include <math.h>
@@ -55,7 +65,7 @@ inline float fabs(float x) { return (float)fabs((double)x); }
 
 //-------------------------------------------------------------------------
 //
-// PQP_REAL
+// double
 //
 // This is the floating point type used throughout PQP.  doubles are
 // recommended, both for their precision and because the software has
@@ -64,7 +74,7 @@ inline float fabs(float x) { return (float)fabs((double)x); }
 //
 //-------------------------------------------------------------------------
 
-typedef double PQP_REAL;
+typedef double double;
 
 //-------------------------------------------------------------------------
 //
@@ -84,7 +94,7 @@ typedef double PQP_REAL;
 // Consequently, PQP is configured to use the RSS type in distance and 
 // tolerance queries (which use BV distance tests) and to use OBBs for
 // collision queries (which use BV overlap tests). Using both requires six
-// more PQP_REALs per BV node than using just one type. 
+// more doubles per BV node than using just one type. 
 //
 // To save space, you can configure PQP to use only one type, however, 
 // with RSS alone, collision queries will typically be slower.  With OBB's 

@@ -1,3 +1,13 @@
+/*
+* @File Name PQP.h
+* @File Path M:\MAS2\embedded Klampt\KrisLibrary\geometry\PQP\src\PQP.h
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:45
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-20 16:11:41
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
 /*************************************************************************\
 
   Copyright 1999 The University of North Carolina at Chapel Hill.
@@ -86,7 +96,7 @@ const int PQP_ERR_BUILD_EMPTY_MODEL = -5;
 
 //----------------------------------------------------------------------------
 //
-//  PQP_REAL 
+//  double 
 //
 //  The floating point type used throughout the package. The type is defined 
 //  in PQP_Compile.h, and by default is "double"
@@ -105,8 +115,8 @@ const int PQP_ERR_BUILD_EMPTY_MODEL = -5;
 //
 //  PQP_Model m;
 //
-//  PQP_REAL p1[3],p2[3],p3[3];  // 3 points will make triangle p
-//  PQP_REAL q1[3],q2[3],q3[3];  // another 3 points for triangle q
+//  double p1[3],p2[3],p3[3];  // 3 points will make triangle p
+//  double q1[3],q2[3],q3[3];  // another 3 points for triangle q
 //
 //  // some initialization of these vertices not shown
 //
@@ -135,7 +145,7 @@ const int PQP_ERR_BUILD_EMPTY_MODEL = -5;
 //                                      // the parameter is optional, since
 //                                      // arrays are reallocated as needed
 //
-//    int AddTri(const PQP_REAL *p1, const PQP_REAL *p2, const PQP_REAL *p3, 
+//    int AddTri(const double *p1, const double *p2, const double *p3, 
 //               int id);
 //
 //    int EndModel();
@@ -157,7 +167,7 @@ const int PQP_ERR_BUILD_EMPTY_MODEL = -5;
 //
 //    int NumBVTests();
 //    int NumTriTests();
-//    PQP_REAL QueryTimeSecs();
+//    double QueryTimeSecs();
 //
 //    // free the list of contact pairs; ordinarily this list is reused
 //    // for each query, and only deleted in the destructor.
@@ -205,8 +215,8 @@ const int PQP_FIRST_CONTACT = 2; // report first intersecting tri pair found
 
 int 
 PQP_Collide(PQP_CollideResult *result,
-            PQP_REAL R1[3][3], PQP_REAL T1[3], const PQP_Model *o1,
-            PQP_REAL R2[3][3], PQP_REAL T2[3], const PQP_Model *o2,
+            double R1[3][3], double T1[3], const PQP_Model *o1,
+            double R2[3][3], double T2[3], const PQP_Model *o2,
             int flag = PQP_ALL_CONTACTS);
 
 
@@ -227,15 +237,15 @@ PQP_Collide(PQP_CollideResult *result,
 //  
 //    int NumBVTests();
 //    int NumTriTests();
-//    PQP_REAL QueryTimeSecs();
+//    double QueryTimeSecs();
 //  
 //    // The following distance and points established the minimum distance
 //    // for the models, within the relative and absolute error bounds 
 //    // specified.
 //
-//    PQP_REAL Distance();
-//    const PQP_REAL *P1();  // pointers to three PQP_REALs
-//    const PQP_REAL *P2();  
+//    double Distance();
+//    const double *P1();  // pointers to three doubles
+//    const double *P2();  
 //  };
 
 //----------------------------------------------------------------------------
@@ -271,10 +281,10 @@ PQP_Collide(PQP_CollideResult *result,
 
 int 
 PQP_Distance(PQP_DistanceResult *result, 
-             PQP_REAL R1[3][3], PQP_REAL T1[3], const PQP_Model *o1,
-             PQP_REAL R2[3][3], PQP_REAL T2[3], const PQP_Model *o2,
-             PQP_REAL rel_err, PQP_REAL abs_err,
-             int qsize = 2, PQP_REAL init_bound = -1);
+             double R1[3][3], double T1[3], const PQP_Model *o1,
+             double R2[3][3], double T2[3], const PQP_Model *o2,
+             double rel_err, double abs_err,
+             int qsize = 2, double init_bound = -1);
 
 //----------------------------------------------------------------------------
 //
@@ -290,15 +300,15 @@ PQP_Distance(PQP_DistanceResult *result,
 //  
 //    int NumBVTests(); 
 //    int NumTriTests();
-//    PQP_REAL QueryTimeSecs();
+//    double QueryTimeSecs();
 //  
 //    // If the models are closer than ( <= ) tolerance, these points 
 //    // and distance were what established this.  Otherwise, 
 //    // distance and point values are not meaningful.
 //  
-//    PQP_REAL Distance();
-//    const PQP_REAL *P1();
-//    const PQP_REAL *P2();
+//    double Distance();
+//    const double *P1();
+//    const double *P2();
 //  
 //    // boolean says whether models are closer than tolerance distance
 //  
@@ -328,16 +338,16 @@ PQP_Distance(PQP_DistanceResult *result,
 
 int
 PQP_Tolerance(PQP_ToleranceResult *res, 
-              PQP_REAL R1[3][3], PQP_REAL T1[3], const PQP_Model *o1,
-              PQP_REAL R2[3][3], PQP_REAL T2[3], const PQP_Model *o2,
-              PQP_REAL tolerance,
+              double R1[3][3], double T1[3], const PQP_Model *o1,
+              double R2[3][3], double T2[3], const PQP_Model *o2,
+              double tolerance,
               int qsize = 2);
 
 int
 PQP_ToleranceAll(PQP_ToleranceResult* res,
-		 PQP_REAL R1[3][3], PQP_REAL T1[3], const PQP_Model *o1,
-		 PQP_REAL R2[3][3], PQP_REAL T2[3], const PQP_Model *o2,
-		 PQP_REAL tolerance,PQP_ToleranceAllResult& allRes);
+		 double R1[3][3], double T1[3], const PQP_Model *o1,
+		 double R2[3][3], double T2[3], const PQP_Model *o2,
+		 double tolerance,PQP_ToleranceAllResult& allRes);
 
 #endif 
 #endif
