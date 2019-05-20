@@ -4,17 +4,20 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-19 13:40:26
+* @Last Modified time: 2019-05-20 20:54:19
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
-#include <KrisLibrary/Logger.h>
+
+#include "stdint.h"
+
+// #include <KrisLibrary/Logger.h>
 #include "AnyGeometry.h"
 #include "Conversions.h"
 #include <math3d/geometry3d.h>
 #include <meshing/VolumeGrid.h>
 #include <meshing/Voxelize.h>
-#include <GLdraw/GeometryAppearance.h>
+// #include <GLdraw/GeometryAppearance.h>
 #include "CollisionPointCloud.h"
 #include "CollisionImplicitSurface.h"
 #include <utils/stringutils.h>
@@ -25,7 +28,7 @@
 #include <string.h>
 
 
-#include "PQP/include/PQP.h"
+#include "PQP/src/PQP.h"
 
 
 using namespace Geometry;
@@ -40,28 +43,44 @@ void Flip(AnyDistanceQueryResult& res)
 
 void Transform1(AnyDistanceQueryResult& res,const RigidTransform& T)
 {
-	if(res.hasClosestPoints) res.cp1 = T*res.cp1;
-	if(res.hasDirections) res.dir1 = T.R*res.dir1;
+	if(res.hasClosestPoints)
+	{
+		res.cp1 = T*res.cp1;
+	}
+	if(res.hasDirections)
+	{
+		res.dir1 = T.R*res.dir1;
+	}
 }
 
 void Transform2(AnyDistanceQueryResult& res,const RigidTransform& T)
 {
-	if(res.hasClosestPoints) res.cp2 = T*res.cp2;
-	if(res.hasDirections) res.dir2 = T.R*res.dir2;
+	if(res.hasClosestPoints)
+	{
+		res.cp2 = T*res.cp2;
+	}
+	if(res.hasDirections)
+	{
+		res.dir2 = T.R*res.dir2;
+	}
 }
 
 void Offset1(AnyDistanceQueryResult& res,Real offset)
 {
 	res.d -= offset;
 	if(res.hasDirections)
+	{
 		res.cp1.madd(res.dir1,offset);
+	}
 }
 
 void Offset2(AnyDistanceQueryResult& res,Real offset)
 {
 	res.d -= offset;
 	if(res.hasDirections)
+	{
 		res.cp2.madd(res.dir2,offset);
+	}
 }
 
 void SetCP2(AnyDistanceQueryResult& res)
@@ -73,12 +92,14 @@ void SetCP2(AnyDistanceQueryResult& res)
 
 void PushGroup1(AnyDistanceQueryResult& res,int i)
 {
-	if(res.group_elem1.empty()) {
+	if(res.group_elem1.empty())
+	{
 		res.group_elem1.resize(2);
 		res.group_elem1[0] = i;
 		res.group_elem1[1] = res.elem1;
 	}
-	else {
+	else
+	{
 		res.group_elem1.insert(res.group_elem1.begin(),i);
 	}
 	res.elem1 = i;
@@ -86,12 +107,14 @@ void PushGroup1(AnyDistanceQueryResult& res,int i)
 
 void PushGroup2(AnyDistanceQueryResult& res,int i)
 {
-	if(res.group_elem2.empty()) {
+	if(res.group_elem2.empty())
+	{
 		res.group_elem2.resize(2);
 		res.group_elem2[0] = i;
 		res.group_elem2[1] = res.elem2;
 	}
-	else {
+	else
+	{
 		res.group_elem2.insert(res.group_elem2.begin(),i);
 	}
 	res.elem2 = i;
@@ -103,12 +126,19 @@ int PointIndex(const CollisionImplicitSurface& s,const Vector3& ptworld)
 	s.currentTransform.mulInverse(ptworld,plocal);
 	IntTriple cell;
 	s.baseGrid.GetIndex(plocal,cell);
-	if(cell.a < 0) cell.a = 0;
-	if(cell.a >= s.baseGrid.value.m) cell.a = s.baseGrid.value.m-1;
-	if(cell.b < 0) cell.b = 0;
-	if(cell.b >= s.baseGrid.value.n) cell.b = s.baseGrid.value.n-1;
-	if(cell.c < 0) cell.c = 0;
-	if(cell.c >= s.baseGrid.value.p) cell.c = s.baseGrid.value.p-1;
+
+	if(cell.a < 0)
+		cell.a = 0;
+	if(cell.a >= s.baseGrid.value.m)
+		cell.a = s.baseGrid.value.m-1;
+	if(cell.b < 0)
+		cell.b = 0;
+	if(cell.b >= s.baseGrid.value.n)
+		cell.b = s.baseGrid.value.n-1;
+	if(cell.c < 0)
+		cell.c = 0;
+	if(cell.c >= s.baseGrid.value.p)
+		cell.c = s.baseGrid.value.p-1;
 	return cell.a*s.baseGrid.value.n*s.baseGrid.value.p + cell.b*s.baseGrid.value.p + cell.c;
 }
 

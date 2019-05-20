@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 20:26:26
+* @Last Modified time: 2019-05-20 20:35:41
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -13,11 +13,12 @@
 #include "stdint.h"
 
 
-#include <KrisLibrary/Logger.h>
+// #include <KrisLibrary/Logger.h>
 #include "CollisionMesh.h"
 #include "PenetrationDepth.h"
 #include <math3d/clip.h>
 #include <iostream>
+
 using namespace Meshing;
 using namespace std;
 
@@ -128,7 +129,7 @@ void CollisionMesh::InitCollisions()
 	if(!tris.empty())
 	{
 		pqpModel = new PQP_Model;
-		ConvertTriToPQP(*this,*pqpModel);
+		ConvertTriToPQP( *this,*pqpModel );
 		CalcVertexNeighbors();
 	}
 }
@@ -140,7 +141,7 @@ void CopyPQPModel(const PQP_Model* source, PQP_Model* dest)
 	dest->num_tris = source->num_tris;
 	dest->num_tris_alloced = source->num_tris;
 	dest->tris = new Tri[source->num_tris];  
-	for(int i=0;i<source->num_tris;i++)
+	for( int i = 0; i < source->num_tris; i++ )
 	{
 		dest->tris[i] = source->tris[i];
 	}
