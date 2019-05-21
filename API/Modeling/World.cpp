@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-19 13:27:10
+* @Last Modified time: 2019-05-21 14:05:46
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -187,7 +187,7 @@ int RobotWorld::IsRigidObject(int id) const
 int RobotWorld::RobotID(int index) const
 {
 	int id = (int)(terrains.size()+rigidObjects.size());
-	for(int i=0;i<index;i++)
+	for( int i = 0; i < index; i++ )
 	{
 		id += (int)robots[i]->links.size()+1;
 	}
@@ -197,7 +197,7 @@ int RobotWorld::RobotID(int index) const
 int RobotWorld::RobotLinkID(int index,int link) const
 {
 	int id = (int)(terrains.size()+rigidObjects.size());
-	for(int i=0;i<index;i++)
+	for( int i = 0; i < index; i++ )
 	{
 		id += (int)robots[i]->links.size()+1;
 	}
@@ -328,15 +328,15 @@ void RobotWorld::SetTransform(int id,const RigidTransform& T)
 
 void RobotWorld::InitCollisions()
 {
-	for(size_t j=0;j<robots.size();j++)
+	for(size_t j = 0; j < robots.size(); j++)
 	{ 
 		robots[j]->InitCollisions();
 	}
-	for(size_t j=0;j<rigidObjects.size();j++)
+	for(size_t j = 0; j < rigidObjects.size(); j++)
 	{
 		rigidObjects[j]->InitCollisions();
 	}
-	for(size_t j=0;j<terrains.size();j++)
+	for(size_t j = 0; j < terrains.size(); j++)
 	{
 		terrains[j]->InitCollisions();
 	}
@@ -354,37 +354,37 @@ void RobotWorld::UpdateGeometry()
 	}
 }
 
-		void RobotWorld::SetGLLights()
-		{
-			for(size_t i=0;i<lights.size();i++) 
-			{
-				lights[i].setCurrentGL(i);
-			}
-			DEBUG_GL_ERRORS()
-				/*
+		// void RobotWorld::SetGLLights()
+		// {
+		// 	for(size_t i=0;i<lights.size();i++) 
+		// 	{
+		// 		lights[i].setCurrentGL(i);
+		// 	}
+			// DEBUG_GL_ERRORS()
+			/*
 			for(int i=(int)lights.size();i<GL_MAX_LIGHTS;i++) {
 				printf("disable %d\n",i);
 				glDisable(GL_LIGHT0+i);
 				DEBUG_GL_ERRORS()
 					}
-				*/
-		}
+			*/
+		// }
 
-		void RobotWorld::DrawGL()
-		{
-			for(size_t i=0;i<robots.size();i++)
-			{
-				robotViews[i].Draw();
-			}
-			for(size_t i=0;i<terrains.size();i++)
-			{
-				terrains[i]->DrawGL();
-			}
-			for(size_t i=0;i<rigidObjects.size();i++)
-			{
-				rigidObjects[i]->DrawGL();
-			}
-		}
+		// void RobotWorld::DrawGL()
+		// {
+		// 	for(size_t i=0;i<robots.size();i++)
+		// 	{
+		// 		robotViews[i].Draw();
+		// 	}
+		// 	for(size_t i=0;i<terrains.size();i++)
+		// 	{
+		// 		terrains[i]->DrawGL();
+		// 	}
+		// 	for(size_t i=0;i<rigidObjects.size();i++)
+		// 	{
+		// 		rigidObjects[i]->DrawGL();
+		// 	}
+		// }
 
 int RobotWorld::LoadRobot(const string& fn)
 {
@@ -491,9 +491,9 @@ int RobotWorld::AddTerrain(const string& name,Terrain* t)
 
 void RobotWorld::DeleteTerrain(const string& name)
 {
-	for(size_t i=0;i<terrains.size();i++)
+	for( size_t i = 0;i < terrains.size(); i++ )
 	{
-		if(terrains[i]->name == name)
+		if( terrains[i]->name == name )
 		{
 			terrains.erase(terrains.begin()+i);
 			i--;

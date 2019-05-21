@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-20 20:54:19
+* @Last Modified time: 2019-05-21 13:58:16
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -190,8 +190,8 @@ Meshing::VolumeGrid& AnyGeometry3D::AsImplicitSurface() { return *AnyCast_Raw<Me
 vector<AnyGeometry3D>& AnyGeometry3D::AsGroup() { return *AnyCast_Raw<vector<AnyGeometry3D> >(&data); }
 
 //appearance casts
-GLDraw::GeometryAppearance* AnyGeometry3D::TriangleMeshAppearanceData() { return AnyCast<GLDraw::GeometryAppearance>(&appearanceData); }
-const GLDraw::GeometryAppearance* AnyGeometry3D::TriangleMeshAppearanceData() const { return AnyCast<GLDraw::GeometryAppearance>(&appearanceData); }
+// GLDraw::GeometryAppearance* AnyGeometry3D::TriangleMeshAppearanceData() { return AnyCast<GLDraw::GeometryAppearance>(&appearanceData); }
+// const GLDraw::GeometryAppearance* AnyGeometry3D::TriangleMeshAppearanceData() const { return AnyCast<GLDraw::GeometryAppearance>(&appearanceData); }
 
 const char* AnyGeometry3D::TypeName(Type type)
 {
@@ -207,17 +207,18 @@ const char* AnyGeometry3D::TypeName(Type type)
 
 bool AnyGeometry3D::Empty() const
 {
-	switch(type) {
-	case Primitive:
-		return AsPrimitive().type == GeometricPrimitive3D::Empty;
-	case TriangleMesh:
-		return AsTriangleMesh().tris.empty();
-	case PointCloud:
-		return AsPointCloud().points.empty();
-	case ImplicitSurface:
-		return false;
-	case Group:
-		return AsGroup().empty();
+	switch(type)
+	{
+		case Primitive:
+			return AsPrimitive().type == GeometricPrimitive3D::Empty;
+		case TriangleMesh:
+			return AsTriangleMesh().tris.empty();
+		case PointCloud:
+			return AsPointCloud().points.empty();
+		case ImplicitSurface:
+			return false;
+		case Group:
+			return AsGroup().empty();
 	}
 	return false;
 }
@@ -226,19 +227,27 @@ void AnyGeometry3D::Merge(const vector<AnyGeometry3D>& geoms)
 {
 	vector<int> nonempty;
 	for(size_t i=0;i<geoms.size();i++)
+	{
 		if(!geoms[i].Empty()) nonempty.push_back((int)i);
+	}
 	if(nonempty.empty()) *this = AnyGeometry3D();
-	else  if(nonempty.size()==1) {
+	else if(nonempty.size()==1)
+	{
 		*this = geoms[nonempty[0]];
 	}
-	else {
+	else
+	{
 		type = geoms[nonempty[0]].type;
 		bool group = false;
 		for(size_t i=1;i<nonempty.size();i++)
-			if(geoms[nonempty[i]].type != type) {
-	//its' a group type
-	group = true;
+		{
+
+			if(geoms[nonempty[i]].type != type)
+			{
+				//its' a group type
+				group = true;
 			}
+		}
 		switch(type) {
 		case Primitive:
 			group = true;
