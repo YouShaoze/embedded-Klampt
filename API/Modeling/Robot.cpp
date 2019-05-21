@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 15:26:58
+* @Last Modified time: 2019-05-21 16:17:12
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -931,6 +931,7 @@ bool Robot::LoadRob(const char *fn)
 	//joints.resize(0);
 	bool sizeErr = false;
 
+	//检查参数数量是否对应
 	if (!parents.empty() && n != parents.size()) {
 		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of parents specified ("<<parents.size()<<")");
 		sizeErr = true;
@@ -941,60 +942,61 @@ bool Robot::LoadRob(const char *fn)
 		sizeErr = true;
 	}
 
-	if (!driverNames.empty() && nd != driverNames.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of driver names specified ("<<driverNames.size()<<")");
-		sizeErr = true;
-	}
 
-	if (!drivers.empty() && nd != drivers.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of drivers specified ("<<drivers.size()<<")");
-		sizeErr = true;
-	}
+	// if (!driverNames.empty() && nd != driverNames.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of driver names specified ("<<driverNames.size()<<")");
+	// 	sizeErr = true;
+	// }
+
+	// if (!drivers.empty() && nd != drivers.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of drivers specified ("<<drivers.size()<<")");
+	// 	sizeErr = true;
+	// }
 
 	if (!jointType.empty() && n != jointType.size()) {
 		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of joint types specified ("<<jointType.size()<<")");
 		sizeErr = true;
 	}
 
-	if (!joints.empty() && nj != joints.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of joints specified ("<<joints.size()<<")");
-		sizeErr = true;
-	}
+	// if (!joints.empty() && nj != joints.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of joints specified ("<<joints.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!massVec.empty() && n != massVec.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of masses specified ("<<massVec.size()<<")");
-		sizeErr = true;
-	}
+	// if (!massVec.empty() && n != massVec.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of masses specified ("<<massVec.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!comVec.empty() && n != comVec.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of COMs specified ("<<comVec.size()<<")");
-		sizeErr = true;
-	}
+	// if (!comVec.empty() && n != comVec.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of COMs specified ("<<comVec.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!inertiaVec.empty() && n != inertiaVec.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of inertia components specified ("<<inertiaVec.size()<<")");
-		sizeErr = true;
-	}
+	// if (!inertiaVec.empty() && n != inertiaVec.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of inertia components specified ("<<inertiaVec.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!a.empty() && n != a.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of DH-parameters specified ("<<a.size()<<")");
-		sizeErr = true;
-	}
+	// if (!a.empty() && n != a.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of DH-parameters specified ("<<a.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!d.empty() && n != d.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of DH-parameters specified ("<<d.size()<<")");
-		sizeErr = true;
-	}
+	// if (!d.empty() && n != d.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of DH-parameters specified ("<<d.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!alpha.empty() && n != alpha.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of DH-parameters specified ("<<alpha.size()<<")");
-		sizeErr = true;
-	}
+	// if (!alpha.empty() && n != alpha.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of DH-parameters specified ("<<alpha.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!theta.empty() && n != theta.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of DH-parameters specified ("<<theta.size()<<")");
-		sizeErr = true;
-	}
+	// if (!theta.empty() && n != theta.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of DH-parameters specified ("<<theta.size()<<")");
+	// 	sizeErr = true;
+	// }
 
 	if (!TParent.empty() && n != TParent.size()) {
 		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of link transforms specified ("<<TParent.size()<<")");
@@ -1021,25 +1023,25 @@ bool Robot::LoadRob(const char *fn)
 		sizeErr = true;
 	}
 
-	if (!vMaxVec.empty() && n != vMaxVec.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of velocity limit variables specified ("<<vMaxVec.size()<<")");
-		sizeErr = true;
-	}
+	// if (!vMaxVec.empty() && n != vMaxVec.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of velocity limit variables specified ("<<vMaxVec.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!vMinVec.empty() && n != vMinVec.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of velocity limit variables specified ("<<vMinVec.size()<<")");
-		sizeErr = true;
-	}
+	// if (!vMinVec.empty() && n != vMinVec.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of velocity limit variables specified ("<<vMinVec.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!tMaxVec.empty() && n != tMaxVec.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of torque limit variables specified ("<<tMaxVec.size()<<")");
-		sizeErr = true;
-	}
+	// if (!tMaxVec.empty() && n != tMaxVec.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of torque limit variables specified ("<<tMaxVec.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!pMaxVec.empty() && n != pMaxVec.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of power limit variables specified ("<<pMaxVec.size()<<")");
-		sizeErr = true;
-	}
+	// if (!pMaxVec.empty() && n != pMaxVec.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of power limit variables specified ("<<pMaxVec.size()<<")");
+	// 	sizeErr = true;
+	// }
 
 	if (!geomFn.empty() && n != geomFn.size()) {
 		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of geometry files specified ("<<geomFn.size()<<")");
@@ -1051,17 +1053,18 @@ bool Robot::LoadRob(const char *fn)
 		sizeErr = true;
 	}
 
-	if (!geomscale.empty() && n != geomscale.size() && 1 != geomscale.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of geometry scale variables specified ("<<geomscale.size()<<")");
-		sizeErr = true;
-	}
+	// if (!geomscale.empty() && n != geomscale.size() && 1 != geomscale.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of geometry scale variables specified ("<<geomscale.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (!geommargin.empty() && n != geommargin.size() && 1 != geommargin.size()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of geometry margin variables specified ("<<geommargin.size()<<")");
-		sizeErr = true;
-	}
+	// if (!geommargin.empty() && n != geommargin.size() && 1 != geommargin.size()) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of geometry margin variables specified ("<<geommargin.size()<<")");
+	// 	sizeErr = true;
+	// }
 
-	if (sizeErr) {
+	if (sizeErr)
+	{
 		// LOG4CXX_ERROR(GET_LOGGER(RobParser),"Size votes:");
 		for (auto i = nvote.counts.begin(); i != nvote.counts.end(); i++) {
 			// LOG4CXX_ERROR(GET_LOGGER(RobParser),i->first<<": "<<i->second);
