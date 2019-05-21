@@ -1,4 +1,13 @@
 /*
+* @File Name: Robot.cpp
+* @File Path: K:\work\MAS2\embedded-Klampt\API\Modeling\Robot.cpp
+* @Author: 29505
+* @Date:   2019-05-21 22:23:19
+* @Last Modified by:   29505
+* @Last Modified time: 2019-05-21 23:56:37
+* @Email: 295054118@whut.edu.cn
+*/
+/*
 * @File Name Robot.cpp
 * @File Path M:\MAS2\embedded Klampt\API\Modeling\Robot.cpp
 * @Author: Ruige_Lee
@@ -1265,7 +1274,7 @@ bool Robot::LoadRob(const char *fn)
 			continue;
 		}
 
-		//这里加载三角mesh?
+		//这里加载三角mesh
 		if ( !LoadGeometry(i, geomFn[i].c_str()) ) {
 			// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Unable to load link "<<i<<" geometry file "<<geomFn[i]);
 			return false;
