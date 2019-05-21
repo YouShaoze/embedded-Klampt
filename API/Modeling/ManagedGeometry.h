@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-19 13:41:37
+* @Last Modified time: 2019-05-21 20:15:31
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -48,7 +48,7 @@ class ManagedGeometry
 {
  public:
 	typedef std::shared_ptr<Geometry::AnyCollisionGeometry3D> GeometryPtr;
-	typedef std::shared_ptr<GLDraw::GeometryAppearance> AppearancePtr;
+	// typedef std::shared_ptr<GLDraw::GeometryAppearance> AppearancePtr;
 
 	ManagedGeometry();
 	///Copy constructor is a shallow copy
@@ -81,7 +81,7 @@ class ManagedGeometry
 	///re-initializing collision data). 
 	void TransformGeometry(const Math3D::Matrix4& xform);
 	///Returns the shared appearance data
-	AppearancePtr Appearance() const;
+	// AppearancePtr Appearance() const;
 	///Returns true if there are multiple objects sharing the appearance data.
 	///If it is shared, then changing one appearance affects multiple objects.
 	bool IsAppearanceShared() const;
@@ -119,7 +119,7 @@ class ManagedGeometry
  private:
 	std::string cacheKey,dynamicGeometrySource;
 	GeometryPtr geometry;
-	AppearancePtr appearance;
+	// AppearancePtr appearance;
 };
 
 class GeometryManager
