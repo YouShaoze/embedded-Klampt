@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 16:36:09
+* @Last Modified time: 2019-05-21 16:49:29
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -1581,23 +1581,23 @@ bool Robot::LoadRob(const char *fn)
 	// timer.Reset();
 
 	//do the mounting of subchains
-	for (size_t i = 0; i < mountLinks.size(); i++) {
-		const char *ext = FileExtension(mountFiles[i].c_str());
+	// for (size_t i = 0; i < mountLinks.size(); i++) {
+	// 	const char *ext = FileExtension(mountFiles[i].c_str());
 
-		if (ext && (0 == strcmp(ext, "rob") || 0 == strcmp(ext, "urdf"))) {
-			string fn = path + mountFiles[i];
-			// LOG4CXX_INFO(GET_LOGGER(RobParser),"   Mounting subchain file " << mountFiles[i]);
-			Robot subchain;
+	// 	if (ext && (0 == strcmp(ext, "rob") || 0 == strcmp(ext, "urdf"))) {
+	// 		string fn = path + mountFiles[i];
+	// 		// LOG4CXX_INFO(GET_LOGGER(RobParser),"   Mounting subchain file " << mountFiles[i]);
+	// 		Robot subchain;
 
-			if (!subchain.Load(fn.c_str())) {
-				// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Error reading subchain file " << fn);
-				return false;
-			}
+	// 		if (!subchain.Load(fn.c_str())) {
+	// 			// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Error reading subchain file " << fn);
+	// 			return false;
+	// 		}
 
-			const char *prefix = (mountNames[i].empty() ? NULL : mountNames[i].c_str());
-			Mount(mountLinks[i], subchain, mountT[i], prefix);
-		}
-	}
+	// 		const char *prefix = (mountNames[i].empty() ? NULL : mountNames[i].c_str());
+	// 		Mount(mountLinks[i], subchain, mountT[i], prefix);
+	// 	}
+	// }
 
 	if (!CheckValid()) {
 		return false;
