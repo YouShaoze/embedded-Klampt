@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 16:17:12
+* @Last Modified time: 2019-05-21 16:24:44
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -1074,99 +1074,103 @@ bool Robot::LoadRob(const char *fn)
 	}
 
 	// LOG4CXX_INFO(GET_LOGGER(RobParser),"   Parsing robot file, "<< n <<" links read...");
-	if ( parents.empty() ) {
-		parents.resize(n);
+	// if ( parents.empty() )
+	// {
+	// 	parents.resize(n);
 
-		for (int i = 0; i < (int) n; i++) {
-			parents[i] = i - 1;
-		}
-	}
+	// 	for (int i = 0; i < (int) n; i++) {
+	// 		parents[i] = i - 1;
+	// 	}
+	// }
 
 	Initialize(n);
 
 	//Init standard stuff
-	if (linkNames.empty()) {
-		linkNames.resize(links.size());
+	// if (linkNames.empty())
+	// {
+	// 	linkNames.resize(links.size());
 
-		for (size_t i = 0; i < links.size(); i++) {
-			char buf[64];
-			sprintf(buf, "Link %d", (int)i);
-			linkNames[i] = buf;
-		}
-	}
+	// 	for (size_t i = 0; i < links.size(); i++) {
+	// 		char buf[64];
+	// 		sprintf(buf, "Link %d", (int)i);
+	// 		linkNames[i] = buf;
+	// 	}
+	// }
 
 	accMax.resize(n, Inf);
 
-	if (qVec.empty()) {
-		q.set(Zero);
-	} else {
-		q.copy(&qVec[0]);
-	}
+	// if (qVec.empty()) {
+	// 	q.set(Zero);
+	// } else {
+	q.copy(&qVec[0]);
+	// }
 
-	if (qMinVec.empty()) {
-		qMin.set(-Inf);
-	} else {
-		qMin.copy(&qMinVec[0]);
-	}
+	// if (qMinVec.empty()) {
+	// 	qMin.set(-Inf);
+	// } else {
+	qMin.copy(&qMinVec[0]);
+	// }
 
-	if (qMaxVec.empty()) {
-		qMax.set(Inf);
-	} else {
-		qMax.copy(&qMaxVec[0]);
-	}
+	// if (qMaxVec.empty()) {
+	// 	qMax.set(Inf);
+	// } else {
+	qMax.copy(&qMaxVec[0]);
+	// }
 
-	if (vMaxVec.empty()) {
-		velMax.set(Inf);
-	} else {
-		velMax.copy(&vMaxVec[0]);
-	}
+	// if (vMaxVec.empty()) {
+	velMax.set(Inf);
+	// } else {
+	// velMax.copy(&vMaxVec[0]);
+	// }
 
-	if (vMinVec.empty()) {
-		velMin.setNegative(velMax);
-	} else {
-		velMin.copy(&vMinVec[0]);
-	}
+	// if (vMinVec.empty()) {
+	velMin.setNegative(velMax);
+	// } else {
+	// 	velMin.copy(&vMinVec[0]);
+	// }
 
-	if (tMaxVec.empty()) {
-		torqueMax.set(Inf);
-	} else {
-		torqueMax.copy(&tMaxVec[0]);
-	}
+	// if (tMaxVec.empty()) {
+	torqueMax.set(Inf);
+	// } else {
+	// 	torqueMax.copy(&tMaxVec[0]);
+	// }
 
-	if (pMaxVec.empty()) {
-		powerMax.set(Inf);
-	} else {
-		powerMax.copy(&pMaxVec[0]);
-	}
+	// if (pMaxVec.empty()) {
+	powerMax.set(Inf);
+	// } else {
+	// 	powerMax.copy(&pMaxVec[0]);
+	// }
 
-	if (aMaxVec.empty()) {
-		if (tMaxVec.empty()) {
-			accMax.set(Inf);
-		} else {
-			GetAccMax(*this, accMax);
-		}
-	} else {
-		accMax.copy(&aMaxVec[0]);
-	}
+	// if (aMaxVec.empty()) {
+		// if (tMaxVec.empty()) {
+	accMax.set(Inf);
+		// } else {
+		// 	GetAccMax(*this, accMax);
+		// }
+	// } else {
+	// 	accMax.copy(&aMaxVec[0]);
+	// }
 
-	if (axes.empty()) {
-		axes.resize(TParent.size(), Vector3(0, 0, 1));
-	}
+	// if (axes.empty()) {
+	// 	axes.resize(TParent.size(), Vector3(0, 0, 1));
+	// }
 
 	//dq.resize(n,0);
-	if (TParent.empty()
-		&& (a.empty() || d.empty() || alpha.empty() || theta.empty())) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   No D-H parameters or link transforms specified");
-		return false;
-	} else if (TParent.empty()) {
-		DenavitHartenbergRobotSetup(alpha, a, d, theta, *this);
-	} else {
-		for (size_t i = 0; i < links.size(); i++) {
-			links[i].type = RobotLink3D::Revolute;
-			links[i].T0_Parent = TParent[i];
-			links[i].w = axes[i];
-		}
+	// if (TParent.empty()
+	// 	&& (a.empty() || d.empty() || alpha.empty() || theta.empty())) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   No D-H parameters or link transforms specified");
+	// 	return false;
+	// } else if (TParent.empty()) {
+	// 	DenavitHartenbergRobotSetup(alpha, a, d, theta, *this);
+	// } else 
+	// {
+	for (size_t i = 0; i < links.size(); i++)
+	{
+		links[i].type = RobotLink3D::Revolute;
+		links[i].T0_Parent = TParent[i];
+		links[i].w = axes[i];
 	}
+	// }
 
 	for (size_t i = 0; i < links.size(); i++) {
 		if (parents[i] < 0) {
@@ -1174,67 +1178,72 @@ bool Robot::LoadRob(const char *fn)
 		}
 	}
 
-	if (!jointType.empty()) {
-		for (size_t i = 0; i < links.size(); i++) {
-			links[i].type = (RobotLink3D::Type) jointType[i];
-		}
+	// if (!jointType.empty()) {
+	for (size_t i = 0; i < links.size(); i++)
+	{
+		links[i].type = (RobotLink3D::Type) jointType[i];
 	}
+	// }
 
 	UpdateFrames();
 
-	if (comVec.empty()) {
-		for (size_t i = 0; i < links.size(); i++) {
-			links[i].com.setZero();
-		}
-	} else {
-		for (size_t i = 0; i < links.size(); i++) {
-			links[i].com = comVec[i];
-		}
+	// if (comVec.empty()) {
+	for (size_t i = 0; i < links.size(); i++) 
+	{
+		links[i].com.setZero();
+	}
+	// } else {
+	// 	for (size_t i = 0; i < links.size(); i++) {
+	// 		links[i].com = comVec[i];
+	// 	}
+	// }
+
+	// if (massVec.empty()) {
+	for (size_t i = 0; i < links.size(); i++)
+	{
+		links[i].mass = 1.0;
+	}
+	// } else {
+	// 	for (size_t i = 0; i < links.size(); i++) {
+	// 		links[i].mass = massVec[i];
+	// 	}
 	}
 
-	if (massVec.empty()) {
-		for (size_t i = 0; i < links.size(); i++) {
-			links[i].mass = 1.0;
-		}
-	} else {
-		for (size_t i = 0; i < links.size(); i++) {
-			links[i].mass = massVec[i];
-		}
+	// if (inertiaVec.empty())
+	// {
+	for (size_t i = 0; i < links.size(); i++) {
+		links[i].inertia.setIdentity();
 	}
-
-	if (inertiaVec.empty()) {
-		for (size_t i = 0; i < links.size(); i++) {
-			links[i].inertia.setIdentity();
-		}
-	} else {
-		for (size_t i = 0; i < links.size(); i++) {
-			links[i].inertia = inertiaVec[i];
-		}
-	}
+	// }
+	// else {
+	// 	for (size_t i = 0; i < links.size(); i++) {
+	// 		links[i].inertia = inertiaVec[i];
+	// 	}
+	// }
 
 	//automatically compute torque limits from COMs
-	if (autoTorque != 0.0) {
-		Real grav = Abs(autoTorque) * 9.8;
-		//TODO: more sophisticated chain structures
-		Real sumMass = 0;
-		Real sumCom = 0;
+	// if (autoTorque != 0.0) {
+	// 	Real grav = Abs(autoTorque) * 9.8;
+	// 	//TODO: more sophisticated chain structures
+	// 	Real sumMass = 0;
+	// 	Real sumCom = 0;
 
-		for (int i = (int) links.size() - 1; i >= 0; i--) {
-			Real oldMass = sumMass;
-			Real oldCom = sumCom;
-			sumMass += links[i].mass;
-			oldCom += links[i].T0_Parent.t.length();
-			sumCom = (links[i].com.length() * links[i].mass + oldCom * oldMass)
-					 / (links[i].mass + oldMass);
-			torqueMax[i] = sumCom * sumMass * grav;
-			//printf("Torque Max %d = %g, moment arm = %g\n",i,torqueMax[i],sumCom);
-		}
-	}
+	// 	for (int i = (int) links.size() - 1; i >= 0; i--) {
+	// 		Real oldMass = sumMass;
+	// 		Real oldCom = sumCom;
+	// 		sumMass += links[i].mass;
+	// 		oldCom += links[i].T0_Parent.t.length();
+	// 		sumCom = (links[i].com.length() * links[i].mass + oldCom * oldMass)
+	// 				 / (links[i].mass + oldMass);
+	// 		torqueMax[i] = sumCom * sumMass * grav;
+	// 		//printf("Torque Max %d = %g, moment arm = %g\n",i,torqueMax[i],sumCom);
+	// 	}
+	// }
 
 	//TODO: whole-body scaling isn't done yet
-	if (scale != 1.0) {
-		// FatalError("Scale not done yet");
-	}
+	// if (scale != 1.0) {
+	// 	// FatalError("Scale not done yet");
+	// }
 
 	if (geomscale.size() == 1) {
 		geomscale.resize(n, geomscale[0]);
