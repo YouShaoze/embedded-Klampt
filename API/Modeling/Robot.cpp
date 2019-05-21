@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 16:49:29
+* @Last Modified time: 2019-05-21 17:46:30
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -1251,7 +1251,7 @@ bool Robot::LoadRob(const char *fn)
 
 	geomManagers.resize(n);
 	geomFiles.resize(n);
-	Timer timer;
+	// Timer timer;
 
 	for (size_t i = 0; i < geomFn.size(); i++) {
 		if (geomFn[i].empty()) {
@@ -1265,6 +1265,7 @@ bool Robot::LoadRob(const char *fn)
 			continue;
 		}
 
+		//这里加载三角mesh?
 		if ( !LoadGeometry(i, geomFn[i].c_str()) ) {
 			// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Unable to load link "<<i<<" geometry file "<<geomFn[i]);
 			return false;
@@ -1474,26 +1475,26 @@ bool Robot::LoadRob(const char *fn)
 
 
 	//first mount the geometries, they affect whether a link is included in self collision testing
-	for (size_t i = 0; i < mountLinks.size(); i++)
-	{
-		const char *ext = FileExtension(mountFiles[i].c_str());
+	// for (size_t i = 0; i < mountLinks.size(); i++)
+	// {
+	// 	const char *ext = FileExtension(mountFiles[i].c_str());
 
-		if (ext && (0 == strcmp(ext, "rob") || 0 == strcmp(ext, "urdf"))) {
-			//its a robot, delay til later
-		} else {
-			string fn = path + mountFiles[i];
-			// LOG4CXX_INFO(GET_LOGGER(RobParser),"   Mounting geometry file " << mountFiles[i]);
-			//mount a triangle mesh on top of another triangle mesh
-			ManagedGeometry loader;
+	// 	if (ext && (0 == strcmp(ext, "rob") || 0 == strcmp(ext, "urdf"))) {
+	// 		//its a robot, delay til later
+	// 	} else {
+	// 		string fn = path + mountFiles[i];
+	// 		// LOG4CXX_INFO(GET_LOGGER(RobParser),"   Mounting geometry file " << mountFiles[i]);
+	// 		//mount a triangle mesh on top of another triangle mesh
+	// 		ManagedGeometry loader;
 
-			if ( !loader.Load(fn.c_str()) ) {
-				// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Error loading mount geometry file " << fn);
-				return false;
-			}
+	// 		if ( !loader.Load(fn.c_str()) ) {
+	// 			// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Error loading mount geometry file " << fn);
+	// 			return false;
+	// 		}
 
-			Mount(mountLinks[i], *loader, mountT[i]);
-		}
-	}
+	// 		Mount(mountLinks[i], *loader, mountT[i]);
+	// 	}
+	// }
 
 	//automatically compute mass parameters from geometry
 	// if (autoMass) {
@@ -1726,344 +1727,350 @@ void Robot::SetGeomFiles(const vector<string> &files)
 
 bool Robot::LoadGeometry(int i, const char *file)
 {
-	if (i >= (int)geomManagers.size()) {
+	if (i >= (int)geomManagers.size())
+	{
 		geomManagers.resize(geometry.size());
 	}
 
 	//make the default appearance be grey, so that loader may override it
 	geomManagers[i].Appearance()->faceColor.set(0.5, 0.5, 0.5);
 
-	if (geomManagers[i].Load(file)) {
+	if (geomManagers[i].Load(file))
+	{
 		geometry[i] = geomManagers[i];
 		return true;
 	}
-
-	return false;
-}
-
-bool Robot::SaveGeometry(const char *prefix)
-{
-	for (size_t i = 0; i < links.size(); i++) {
-		if (!IsGeometryEmpty(i)) {
-			if (geomFiles[i].empty()) {
-				// LOG4CXX_ERROR(GET_LOGGER(RobParser),"Robot::SaveGeometry: warning, link "<<i<<" has empty file name");
-				continue;
-			}
-
-			if (!geometry[i]->Save((string(prefix) + geomFiles[i]).c_str())) {
-				// LOG4CXX_ERROR(GET_LOGGER(RobParser), "Robot::SaveGeometry: Unable to save to geometry file " << string(prefix)+geomFiles[i] << "");
-				return false;
-			}
-		}
-	}
-
-	return true;
-}
-
-bool Robot::Save(const char *fn)
-{
-	ofstream file;
-	file.open(fn, ios::out);
-
-	if (!file.is_open()) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), fn << " cannot be opened!" << "");
-		file.close();
+	else
+	{
 		return false;
 	}
-
-	int nLinks = links.size();
-	file << "links\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << "\"" << linkNames[i] << "\" ";
-	}
-
-	file << endl << endl;
-
-	file << "parents\t";
-
-	for (int i = 0; i < (int) parents.size(); i++) {
-		file << parents[i] << " ";
-	}
-
-	file << endl << endl;
-
-	file << "axis\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << links[i].w << "\t";
-	}
-
-	file << endl << endl;
-
-	file << "jointtype\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		if (links[i].type == RobotLink3D::Prismatic) {
-			file << "p ";
-		} else {
-			file << "r ";
-		}
-	}
-
-	file << endl << endl;
-
-	file << "Tparent\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		RigidTransform T(links[i].T0_Parent);
-		file << T.R(0, 0) << " " << T.R(0, 1) << " " << T.R(0, 2) << "\t";
-		file << T.R(1, 0) << " " << T.R(1, 1) << " " << T.R(1, 2) << "\t";
-		file << T.R(2, 0) << " " << T.R(2, 1) << " " << T.R(2, 2) << "\t";
-		file << T.t[0] << " " << T.t[1] << " " << T.t[2];
-
-		if (i < nLinks - 1) {
-			file << " \\" << endl;
-		}
-	}
-
-	file << endl << endl;
-
-	file << "q\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << q[i] << " ";
-	}
-
-	file << endl << endl;
-
-	file << "qmin\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << qMin[i] << " ";
-	}
-
-	file << endl << endl;
-
-	file << "qmax\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << qMax[i] << " ";
-	}
-
-	file << endl << endl;
-
-	file << "geometry\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		if (!geometry[i] || geometry[i]->Empty()) {
-			file << "\"\" ";
-		} else {
-			file << "\"" << geomFiles[i] << "\" ";
-		}
-	}
-
-	file << endl << endl;
-
-	file << "mass\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << links[i].mass << " ";
-	}
-
-	file << endl << endl;
-
-	file << "com\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << links[i].com[0] << " " << links[i].com[1] << " "
-			 << links[i].com[2] << "\t";
-	}
-
-	file << endl << endl;
-
-	file << "inertia\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		Matrix3 inertia(links[i].inertia);
-		file << inertia(0, 0) << " " << inertia(0, 1) << " " << inertia(0, 2)
-			 << " ";
-		file << inertia(1, 0) << " " << inertia(1, 1) << " " << inertia(1, 2)
-			 << " ";
-		file << inertia(2, 0) << " " << inertia(2, 1) << " " << inertia(2, 2)
-			 << "\t";
-	}
-
-	file << endl << endl;
-
-	file << "torquemax\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << torqueMax[i] << " ";
-	}
-
-	file << endl << endl;
-
-	file << "velmax\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << velMax[i] << " ";
-	}
-
-	file << endl << endl;
-
-	file << "accmax\t";
-
-	for (int i = 0; i < nLinks; i++) {
-		file << accMax[i] << " ";
-	}
-
-	file << endl << endl;
-
-	for (int i = 0; i < nLinks; i++) {
-		if (!geometry[i] || geometry[i]->Empty()) {
-			continue;
-		}
-
-		vector<int> nocollision;
-
-		for (int j = i + 1; j < nLinks; j++) {
-			if (!geometry[j] || geometry[j]->Empty()) {
-				continue;
-			}
-
-			if (parents[i] != j && parents[j] != i) {
-				if (selfCollisions(i, j) == NULL) {
-					nocollision.push_back(j);
-				}
-			}
-		}
-
-		if (!nocollision.empty()) {
-			file << "noselfcollision\t";
-
-			for (size_t j = 0; j < nocollision.size(); j++) {
-				file << i << " " << nocollision[j] << "\t";
-			}
-
-			file << endl;
-		}
-	}
-
-	file << endl;
-
-	int nJoints = joints.size();
-
-	for (int i = 0; i < nJoints; i++) {
-		file << "joint ";
-
-		switch (joints[i].type) {
-			case RobotJoint::Floating:
-				file << "floating " << joints[i].linkIndex << " "
-					 << joints[i].baseIndex << endl;
-				break;
-
-			case RobotJoint::Normal:
-				file << "normal " << joints[i].linkIndex << endl;
-				break;
-
-			case RobotJoint::Weld:
-				file << "weld " << joints[i].linkIndex << endl;
-				break;
-
-			case RobotJoint::Spin:
-				file << "spin " << joints[i].linkIndex << endl;
-				break;
-
-			case RobotJoint::FloatingPlanar:
-				file << "floating2d " << joints[i].linkIndex << " "
-					 << joints[i].baseIndex << endl;
-				break;
-
-			case RobotJoint::BallAndSocket:
-				file << "ballandsocket " << joints[i].linkIndex << " "
-					 << joints[i].baseIndex << endl;
-				break;
-
-			default:
-				// LOG4CXX_ERROR(GET_LOGGER(RobParser), "Unable to save joint type " << (int)joints[i].type
-				// 		<< "");
-				return false;
-		}
-	}
-
-	file << endl << endl;
-
-	int nDrivers = drivers.size();
-
-	for (int i = 0; i < nDrivers; i++) {
-		switch (drivers[i].type) {
-			case RobotJointDriver::Normal:
-				if (drivers[i].linkIndices.size() > 0) {
-					file << "driver normal " << drivers[i].linkIndices[0] << endl;
-				}
-
-				break;
-
-			default:
-				// LOG4CXX_ERROR(GET_LOGGER(RobParser), "Unable to save driver type " << (int) drivers[i].type
-				// 		<< "");
-				return false;
-		}
-	}
-
-	file << endl << endl;
-
-	file << "servoP\t";
-
-	for (int i = 0; i < nDrivers; i++) {
-		file << drivers[i].servoP << " ";
-	}
-
-	file << endl;
-	file << "servoI\t";
-
-	for (int i = 0; i < nDrivers; i++) {
-		file << drivers[i].servoI << " ";
-	}
-
-	file << endl;
-	file << "servoD\t";
-
-	for (int i = 0; i < nDrivers; i++) {
-		file << drivers[i].servoD << " ";
-	}
-
-	file << endl << endl;
-
-	file << "dryFriction\t";
-
-	for (int i = 0; i < nDrivers; i++) {
-		file << drivers[i].dryFriction << " ";
-	}
-
-	file << endl;
-
-	file << "viscousFriction\t";
-
-	for (int i = 0; i < nDrivers; i++) {
-		file << drivers[i].viscousFriction << " ";
-	}
-
-	file << endl;
-	file << endl;
-
-	for (map<string, string>::const_iterator i = properties.begin(); i != properties.end(); i++) {
-		file << "property " << i->first << " ";
-		SafeOutputString(file, i->second);
-		file << endl;
-	}
-
-	file.close();
-	return true;
 }
+
+// bool Robot::SaveGeometry(const char *prefix)
+// {
+// 	for (size_t i = 0; i < links.size(); i++) {
+// 		if (!IsGeometryEmpty(i)) {
+// 			if (geomFiles[i].empty()) {
+// 				// LOG4CXX_ERROR(GET_LOGGER(RobParser),"Robot::SaveGeometry: warning, link "<<i<<" has empty file name");
+// 				continue;
+// 			}
+
+// 			if (!geometry[i]->Save((string(prefix) + geomFiles[i]).c_str())) {
+// 				// LOG4CXX_ERROR(GET_LOGGER(RobParser), "Robot::SaveGeometry: Unable to save to geometry file " << string(prefix)+geomFiles[i] << "");
+// 				return false;
+// 			}
+// 		}
+// 	}
+
+// 	return true;
+// }
+
+// bool Robot::Save(const char *fn)
+// {
+// 	ofstream file;
+// 	file.open(fn, ios::out);
+
+// 	if (!file.is_open()) {
+// 		// LOG4CXX_ERROR(GET_LOGGER(RobParser), fn << " cannot be opened!" << "");
+// 		file.close();
+// 		return false;
+// 	}
+
+// 	int nLinks = links.size();
+// 	file << "links\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << "\"" << linkNames[i] << "\" ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "parents\t";
+
+// 	for (int i = 0; i < (int) parents.size(); i++) {
+// 		file << parents[i] << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "axis\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << links[i].w << "\t";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "jointtype\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		if (links[i].type == RobotLink3D::Prismatic) {
+// 			file << "p ";
+// 		} else {
+// 			file << "r ";
+// 		}
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "Tparent\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		RigidTransform T(links[i].T0_Parent);
+// 		file << T.R(0, 0) << " " << T.R(0, 1) << " " << T.R(0, 2) << "\t";
+// 		file << T.R(1, 0) << " " << T.R(1, 1) << " " << T.R(1, 2) << "\t";
+// 		file << T.R(2, 0) << " " << T.R(2, 1) << " " << T.R(2, 2) << "\t";
+// 		file << T.t[0] << " " << T.t[1] << " " << T.t[2];
+
+// 		if (i < nLinks - 1) {
+// 			file << " \\" << endl;
+// 		}
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "q\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << q[i] << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "qmin\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << qMin[i] << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "qmax\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << qMax[i] << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "geometry\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		if (!geometry[i] || geometry[i]->Empty()) {
+// 			file << "\"\" ";
+// 		} else {
+// 			file << "\"" << geomFiles[i] << "\" ";
+// 		}
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "mass\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << links[i].mass << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "com\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << links[i].com[0] << " " << links[i].com[1] << " "
+// 			 << links[i].com[2] << "\t";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "inertia\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		Matrix3 inertia(links[i].inertia);
+// 		file << inertia(0, 0) << " " << inertia(0, 1) << " " << inertia(0, 2)
+// 			 << " ";
+// 		file << inertia(1, 0) << " " << inertia(1, 1) << " " << inertia(1, 2)
+// 			 << " ";
+// 		file << inertia(2, 0) << " " << inertia(2, 1) << " " << inertia(2, 2)
+// 			 << "\t";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "torquemax\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << torqueMax[i] << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "velmax\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << velMax[i] << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "accmax\t";
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		file << accMax[i] << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	for (int i = 0; i < nLinks; i++) {
+// 		if (!geometry[i] || geometry[i]->Empty()) {
+// 			continue;
+// 		}
+
+// 		vector<int> nocollision;
+
+// 		for (int j = i + 1; j < nLinks; j++) {
+// 			if (!geometry[j] || geometry[j]->Empty()) {
+// 				continue;
+// 			}
+
+// 			if (parents[i] != j && parents[j] != i) {
+// 				if (selfCollisions(i, j) == NULL) {
+// 					nocollision.push_back(j);
+// 				}
+// 			}
+// 		}
+
+// 		if (!nocollision.empty()) {
+// 			file << "noselfcollision\t";
+
+// 			for (size_t j = 0; j < nocollision.size(); j++) {
+// 				file << i << " " << nocollision[j] << "\t";
+// 			}
+
+// 			file << endl;
+// 		}
+// 	}
+
+// 	file << endl;
+
+// 	int nJoints = joints.size();
+
+// 	for (int i = 0; i < nJoints; i++) {
+// 		file << "joint ";
+
+// 		switch (joints[i].type) {
+// 			case RobotJoint::Floating:
+// 				file << "floating " << joints[i].linkIndex << " "
+// 					 << joints[i].baseIndex << endl;
+// 				break;
+
+// 			case RobotJoint::Normal:
+// 				file << "normal " << joints[i].linkIndex << endl;
+// 				break;
+
+// 			case RobotJoint::Weld:
+// 				file << "weld " << joints[i].linkIndex << endl;
+// 				break;
+
+// 			case RobotJoint::Spin:
+// 				file << "spin " << joints[i].linkIndex << endl;
+// 				break;
+
+// 			case RobotJoint::FloatingPlanar:
+// 				file << "floating2d " << joints[i].linkIndex << " "
+// 					 << joints[i].baseIndex << endl;
+// 				break;
+
+// 			case RobotJoint::BallAndSocket:
+// 				file << "ballandsocket " << joints[i].linkIndex << " "
+// 					 << joints[i].baseIndex << endl;
+// 				break;
+
+// 			default:
+// 				// LOG4CXX_ERROR(GET_LOGGER(RobParser), "Unable to save joint type " << (int)joints[i].type
+// 				// 		<< "");
+// 				return false;
+// 		}
+// 	}
+
+// 	file << endl << endl;
+
+// 	int nDrivers = drivers.size();
+
+// 	for (int i = 0; i < nDrivers; i++) {
+// 		switch (drivers[i].type) {
+// 			case RobotJointDriver::Normal:
+// 				if (drivers[i].linkIndices.size() > 0) {
+// 					file << "driver normal " << drivers[i].linkIndices[0] << endl;
+// 				}
+
+// 				break;
+
+// 			default:
+// 				// LOG4CXX_ERROR(GET_LOGGER(RobParser), "Unable to save driver type " << (int) drivers[i].type
+// 				// 		<< "");
+// 				return false;
+// 		}
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "servoP\t";
+
+// 	for (int i = 0; i < nDrivers; i++) {
+// 		file << drivers[i].servoP << " ";
+// 	}
+
+// 	file << endl;
+// 	file << "servoI\t";
+
+// 	for (int i = 0; i < nDrivers; i++) {
+// 		file << drivers[i].servoI << " ";
+// 	}
+
+// 	file << endl;
+// 	file << "servoD\t";
+
+// 	for (int i = 0; i < nDrivers; i++) {
+// 		file << drivers[i].servoD << " ";
+// 	}
+
+// 	file << endl << endl;
+
+// 	file << "dryFriction\t";
+
+// 	for (int i = 0; i < nDrivers; i++) {
+// 		file << drivers[i].dryFriction << " ";
+// 	}
+
+// 	file << endl;
+
+// 	file << "viscousFriction\t";
+
+// 	for (int i = 0; i < nDrivers; i++) {
+// 		file << drivers[i].viscousFriction << " ";
+// 	}
+
+// 	file << endl;
+// 	file << endl;
+
+// 	for (map<string, string>::const_iterator i = properties.begin(); i != properties.end(); i++) {
+// 		file << "property " << i->first << " ";
+// 		SafeOutputString(file, i->second);
+// 		file << endl;
+// 	}
+
+// 	file.close();
+// 	return true;
+// }
 
 
 bool Robot::CheckValid() const
 {
-	for (size_t i = 0; i < parents.size(); i++) {
-		if (parents[i] < -1 || parents[i] >= (int) parents.size()) {
-			LOG4CXX_ERROR(GET_LOGGER(Robot), "Invalid parent[" << i << "]=" << parents[i]);
+	for (size_t i = 0; i < parents.size(); i++)
+	{
+		if (parents[i] < -1 || parents[i] >= (int) parents.size())
+		{
+			// LOG4CXX_ERROR(GET_LOGGER(Robot), "Invalid parent[" << i << "]=" << parents[i]);
 			return false;
 		}
 	}
