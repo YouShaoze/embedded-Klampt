@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 17:57:57
+* @Last Modified time: 2019-05-21 19:25:08
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -153,7 +153,10 @@ bool ManagedGeometry::LoadNoCache(const string& filename)
 	RemoveFromCache();
 	dynamicGeometrySource.clear();
 	geometry = make_shared<Geometry::AnyCollisionGeometry3D>();
-	if(appearance) appearance->geom = NULL;
+	if(appearance) 
+	{
+		appearance->geom = NULL;
+	}
 	//keep appearance
 
 	//load from scratch
@@ -182,43 +185,46 @@ bool ManagedGeometry::LoadNoCache(const string& filename)
 	//TODO: ROS Mesh messages?
 
 	const char* ext=FileExtension(fn);
-	if(ext) {
-		if(Geometry::AnyGeometry3D::CanLoadExt(ext))
-		{
+	if(ext)
+	{
+		// if(Geometry::AnyGeometry3D::CanLoadExt(ext))
+		// {
 			// Timer timer;
-			geometry = make_shared<Geometry::AnyCollisionGeometry3D>();
-			if(!geometry->Load(fn))
+		geometry = make_shared<Geometry::AnyCollisionGeometry3D>();
+		if(!geometry->Load(fn))
+		{
+			// LOG4CXX_WARN(KrisLibrary::logger(),"ManagedGeometry: Error loading geometry file "<<fn);
+			geometry = NULL;
+			return false;
+		}
+		// double t = timer.ElapsedTime();
+		// if(t > 0.2) 
+		// {
+			// LOG4CXX_INFO(KrisLibrary::logger(),"ManagedGeometry: loaded "<<filename<<" in time "<<t<<"s");
+		// }
+		if(geometry->type == Geometry::AnyGeometry3D::TriangleMesh)
+		{
+			if(geometry->TriangleMeshAppearanceData() != NULL)
 			{
-				// LOG4CXX_WARN(KrisLibrary::logger(),"ManagedGeometry: Error loading geometry file "<<fn);
-				geometry = NULL;
-				return false;
-			}
-			double t = timer.ElapsedTime();
-			if(t > 0.2) 
-				// LOG4CXX_INFO(KrisLibrary::logger(),"ManagedGeometry: loaded "<<filename<<" in time "<<t<<"s");
-			if(geometry->type == Geometry::AnyGeometry3D::TriangleMesh)
-			{
-				if(geometry->TriangleMeshAppearanceData() != NULL)
-				{
-					appearance = make_shared<GLDraw::GeometryAppearance>(*geometry->TriangleMeshAppearanceData());
-					appearance->Set(*geometry);
-				}
-				else
-				{
-					appearance->Set(*geometry);
-				}
+				// appearance = make_shared<GLDraw::GeometryAppearance>(*geometry->TriangleMeshAppearanceData());
+				appearance->Set(*geometry);
 			}
 			else
 			{
 				appearance->Set(*geometry);
 			}
-			return true;
 		}
-		else 
+		else
 		{
-			// LOG4CXX_WARN(KrisLibrary::logger(),"ManagedGeometry: Unknown file extension "<<ext<<" on file "<<fn);
-			return false;
+			appearance->Set(*geometry);
 		}
+		return true;
+		// }
+		// else 
+		// {
+		// 	// LOG4CXX_WARN(KrisLibrary::logger(),"ManagedGeometry: Unknown file extension "<<ext<<" on file "<<fn);
+		// 	return false;
+		// }
 	}
 	else
 	{

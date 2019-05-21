@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 13:58:16
+* @Last Modified time: 2019-05-21 19:27:02
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -516,7 +516,8 @@ bool AnyGeometry3D::CanSaveExt(const char* ext)
 bool AnyGeometry3D::Load(const char* fn)
 {
 	const char* ext = FileExtension(fn);
-	if(Meshing::CanLoadTriMeshExt(ext)) {
+	if(Meshing::CanLoadTriMeshExt(ext))
+	{
 		type = TriangleMesh;
 		data = Meshing::TriMesh();
 		GLDraw::GeometryAppearance blank,temp;
@@ -527,41 +528,42 @@ bool AnyGeometry3D::Load(const char* fn)
 			appearanceData = temp;
 		return true;
 	}
-	else if(0==strcmp(ext,"pcd")) {
-		type = PointCloud;
-		data = Meshing::PointCloud3D();
-		return this->AsPointCloud().LoadPCL(fn);
-	}
-	else if(0==strcmp(ext,"vol")) {
-		type = ImplicitSurface;
-		data = Meshing::VolumeGrid();
-		ifstream in(fn,ios::in);
-		if(!in) return false;
-		in >> this->AsImplicitSurface();
-		if(!in) return false;
-		in.close();
-		return true;
-	}
-	else if(0==strcmp(ext,"geom")) {
-		ifstream in(fn,ios::in);
-		if(!in) {
-			LOG4CXX_ERROR(KrisLibrary::logger(),"AnyGeometry3D::Load: File "<<fn);
-			return false;
-		}
-		if(!Load(in)) return false;
-		in.close();
-		return true;
-	}
-	else {
-		ifstream in(fn,ios::in);
-		if(!in) {
-			LOG4CXX_ERROR(KrisLibrary::logger(),"AnyGeometry3D::Load: File "<<fn);
-			return false;
-		}
-		if(!Load(in)) return false;
-		in.close();
-		return true;
-	}
+	// else if(0==strcmp(ext,"pcd"))
+	// {
+	// 	type = PointCloud;
+	// 	data = Meshing::PointCloud3D();
+	// 	return this->AsPointCloud().LoadPCL(fn);
+	// }
+	// else if(0==strcmp(ext,"vol")) {
+	// 	type = ImplicitSurface;
+	// 	data = Meshing::VolumeGrid();
+	// 	ifstream in(fn,ios::in);
+	// 	if(!in) return false;
+	// 	in >> this->AsImplicitSurface();
+	// 	if(!in) return false;
+	// 	in.close();
+	// 	return true;
+	// }
+	// else if(0==strcmp(ext,"geom")) {
+	// 	ifstream in(fn,ios::in);
+	// 	if(!in) {
+	// 		LOG4CXX_ERROR(KrisLibrary::logger(),"AnyGeometry3D::Load: File "<<fn);
+	// 		return false;
+	// 	}
+	// 	if(!Load(in)) return false;
+	// 	in.close();
+	// 	return true;
+	// }
+	// else {
+	// 	ifstream in(fn,ios::in);
+	// 	if(!in) {
+	// 		LOG4CXX_ERROR(KrisLibrary::logger(),"AnyGeometry3D::Load: File "<<fn);
+	// 		return false;
+	// 	}
+	// 	if(!Load(in)) return false;
+	// 	in.close();
+	// 	return true;
+	// }
 	return true;
 }
 
