@@ -1,4 +1,14 @@
 /*
+* @File Name urdftorob.cpp
+* @File Path M:\MAS2\embedded Klampt\API\Main\urdftorob.cpp
+* @Author: Ruige_Lee
+* @Date:   2019-05-19 11:47:44
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-21 15:09:29
+* @Email: 295054118@whut.edu.cn
+* @page: https://whutddk.github.io/
+*/
+/*
  * urdftorob.cpp
  *
  *  Created on: Jun 07, 2013
@@ -16,30 +26,30 @@
 using namespace std;
 
 
-int URDFtoRob(AnyCollection& settings,string infile,string outfile){
-  string path = GetFilePath(outfile.c_str());
+// int URDFtoRob(AnyCollection& settings,string infile,string outfile){
+//   string path = GetFilePath(outfile.c_str());
 
 
-  Robot robot;
+//   Robot robot;
 
-  URDFConverter::useVisGeom = settings["useVisGeom"];
-  URDFConverter::flipYZ = settings["flipYZ"];
-  settings["packageRootPath"].as(URDFConverter::packageRootPath);
-  string geomPrefix,geomExtension;
-  settings["outputGeometryPrefix"].as(geomPrefix);
-  settings["outputGeometryExtension"].as(geomExtension);
-  robot.LoadURDF(infile.c_str());
-  if(!geomExtension.empty()) {
-    //change the geometry file extension
-    robot.SetGeomFiles(geomPrefix.c_str(),geomExtension.c_str());
-  }
-  robot.Save(outfile.c_str());
-  if(!geomExtension.empty()) {
-    //save in absolute path
-    robot.SaveGeometry(path.c_str());
-  }
-  return 1;
-}
+//   URDFConverter::useVisGeom = settings["useVisGeom"];
+//   URDFConverter::flipYZ = settings["flipYZ"];
+//   settings["packageRootPath"].as(URDFConverter::packageRootPath);
+//   string geomPrefix,geomExtension;
+//   settings["outputGeometryPrefix"].as(geomPrefix);
+//   settings["outputGeometryExtension"].as(geomExtension);
+//   robot.LoadURDF(infile.c_str());
+//   if(!geomExtension.empty()) {
+//     //change the geometry file extension
+//     robot.SetGeomFiles(geomPrefix.c_str(),geomExtension.c_str());
+//   }
+//   robot.Save(outfile.c_str());
+//   if(!geomExtension.empty()) {
+//     //save in absolute path
+//     robot.SaveGeometry(path.c_str());
+//   }
+//   return 1;
+// }
 
 
 int main_shell(int argc, char** argv)

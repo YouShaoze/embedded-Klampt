@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 14:58:09
+* @Last Modified time: 2019-05-21 15:26:58
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -276,7 +276,8 @@ bool Robot::LoadRob(const char *fn)
 
 	ifstream in(fn, ios::in);
 
-	if (!in) {
+	if (!in)
+	{
 		// LOG4CXX_INFO(GET_LOGGER(RobParser),"Unable to read robot file "<< fn<<", file does not exist or is not available for reading");
 		return false;
 	}
@@ -284,7 +285,8 @@ bool Robot::LoadRob(const char *fn)
 	// LOG4CXX_INFO(GET_LOGGER(RobParser),"Reading robot file "<< fn <<"...");
 	int lineno = 0;
 
-	while (in) {
+	while (in)
+	{
 		//LOG4CXX_INFO(GET_LOGGER(RobParser),"Reading line "<<name<<"...");
 		//read the rest of the line
 		string line, name;
@@ -293,35 +295,51 @@ bool Robot::LoadRob(const char *fn)
 		bool foundEndline = false, comment = false;
 		bool foundEof = false;
 
-		while (!foundEndline) {
-			for (int i = 0; i < 1024; i++) {
+		//一直读到一行结束
+		while (!foundEndline)
+		{
+			for (int i = 0; i < 1024; i++)
+			{
 				int c = in.get();
 
-				if (!in || c == EOF) { buf[i] = 0; foundEndline = true; foundEof = true; break; }
+				//文件读完了，提前跳出for循环
+				if ( !in || c == EOF )
+					{ buf[i] = 0; foundEndline = true; foundEof = true; break; }
 
-				if (c == '\n') {
+				//这一行是读完了
+				if (c == '\n')
+				{
 					buf[i] = 0;
 					foundEndline = true;
 					lineno++;
 					break;
-				} else if (c == '#' || comment) {
+				}
+				//这一行后面都是注释
+				else if (c == '#' || comment)
+				{
 					c = 0;
 					comment = true;
-				} else if (c == '\\') {
+				}
+				//出现行拼接
+				else if (c == '\\')
+				{
 					//read escape characters (e.g., end of line)
+					//读下一个字符
 					c = in.get();
 
 					if (c == '\r') { //possibly windows-encoded file
 						c = in.get();
 					}
 
-					if (c == '\n') {
+					if (c == '\n')
+					{
 						lineno++;
 					}
 
 					c = TranslateEscape(c);
 				}
 
+				//逐个压入行buf中，最大1024
 				buf[i] = c;
 			}
 
@@ -332,12 +350,13 @@ bool Robot::LoadRob(const char *fn)
 		ss.str(line);
 		ss >> name;
 
-		if (!ss) {
+		if (!ss)
+		{
 			if (foundEof) { break; }
 
 			continue; //empty line
 		}
-
+		//转小写？
 		Lowercase(name);
 		//LOG4CXX_INFO(GET_LOGGER(RobParser),"Reading line "<<name<<" line "<<lineno);
 		string stemp;
@@ -346,480 +365,536 @@ bool Robot::LoadRob(const char *fn)
 
 		if (name[0] == '#') {
 			continue;
-		} else if (name == "parents") {
-			while (ss >> itemp) {
+		}
+		else if (name == "parents")
+		{
+			while (ss >> itemp)
+			{
 				parents.push_back(itemp);
 			}
-		} else if (name == "links") {
-			while (SafeInputString(ss, stemp)) {
+		}
+		else if (name == "links")
+		{
+			while (SafeInputString(ss, stemp))
+			{
 				linkNames.push_back(stemp);
 			}
-		} else if (name == "jointtype") {
-			while (ss >> stemp) {
-				if (stemp == "r") {
+		}
+		else if (name == "jointtype")
+		{
+			while (ss >> stemp)
+			{
+				if (stemp == "r")
+				{
 					jointType.push_back(RobotLink3D::Revolute);
-				} else if (stemp == "p") {
-					jointType.push_back(RobotLink3D::Prismatic);
-				} else {
+				}
+				// else if (stemp == "p")
+				// {
+				// 	jointType.push_back(RobotLink3D::Prismatic);
+				// }
+				else
+				{
 					// printf("Invalid joint type %s on line %d\n", stemp.c_str(),
 					// 		lineno);
 					return false;
 				}
 			}
-		} else if (name == "drivers") {
-			while (SafeInputString(ss, stemp)) {
-				driverNames.push_back(stemp);
-			}
-		} else if (name == "qmin") {
-			while (SafeInputFloat(ss, ftemp)) {
+		} 
+		// else if (name == "drivers")
+		// {
+		// 	while (SafeInputString(ss, stemp)) {
+		// 		driverNames.push_back(stemp);
+		// 	}
+		// } 
+		else if (name == "qmin")
+		{
+			while (SafeInputFloat(ss, ftemp))
+			{
 				qMinVec.push_back(ftemp);
 			}
-		} else if (name == "qmindeg") {
-			while (SafeInputFloat(ss, ftemp)) {
-				qMinVec.push_back(DtoR(ftemp));
-			}
-		} else if (name == "qmax") {
-			while (SafeInputFloat(ss, ftemp)) {
+		}
+		// else if (name == "qmindeg")
+		// {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		qMinVec.push_back(DtoR(ftemp));
+		// 	}
+		// } 
+		else if (name == "qmax")
+		{
+			while (SafeInputFloat(ss, ftemp))
+			{
 				qMaxVec.push_back(ftemp);
 			}
-		} else if (name == "qmaxdeg") {
-			while (SafeInputFloat(ss, ftemp)) {
-				qMaxVec.push_back(DtoR(ftemp));
-			}
-		} else if (name == "q") {
-			while (SafeInputFloat(ss, ftemp)) {
+		}
+		// else if (name == "qmaxdeg")
+		// {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		qMaxVec.push_back(DtoR(ftemp));
+		// 	}
+		// }
+		else if (name == "q")
+		{
+			while (SafeInputFloat(ss, ftemp))
+			{
 				qVec.push_back(ftemp);
 			}
-		} else if (name == "qdeg") {
-			while (SafeInputFloat(ss, ftemp)) {
-				qVec.push_back(DtoR(ftemp));
-			}
-		} else if (name == "velmax") {
-			while (SafeInputFloat(ss, ftemp)) {
-				vMaxVec.push_back(ftemp);
-			}
-		} else if (name == "velmaxdeg") {
-			while (SafeInputFloat(ss, ftemp)) {
-				vMaxVec.push_back(DtoR(ftemp));
-			}
-		} else if (name == "velmin") {
-			while (SafeInputFloat(ss, ftemp)) {
-				vMinVec.push_back(ftemp);
-			}
-		} else if (name == "velmindeg") {
-			while (SafeInputFloat(ss, ftemp)) {
-				vMinVec.push_back(DtoR(ftemp));
-			}
-		} else if (name == "torquemax") {
-			while (SafeInputFloat(ss, ftemp)) {
-				tMaxVec.push_back(ftemp);
-			}
-		} else if (name == "accmax") {
-			while (SafeInputFloat(ss, ftemp)) {
-				aMaxVec.push_back(ftemp);
-			}
-		} else if (name == "accmaxdeg") {
-			while (SafeInputFloat(ss, ftemp)) {
-				aMaxVec.push_back(DtoR(ftemp));
-			}
-		} else if (name == "powermax") {
-			while (SafeInputFloat(ss, ftemp)) {
-				pMaxVec.push_back(ftemp);
-			}
-		} else if (name == "servop") {
-			while (ss >> ftemp) {
-				servoP.push_back(ftemp);
-			}
-		} else if (name == "servoi") {
-			while (ss >> ftemp) {
-				servoI.push_back(ftemp);
-			}
-		} else if (name == "servod") {
-			while (ss >> ftemp) {
-				servoD.push_back(ftemp);
-			}
-		} else if (name == "dryfriction") {
-			while (ss >> ftemp) {
-				dryFriction.push_back(ftemp);
-			}
-		} else if (name == "viscousfriction") {
-			while (ss >> ftemp) {
-				viscousFriction.push_back(ftemp);
-			}
-		} else if (name == "tparent") {
+		}
+		// else if (name == "qdeg") {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		qVec.push_back(DtoR(ftemp));
+		// 	}
+		// }
+		// else if (name == "velmax") {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		vMaxVec.push_back(ftemp);
+		// 	}
+		// }
+		// else if (name == "velmaxdeg") {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		vMaxVec.push_back(DtoR(ftemp));
+		// 	}
+		// }
+		// else if (name == "velmin") {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		vMinVec.push_back(ftemp);
+		// 	}
+		// }
+		// else if (name == "velmindeg")
+		// {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		vMinVec.push_back(DtoR(ftemp));
+		// 	}
+		// }
+		// else if (name == "torquemax") {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		tMaxVec.push_back(ftemp);
+		// 	}
+		// }
+		// else if (name == "accmax")
+		// {
+		// 	while (SafeInputFloat(ss, ftemp))
+		// 	{
+		// 		aMaxVec.push_back(ftemp);
+		// 	}
+		// }
+		// else if (name == "accmaxdeg")
+		// {
+		// 	while (SafeInputFloat(ss, ftemp))
+		// 	{
+		// 		aMaxVec.push_back(DtoR(ftemp));
+		// 	}
+		// }
+		// else if (name == "powermax") {
+		// 	while (SafeInputFloat(ss, ftemp)) {
+		// 		pMaxVec.push_back(ftemp);
+		// 	}
+		// } else if (name == "servop") {
+		// 	while (ss >> ftemp) {
+		// 		servoP.push_back(ftemp);
+		// 	}
+		// } else if (name == "servoi") {
+		// 	while (ss >> ftemp) {
+		// 		servoI.push_back(ftemp);
+		// 	}
+		// } else if (name == "servod") {
+		// 	while (ss >> ftemp) {
+		// 		servoD.push_back(ftemp);
+		// 	}
+		// } else if (name == "dryfriction") {
+		// 	while (ss >> ftemp) {
+		// 		dryFriction.push_back(ftemp);
+		// 	}
+		// } else if (name == "viscousfriction") {
+		// 	while (ss >> ftemp) {
+		// 		viscousFriction.push_back(ftemp);
+		// 	}
+		// }
+		else if (name == "tparent") {
 			RigidTransform Ttemp;
 
 			while (ss >> Ttemp) {
 				TParent.push_back(Ttemp);
 			}
-		} else if (name == "axis") {
+		}
+		else if (name == "axis") {
 			Vector3 vtemp;
 
 			while (ss >> vtemp) {
 				axes.push_back(vtemp);
 			}
-		} else if (name == "alpha") {
-			while (ss >> ftemp) {
-				alpha.push_back(ftemp);
-			}
-		} else if (name == "alphadeg") {
-			while (ss >> ftemp) {
-				alpha.push_back(DtoR(ftemp));
-			}
-		} else if (name == "a") {
-			while (ss >> ftemp) {
-				a.push_back(ftemp);
-			}
-		} else if (name == "d") {
-			while (ss >> ftemp) {
-				d.push_back(ftemp);
-			}
-		} else if (name == "theta") {
-			while (ss >> ftemp) {
-				theta.push_back(ftemp);
-			}
-		} else if (name == "thetadeg") {
-			while (ss >> ftemp) {
-				theta.push_back(DtoR(ftemp));
-			}
-		} else if (name == "translation") {
-			ss >> baseTransform.t;
-		} else if (name == "rotation") {
-			ss >> baseTransform.R;
-		} else if (name == "mass") {
-			while (ss >> ftemp) {
-				massVec.push_back(ftemp);
-			}
-		} else if (name == "com") {
-			Vector3 v3temp;
+		}
+		// else if (name == "alpha") {
+		// 	while (ss >> ftemp) {
+		// 		alpha.push_back(ftemp);
+		// 	}
+		// }
+		// else if (name == "alphadeg") {
+		// 	while (ss >> ftemp) {
+		// 		alpha.push_back(DtoR(ftemp));
+		// 	}
+		// } else if (name == "a") {
+		// 	while (ss >> ftemp) {
+		// 		a.push_back(ftemp);
+		// 	}
+		// } else if (name == "d") {
+		// 	while (ss >> ftemp) {
+		// 		d.push_back(ftemp);
+		// 	}
+		// } else if (name == "theta") {
+		// 	while (ss >> ftemp) {
+		// 		theta.push_back(ftemp);
+		// 	}
+		// } else if (name == "thetadeg") {
+		// 	while (ss >> ftemp) {
+		// 		theta.push_back(DtoR(ftemp));
+		// 	}
+		// } else if (name == "translation") {
+		// 	ss >> baseTransform.t;
+		// } else if (name == "rotation") {
+		// 	ss >> baseTransform.R;
+		// } else if (name == "mass") {
+		// 	while (ss >> ftemp) {
+		// 		massVec.push_back(ftemp);
+		// 	}
+		// } else if (name == "com") {
+		// 	Vector3 v3temp;
 
-			while (ss >> v3temp) {
-				comVec.push_back(v3temp);
-			}
-		} else if (name == "inertiadiag") {
-			Vector3 v3temp;
-			Matrix3 m3temp;
+		// 	while (ss >> v3temp) {
+		// 		comVec.push_back(v3temp);
+		// 	}
+		// } else if (name == "inertiadiag") {
+		// 	Vector3 v3temp;
+		// 	Matrix3 m3temp;
 
-			while (ss >> v3temp) {
-				m3temp.setDiagonal(v3temp);
-				inertiaVec.push_back(m3temp);
-			}
-		} else if (name == "inertia") {
-			Vector3 v1, v2, v3;
-			Matrix3 m3temp;
+		// 	while (ss >> v3temp) {
+		// 		m3temp.setDiagonal(v3temp);
+		// 		inertiaVec.push_back(m3temp);
+		// 	}
+		// } else if (name == "inertia") {
+		// 	Vector3 v1, v2, v3;
+		// 	Matrix3 m3temp;
 
-			while (ss) {
-				ss >> v1 >> v2 >> v3;
+		// 	while (ss) {
+		// 		ss >> v1 >> v2 >> v3;
 
-				if (ss) {
-					m3temp.set(v1, v2, v3);
-					inertiaVec.push_back(m3temp);
-				}
-			}
-		} else if (name == "automass") {
-			autoMass = true;
-		} else if (name == "autotorque") {
-			ss >> autoTorque;
-		} else if (name == "geometry") {
+		// 		if (ss) {
+		// 			m3temp.set(v1, v2, v3);
+		// 			inertiaVec.push_back(m3temp);
+		// 		}
+		// 	}
+		// } else if (name == "automass") {
+		// 	autoMass = true;
+		// } else if (name == "autotorque") {
+		// 	ss >> autoTorque;
+		// } 
+		else if (name == "geometry") {
 			while (SafeInputString(ss, stemp)) {
 				geomFn.push_back(stemp);
 			}
-		} else if (name == "scale") {
-			ss >> scale;
-		} else if (name == "geomscale") {
-			while (ss >> ftemp) {
-				geomscale.push_back(ftemp);
-			}
-		} else if (name == "geommargin") {
-			while (ss >> ftemp) {
-				geommargin.push_back(ftemp);
-			}
-		} else if (name == "collision") {
-			while (SafeInputString(ss, stemp)) {
-				collision.push_back(stemp);
-			}
-		} else if (name == "nocollision") {
-			while (SafeInputString(ss, stemp)) {
-				noCollision.push_back(stemp);
-			}
-		} else if (name == "selfcollision") {
-			pair<string, string> ptemp;
+		}
+		// else if (name == "scale") {
+		// 	ss >> scale;
+		// } else if (name == "geomscale") {
+		// 	while (ss >> ftemp) {
+		// 		geomscale.push_back(ftemp);
+		// 	}
+		// } else if (name == "geommargin") {
+		// 	while (ss >> ftemp) {
+		// 		geommargin.push_back(ftemp);
+		// 	}
+		// } else if (name == "collision") {
+		// 	while (SafeInputString(ss, stemp)) {
+		// 		collision.push_back(stemp);
+		// 	}
+		// } else if (name == "nocollision") {
+		// 	while (SafeInputString(ss, stemp)) {
+		// 		noCollision.push_back(stemp);
+		// 	}
+		// } else if (name == "selfcollision") {
+		// 	pair<string, string> ptemp;
 
-			while (SafeInputString(ss, ptemp.first) && SafeInputString(ss, ptemp.second)) {
-				selfCollision.push_back(ptemp);
-			}
-		} else if (name == "noselfcollision") {
-			pair<string, string> ptemp;
+		// 	while (SafeInputString(ss, ptemp.first) && SafeInputString(ss, ptemp.second)) {
+		// 		selfCollision.push_back(ptemp);
+		// 	}
+		// } else if (name == "noselfcollision") {
+		// 	pair<string, string> ptemp;
 
-			while (SafeInputString(ss, ptemp.first) && SafeInputString(ss, ptemp.second)) {
-				noSelfCollision.push_back(ptemp);
-			}
-		} else if (name == "geomtransform") {
-			int tmpindex;
-			ss >> tmpindex;
-			geomTransformIndex.push_back(tmpindex);
-			Matrix4 m;
+		// 	while (SafeInputString(ss, ptemp.first) && SafeInputString(ss, ptemp.second)) {
+		// 		noSelfCollision.push_back(ptemp);
+		// 	}
+		// } else if (name == "geomtransform") {
+		// 	int tmpindex;
+		// 	ss >> tmpindex;
+		// 	geomTransformIndex.push_back(tmpindex);
+		// 	Matrix4 m;
 
-			if (ss) {
-				ss >> m(0, 0) >> m(0, 1) >> m(0, 2) >> m(0, 3);
-				ss >> m(1, 0) >> m(1, 1) >> m(1, 2) >> m(1, 3);
-				ss >> m(2, 0) >> m(2, 1) >> m(2, 2) >> m(2, 3);
-				ss >> m(3, 0) >> m(3, 1) >> m(3, 2) >> m(3, 3);
-				geomTransform.push_back(m);
-			} else {
-				// printf("Invalid geomTransform on line %d\n", lineno);
-			}
-		} else if (name == "joint") {
-			RobotJoint tempJoint;
-			tempJoint.type = RobotJoint::Normal;
-			ss >> stemp;
+		// 	if (ss) {
+		// 		ss >> m(0, 0) >> m(0, 1) >> m(0, 2) >> m(0, 3);
+		// 		ss >> m(1, 0) >> m(1, 1) >> m(1, 2) >> m(1, 3);
+		// 		ss >> m(2, 0) >> m(2, 1) >> m(2, 2) >> m(2, 3);
+		// 		ss >> m(3, 0) >> m(3, 1) >> m(3, 2) >> m(3, 3);
+		// 		geomTransform.push_back(m);
+		// 	} else {
+		// 		// printf("Invalid geomTransform on line %d\n", lineno);
+		// 	}
+		// } 
+		// else if (name == "joint") {
+		// 	RobotJoint tempJoint;
+		// 	tempJoint.type = RobotJoint::Normal;
+		// 	ss >> stemp;
 
-			if (ss) {
-				Lowercase(stemp);
+		// 	if (ss) {
+		// 		Lowercase(stemp);
 
-				if (stemp == "weld") {
-					tempJoint.type = RobotJoint::Weld;
-					ss >> tempJoint.linkIndex;
-				} else if (stemp == "normal") {
-					tempJoint.type = RobotJoint::Normal;
-					ss >> tempJoint.linkIndex;
-				} else if (stemp == "spin") {
-					tempJoint.type = RobotJoint::Spin;
-					ss >> tempJoint.linkIndex;
-				} else if (stemp == "floating") {
-					tempJoint.type = RobotJoint::Floating;
-					ss >> tempJoint.linkIndex;
+		// 		if (stemp == "weld") {
+		// 			tempJoint.type = RobotJoint::Weld;
+		// 			ss >> tempJoint.linkIndex;
+		// 		} else if (stemp == "normal") {
+		// 			tempJoint.type = RobotJoint::Normal;
+		// 			ss >> tempJoint.linkIndex;
+		// 		} else if (stemp == "spin") {
+		// 			tempJoint.type = RobotJoint::Spin;
+		// 			ss >> tempJoint.linkIndex;
+		// 		} else if (stemp == "floating") {
+		// 			tempJoint.type = RobotJoint::Floating;
+		// 			ss >> tempJoint.linkIndex;
 
-					if (tempJoint.linkIndex <= 0) {
-						// LOG4CXX_INFO(GET_LOGGER(RobParser),"Invalid floating link "<< tempJoint.linkIndex<<" on line "<< lineno);
-						return false;
-					}
+		// 			if (tempJoint.linkIndex <= 0) {
+		// 				// LOG4CXX_INFO(GET_LOGGER(RobParser),"Invalid floating link "<< tempJoint.linkIndex<<" on line "<< lineno);
+		// 				return false;
+		// 			}
 
-					if (ss) {
-						ss >> tempJoint.baseIndex;
+		// 			if (ss) {
+		// 				ss >> tempJoint.baseIndex;
 
-						if (!ss) {
-							tempJoint.baseIndex = -1;
-							ss.clear(); //clear the bad bit
-						}
-					}
-				} else if (stemp == "ballandsocket") {
-					tempJoint.type = RobotJoint::BallAndSocket;
-					ss >> tempJoint.linkIndex;
+		// 				if (!ss) {
+		// 					tempJoint.baseIndex = -1;
+		// 					ss.clear(); //clear the bad bit
+		// 				}
+		// 			}
+		// 		} else if (stemp == "ballandsocket") {
+		// 			tempJoint.type = RobotJoint::BallAndSocket;
+		// 			ss >> tempJoint.linkIndex;
 
-					if (tempJoint.linkIndex <= 0) {
-						// LOG4CXX_INFO(GET_LOGGER(RobParser),"Invalid ballandsocket link "<<tempJoint.linkIndex <<" on line "<<lineno);
-						return false;
-					}
+		// 			if (tempJoint.linkIndex <= 0) {
+		// 				// LOG4CXX_INFO(GET_LOGGER(RobParser),"Invalid ballandsocket link "<<tempJoint.linkIndex <<" on line "<<lineno);
+		// 				return false;
+		// 			}
 
-					if (ss) {
-						ss >> tempJoint.baseIndex;
+		// 			if (ss) {
+		// 				ss >> tempJoint.baseIndex;
 
-						if (!ss) {
-							tempJoint.baseIndex = -1;
-							ss.clear(); //clear the bad bit
-						}
-					}
-				} else if (stemp == "floatingplanar") {
-					tempJoint.type = RobotJoint::FloatingPlanar;
-					ss >> tempJoint.linkIndex;
+		// 				if (!ss) {
+		// 					tempJoint.baseIndex = -1;
+		// 					ss.clear(); //clear the bad bit
+		// 				}
+		// 			}
+		// 		} else if (stemp == "floatingplanar") {
+		// 			tempJoint.type = RobotJoint::FloatingPlanar;
+		// 			ss >> tempJoint.linkIndex;
 
-					if (tempJoint.linkIndex <= 0) {
-						// LOG4CXX_INFO(GET_LOGGER(RobParser),"Invalid floatingplanar link "<<tempJoint.linkIndex <<" on line "<<lineno);
-						return false;
-					}
+		// 			if (tempJoint.linkIndex <= 0) {
+		// 				// LOG4CXX_INFO(GET_LOGGER(RobParser),"Invalid floatingplanar link "<<tempJoint.linkIndex <<" on line "<<lineno);
+		// 				return false;
+		// 			}
 
-					if (ss) {
-						ss >> tempJoint.baseIndex;
+		// 			if (ss) {
+		// 				ss >> tempJoint.baseIndex;
 
-						if (!ss) {
-							tempJoint.baseIndex = -1;
-							ss.clear(); //clear the bad bit
-						}
-					}
-				} else {
-					// LOG4CXX_INFO(GET_LOGGER(RobParser),"Invalid joint type "<< stemp.c_str()<<" on line "<<
-					// 		lineno);
-					return false;
-				}
-			}
+		// 				if (!ss) {
+		// 					tempJoint.baseIndex = -1;
+		// 					ss.clear(); //clear the bad bit
+		// 				}
+		// 			}
+		// 		} 
+		// 		else {
+		// 			// LOG4CXX_INFO(GET_LOGGER(RobParser),"Invalid joint type "<< stemp.c_str()<<" on line "<<
+		// 			// 		lineno);
+		// 			return false;
+		// 		}
+		// 	}
 
-			if (ss) {
-				joints.push_back(tempJoint);
-			}
-		} else if (name == "driver") {
-			RobotJointDriver tempDriver;
-			tempDriver.type = RobotJointDriver::Normal;
-			ss >> stemp;
+		// 	if (ss) {
+		// 		joints.push_back(tempJoint);
+		// 	}
+		// } 
+		// else if (name == "driver") {
+		// 	RobotJointDriver tempDriver;
+		// 	tempDriver.type = RobotJointDriver::Normal;
+		// 	ss >> stemp;
 
-			if (ss) {
-				//TODO: servo parameters, dry friction
-				tempDriver.servoP = 0;
-				tempDriver.servoI = 0;
-				tempDriver.servoD = 0;
-				tempDriver.dryFriction = 0;
-				tempDriver.viscousFriction = 0;
+		// 	if (ss) {
+		// 		//TODO: servo parameters, dry friction
+		// 		tempDriver.servoP = 0;
+		// 		tempDriver.servoI = 0;
+		// 		tempDriver.servoD = 0;
+		// 		tempDriver.dryFriction = 0;
+		// 		tempDriver.viscousFriction = 0;
 
-				if (stemp == "normal") {
-					tempDriver.type = RobotJointDriver::Normal;
-					tempDriver.linkIndices.resize(1);
-					ss >> itemp;
-					tempDriver.linkIndices[0] = itemp;
-					//Settings are loaded below
-				} else if (stemp == "affine") {
-					tempDriver.type = RobotJointDriver::Affine;
-					ss >> itemp;
+		// 		if (stemp == "normal") {
+		// 			tempDriver.type = RobotJointDriver::Normal;
+		// 			tempDriver.linkIndices.resize(1);
+		// 			ss >> itemp;
+		// 			tempDriver.linkIndices[0] = itemp;
+		// 			//Settings are loaded below
+		// 		} else if (stemp == "affine") {
+		// 			tempDriver.type = RobotJointDriver::Affine;
+		// 			ss >> itemp;
 
-					if (itemp <= 0) {
-						// printf("Invalid number of joint indices %d\n", itemp);
-						return false;
-					}
+		// 			if (itemp <= 0) {
+		// 				// printf("Invalid number of joint indices %d\n", itemp);
+		// 				return false;
+		// 			}
 
-					tempDriver.linkIndices.resize(itemp);
-					tempDriver.affScaling.resize(itemp);
-					tempDriver.affOffset.resize(itemp);
+		// 			tempDriver.linkIndices.resize(itemp);
+		// 			tempDriver.affScaling.resize(itemp);
+		// 			tempDriver.affOffset.resize(itemp);
 
-					for (int i = 0; i < itemp; i++) {
-						ss >> tempDriver.linkIndices[i];
-					}
+		// 			for (int i = 0; i < itemp; i++) {
+		// 				ss >> tempDriver.linkIndices[i];
+		// 			}
 
-					for (int i = 0; i < itemp; i++) {
-						ss >> tempDriver.affScaling[i];
-					}
+		// 			for (int i = 0; i < itemp; i++) {
+		// 				ss >> tempDriver.affScaling[i];
+		// 			}
 
-					for (int i = 0; i < itemp; i++) {
-						ss >> tempDriver.affOffset[i];
-					}
+		// 			for (int i = 0; i < itemp; i++) {
+		// 				ss >> tempDriver.affOffset[i];
+		// 			}
 
-					SafeInputFloat(ss, tempDriver.qmin);
-					SafeInputFloat(ss, tempDriver.qmax);
-					SafeInputFloat(ss, tempDriver.vmin);
-					SafeInputFloat(ss, tempDriver.vmax);
-					SafeInputFloat(ss, tempDriver.tmin);
-					SafeInputFloat(ss, tempDriver.tmax);
-					//TODO: driver acceleration limits?
-					tempDriver.amin = -Inf;
-					tempDriver.amax = Inf;
-				} else if (stemp == "translation") {
-					tempDriver.type = RobotJointDriver::Translation;
-					tempDriver.linkIndices.resize(2);
-					ss >> itemp;
-					tempDriver.linkIndices[0] = itemp;
-					ss >> itemp;
-					tempDriver.linkIndices[1] = itemp;
-					//Settings are loaded below
-				} else if (stemp == "rotation") {
-					tempDriver.type = RobotJointDriver::Rotation;
-					tempDriver.linkIndices.resize(2);
-					ss >> itemp;
-					tempDriver.linkIndices[0] = itemp;
-					ss >> itemp;
-					tempDriver.linkIndices[1] = itemp;
-					//Settings are loaded below
-				} else {
-					// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Invalid driver type "<< stemp.c_str()<<" on line "<<lineno);
-					return false;
-				}
-			}
+		// 			SafeInputFloat(ss, tempDriver.qmin);
+		// 			SafeInputFloat(ss, tempDriver.qmax);
+		// 			SafeInputFloat(ss, tempDriver.vmin);
+		// 			SafeInputFloat(ss, tempDriver.vmax);
+		// 			SafeInputFloat(ss, tempDriver.tmin);
+		// 			SafeInputFloat(ss, tempDriver.tmax);
+		// 			//TODO: driver acceleration limits?
+		// 			tempDriver.amin = -Inf;
+		// 			tempDriver.amax = Inf;
+		// 		} else if (stemp == "translation") {
+		// 			tempDriver.type = RobotJointDriver::Translation;
+		// 			tempDriver.linkIndices.resize(2);
+		// 			ss >> itemp;
+		// 			tempDriver.linkIndices[0] = itemp;
+		// 			ss >> itemp;
+		// 			tempDriver.linkIndices[1] = itemp;
+		// 			//Settings are loaded below
+		// 		} else if (stemp == "rotation") {
+		// 			tempDriver.type = RobotJointDriver::Rotation;
+		// 			tempDriver.linkIndices.resize(2);
+		// 			ss >> itemp;
+		// 			tempDriver.linkIndices[0] = itemp;
+		// 			ss >> itemp;
+		// 			tempDriver.linkIndices[1] = itemp;
+		// 			//Settings are loaded below
+		// 		} else {
+		// 			// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Invalid driver type "<< stemp.c_str()<<" on line "<<lineno);
+		// 			return false;
+		// 		}
+		// 	}
 
-			if (ss) {
-				drivers.push_back(tempDriver);
-			} else {
-				// fprintf(stderr, "   Failure reading driver on line %d\n", lineno);
-				return false;
-			}
-		} else if (name == "mount") {
-			ss >> itemp;
+		// 	if (ss) {
+		// 		drivers.push_back(tempDriver);
+		// 	} else {
+		// 		// fprintf(stderr, "   Failure reading driver on line %d\n", lineno);
+		// 		return false;
+		// 	}
+		// } 
+		// else if (name == "mount") {
+		// 	ss >> itemp;
 
-			if (!SafeInputString(ss, stemp)) {
-				// fprintf(stderr, "   Error reading mount file name on line %d\n",
-				// 		lineno);
-				return false;
-			}
+		// 	if (!SafeInputString(ss, stemp)) {
+		// 		// fprintf(stderr, "   Error reading mount file name on line %d\n",
+		// 		// 		lineno);
+		// 		return false;
+		// 	}
 
-			mountLinks.push_back(itemp);
-			mountFiles.push_back(stemp);
-			RigidTransform Ttemp;
-			Ttemp.setIdentity();
+		// 	mountLinks.push_back(itemp);
+		// 	mountFiles.push_back(stemp);
+		// 	RigidTransform Ttemp;
+		// 	Ttemp.setIdentity();
 
-			if (ss) {
-				ss >> Ttemp;
+		// 	if (ss) {
+		// 		ss >> Ttemp;
 
-				if (!ss) {
-					// LOG4CXX_INFO(GET_LOGGER(RobParser),"   Note: didn't read subchain transform");
-					ss.clear();
-					Ttemp.setIdentity();
-				}
-			}
+		// 		if (!ss) {
+		// 			// LOG4CXX_INFO(GET_LOGGER(RobParser),"   Note: didn't read subchain transform");
+		// 			ss.clear();
+		// 			Ttemp.setIdentity();
+		// 		}
+		// 	}
 
-			mountT.push_back(Ttemp);
-			string name;
+		// 	mountT.push_back(Ttemp);
+		// 	string name;
 
-			if (ss) {
-				string op;
-				ss >> op;
+		// 	if (ss) {
+		// 		string op;
+		// 		ss >> op;
 
-				if (op == "as") {
-					if (!SafeInputString(ss, name)) {
-						// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Error reading mount alias");
-						name = "";
-					}
-				}
-			}
+		// 		if (op == "as") {
+		// 			if (!SafeInputString(ss, name)) {
+		// 				// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Error reading mount alias");
+		// 				name = "";
+		// 			}
+		// 		}
+		// 	}
 
-			if (name.empty()) {
-				mountNames.push_back(string());
-				/*
-				string robotName = stemp;
-				StripExtension(robotName);
-				mountNames.push_back(robotName);
-				*/
-			} else {
-				mountNames.push_back(name);
-			}
-		} else if (name == "property") {
-			string value;
-			SafeInputString(ss, stemp);
-			getline(ss, value);
+		// 	if (name.empty()) {
+		// 		mountNames.push_back(string());
+		// 		/*
+		// 		string robotName = stemp;
+		// 		StripExtension(robotName);
+		// 		mountNames.push_back(robotName);
+		// 		*/
+		// 	} else {
+		// 		mountNames.push_back(name);
+		// 	}
+		// } else if (name == "property") {
+		// 	string value;
+		// 	SafeInputString(ss, stemp);
+		// 	getline(ss, value);
 
-			if (ss.fail() || ss.bad()) {
-				// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Explicit property on line "<< lineno<<" could not be read");
-				return false;
-			}
+		// 	if (ss.fail() || ss.bad()) {
+		// 		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Explicit property on line "<< lineno<<" could not be read");
+		// 		return false;
+		// 	}
 
-			if (stemp == "controller" || stemp == "sensors") {
-				stringstream ss(value);
-				string file;
-				SafeInputString(ss, file);
-				const char *ext = FileExtension(file.c_str());
+		// 	if (stemp == "controller" || stemp == "sensors") {
+		// 		stringstream ss(value);
+		// 		string file;
+		// 		SafeInputString(ss, file);
+		// 		const char *ext = FileExtension(file.c_str());
 
-				if (ext && 0 == strcmp(ext, "xml")) {
-					//prepend the robot path
-					string fn = path + file;
+		// 		if (ext && 0 == strcmp(ext, "xml")) {
+		// 			//prepend the robot path
+		// 			string fn = path + file;
 
-					if (!GetFileContents(fn.c_str(), properties[stemp])) {
-						// LOG4CXX_ERROR(GET_LOGGER(RobParser),"     Unable to read "<<stemp.c_str()<<" property from file "<<fn.c_str());
-						return false;
-					}
-				} else {
-					properties[stemp] = value;
-					stringstream ss(value);
-					TiXmlElement e(stemp.c_str());
-					ss >> e;
+		// 			if (!GetFileContents(fn.c_str(), properties[stemp])) {
+		// 				// LOG4CXX_ERROR(GET_LOGGER(RobParser),"     Unable to read "<<stemp.c_str()<<" property from file "<<fn.c_str());
+		// 				return false;
+		// 			}
+		// 		} else {
+		// 			properties[stemp] = value;
+		// 			stringstream ss(value);
+		// 			TiXmlElement e(stemp.c_str());
+		// 			ss >> e;
 
-					if (!ss) {
-						// LOG4CXX_ERROR(GET_LOGGER(RobParser),"     Property "<<stemp.c_str()<<" is not valid XML");
-					}
-				}
-			} else {
-				properties[stemp] = value;
-			}
-		} else {
+		// 			if (!ss) {
+		// 				// LOG4CXX_ERROR(GET_LOGGER(RobParser),"     Property "<<stemp.c_str()<<" is not valid XML");
+		// 			}
+		// 		}
+		// 	} else {
+		// 		properties[stemp] = value;
+		// 	}
+		// } 
+		else 
+		{
 			// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Invalid robot property "<<name.c_str()<<" on line "<<lineno<< "");
 			return false;
 		}
 
-		if (ss.bad()) {
+		if (ss.bad())
+		{
 			// 	LOG4CXX_ERROR(GET_LOGGER(RobParser),
 			// "   Error encountered while reading robot property "<<name.c_str()<<" on line "<<lineno);
 			return false;
