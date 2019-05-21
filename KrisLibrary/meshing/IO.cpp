@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 20:11:53
+* @Last Modified time: 2019-05-21 20:13:06
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -419,7 +419,7 @@ bool LoadOFF(std::istream& in,TriMesh& tri)
 				in.setstate(ios::badbit);
 				return false;
 			}
-			for( int i = 0;i < nv; i++ )
+			for( int i = 0; i < nv; i++ )
 			{
 				int v;
 				ss >> v;

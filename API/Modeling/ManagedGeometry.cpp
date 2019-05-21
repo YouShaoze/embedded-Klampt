@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 19:33:02
+* @Last Modified time: 2019-05-21 20:15:08
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -153,10 +153,10 @@ bool ManagedGeometry::LoadNoCache(const string& filename)
 	RemoveFromCache();
 	dynamicGeometrySource.clear();
 	geometry = make_shared<Geometry::AnyCollisionGeometry3D>();
-	if(appearance) 
-	{
-		appearance->geom = NULL;
-	}
+	// if(appearance) 
+	// {
+	// 	appearance->geom = NULL;
+	// }
 	//keep appearance
 
 	//load from scratch
@@ -211,7 +211,7 @@ bool ManagedGeometry::LoadNoCache(const string& filename)
 		// }
 		// else
 		// {
-		appearance->Set(*geometry);
+		// appearance->Set(*geometry);
 		// }
 		// }
 		// else
@@ -376,17 +376,17 @@ void ManagedGeometry::TransformGeometry(const Math3D::Matrix4& xform)
 	}
 }
 
-void ManagedGeometry::OnGeometryChange()
-{
-	//may need to refresh appearance?
-	if(geometry && appearance)
-		 appearance->Set(*geometry);
-}
+// void ManagedGeometry::OnGeometryChange()
+// {
+// 	//may need to refresh appearance?
+// 	if(geometry && appearance)
+// 		 appearance->Set(*geometry);
+// }
 
-ManagedGeometry::AppearancePtr ManagedGeometry::Appearance() const
-{
-	return appearance; 
-}
+// ManagedGeometry::AppearancePtr ManagedGeometry::Appearance() const
+// {
+// 	return appearance; 
+// }
 
 bool ManagedGeometry::IsAppearanceShared() const
 { 
