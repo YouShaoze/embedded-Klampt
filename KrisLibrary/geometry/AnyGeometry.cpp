@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:45
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 19:27:02
+* @Last Modified time: 2019-05-21 19:39:02
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -520,12 +520,20 @@ bool AnyGeometry3D::Load(const char* fn)
 	{
 		type = TriangleMesh;
 		data = Meshing::TriMesh();
-		GLDraw::GeometryAppearance blank,temp;
-		if(!Meshing::Import(fn,this->AsTriangleMesh(),temp)) return false;
-		if(temp.faceColor != blank.faceColor ||
-			 !temp.vertexColors.empty() ||
-			 !temp.faceColors.empty()) //loaded appearance data
-			appearanceData = temp;
+
+		// GLDraw::GeometryAppearance blank,temp;
+
+		if(!Meshing::Import(fn,this->AsTriangleMesh())) 
+		{
+			return false;
+		}
+
+		// if(temp.faceColor != blank.faceColor ||
+		// 	 !temp.vertexColors.empty() ||
+		// 	 !temp.faceColors.empty()) //loaded appearance data
+		// {
+		// 	appearanceData = temp;
+		// }
 		return true;
 	}
 	// else if(0==strcmp(ext,"pcd"))

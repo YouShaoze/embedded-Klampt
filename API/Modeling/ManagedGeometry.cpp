@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 19:25:08
+* @Last Modified time: 2019-05-21 19:33:02
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -112,29 +112,29 @@ bool ManagedGeometry::Load(const string& filename)
 	// 	return LoadNoCache(filename);
 	// }
 
-	ManagedGeometry* prev = ManagedGeometry::IsCached(filename);
-	if(prev)
-	{
-		cacheKey = filename;
-		//printf("ManagedGeometry: Copying data from previously loaded file %s\n",filename.c_str());
-		if(!prev->geometry->CollisionDataInitialized())
-		{
-			// Timer timer;
-			prev->geometry->InitCollisionData();
-			// double t = timer.ElapsedTime();
-			// if(t > 0.2) 
-				// LOG4CXX_INFO(KrisLibrary::logger(),"ManagedGeometry: Initialized "<<filename<<" collision data structures in time "<<t<<"s");
-		}
-		geometry = make_shared<Geometry::AnyCollisionGeometry3D>(*prev->geometry);
-		//geometry = prev->geometry;
-		appearance = prev->appearance;
-		appearance->geom = geometry.get();
-		manager.cache[filename].geoms.push_back(this);
-// #if CACHE_DEBUG
-// 		LOG4CXX_WARN(KrisLibrary::logger(),"ManagedGeometry: adding a duplicate of "<<filename<<" to cache");
-// #endif
-		return true;
-	}
+// 	ManagedGeometry* prev = ManagedGeometry::IsCached(filename);
+// 	if(prev)
+// 	{
+// 		cacheKey = filename;
+// 		//printf("ManagedGeometry: Copying data from previously loaded file %s\n",filename.c_str());
+// 		if(!prev->geometry->CollisionDataInitialized())
+// 		{
+// 			// Timer timer;
+// 			prev->geometry->InitCollisionData();
+// 			// double t = timer.ElapsedTime();
+// 			// if(t > 0.2) 
+// 				// LOG4CXX_INFO(KrisLibrary::logger(),"ManagedGeometry: Initialized "<<filename<<" collision data structures in time "<<t<<"s");
+// 		}
+// 		geometry = make_shared<Geometry::AnyCollisionGeometry3D>(*prev->geometry);
+// 		//geometry = prev->geometry;
+// 		appearance = prev->appearance;
+// 		appearance->geom = geometry.get();
+// 		manager.cache[filename].geoms.push_back(this);
+// // #if CACHE_DEBUG
+// // 		LOG4CXX_WARN(KrisLibrary::logger(),"ManagedGeometry: adding a duplicate of "<<filename<<" to cache");
+// // #endif
+// 		return true;
+// 	}
 
 	if(LoadNoCache(filename))
 	{  
@@ -202,22 +202,22 @@ bool ManagedGeometry::LoadNoCache(const string& filename)
 		// {
 			// LOG4CXX_INFO(KrisLibrary::logger(),"ManagedGeometry: loaded "<<filename<<" in time "<<t<<"s");
 		// }
-		if(geometry->type == Geometry::AnyGeometry3D::TriangleMesh)
-		{
-			if(geometry->TriangleMeshAppearanceData() != NULL)
-			{
-				// appearance = make_shared<GLDraw::GeometryAppearance>(*geometry->TriangleMeshAppearanceData());
-				appearance->Set(*geometry);
-			}
-			else
-			{
-				appearance->Set(*geometry);
-			}
-		}
-		else
-		{
-			appearance->Set(*geometry);
-		}
+		// if(geometry->type == Geometry::AnyGeometry3D::TriangleMesh)
+		// {
+		// if(geometry->TriangleMeshAppearanceData() != NULL)
+		// {
+		// 	// appearance = make_shared<GLDraw::GeometryAppearance>(*geometry->TriangleMeshAppearanceData());
+		// 	appearance->Set(*geometry);
+		// }
+		// else
+		// {
+		appearance->Set(*geometry);
+		// }
+		// }
+		// else
+		// {
+		// 	appearance->Set(*geometry);
+		// }
 		return true;
 		// }
 		// else 
@@ -233,21 +233,21 @@ bool ManagedGeometry::LoadNoCache(const string& filename)
 	}
 }
 
-ManagedGeometry* ManagedGeometry::IsCached(const string& filename)
-{
-	map<string,GeometryManager::GeometryList>::const_iterator i=manager.cache.find(filename);
-	if(i==manager.cache.end()) return NULL;
-	if(i->second.geoms.empty()) return NULL;
-#if CACHE_DEBUG
-	printf("ManagedGeometry: retreiving %s from cache.\n",filename.c_str());
-#endif
-	return i->second.geoms[0];
-}
+// ManagedGeometry* ManagedGeometry::IsCached(const string& filename)
+// {
+// 	map<string,GeometryManager::GeometryList>::const_iterator i=manager.cache.find(filename);
+// 	if(i==manager.cache.end()) return NULL;
+// 	if(i->second.geoms.empty()) return NULL;
+// #if CACHE_DEBUG
+// 	printf("ManagedGeometry: retreiving %s from cache.\n",filename.c_str());
+// #endif
+// 	return i->second.geoms[0];
+// }
 
-bool ManagedGeometry::IsCached() const
-{
-	return !cacheKey.empty();
-}
+// bool ManagedGeometry::IsCached() const
+// {
+// 	return !cacheKey.empty();
+// }
 
 bool ManagedGeometry::IsOriginal() const
 {
