@@ -4,7 +4,7 @@
 * @Author: Ruige_Lee
 * @Date:   2019-05-19 11:47:44
 * @Last Modified by:   Ruige_Lee
-* @Last Modified time: 2019-05-21 16:24:44
+* @Last Modified time: 2019-05-21 16:36:09
 * @Email: 295054118@whut.edu.cn
 * @page: https://whutddk.github.io/
 */
@@ -1207,7 +1207,7 @@ bool Robot::LoadRob(const char *fn)
 	// 	for (size_t i = 0; i < links.size(); i++) {
 	// 		links[i].mass = massVec[i];
 	// 	}
-	}
+	// }
 
 	// if (inertiaVec.empty())
 	// {
@@ -1270,13 +1270,13 @@ bool Robot::LoadRob(const char *fn)
 			return false;
 		}
 
-		if (!geomscale.empty() && geomscale[i] != 1) {
-			Matrix4 mscale;
-			mscale.setIdentity();
-			mscale(0, 0) = mscale(1, 1) = mscale(2, 2) = geomscale[i];
-			geomManagers[i].TransformGeometry(mscale);
-			geometry[i] = geomManagers[i];
-		}
+		// if (!geomscale.empty() && geomscale[i] != 1) {
+		// 	Matrix4 mscale;
+		// 	mscale.setIdentity();
+		// 	mscale(0, 0) = mscale(1, 1) = mscale(2, 2) = geomscale[i];
+		// 	geomManagers[i].TransformGeometry(mscale);
+		// 	geometry[i] = geomManagers[i];
+		// }
 
 		if (geommargin.size() == 1) {
 			geometry[i]->margin = geommargin[0];
@@ -1292,7 +1292,7 @@ bool Robot::LoadRob(const char *fn)
 	}
 
 	// LOG4CXX_INFO(GET_LOGGER(RobParser),"Loaded geometries in time "<<timer.ElapsedTime()<<"s, "<<numGeomElements<<" total primitive elements");
-	timer.Reset();
+	// timer.Reset();
 
 	//process transformation of geometry shapes
 	if ( geomTransformIndex.size() != geomTransform.size() ) {
@@ -1315,12 +1315,12 @@ bool Robot::LoadRob(const char *fn)
 		geometry[geomIndex] = geomManagers[geomIndex];
 	}
 
-	if (collision.empty()) {
+	// if (collision.empty()) {
 		//TESTING: don't need to do this with dynamic initialization
 		//InitCollisions();
-	} else {
+	// } else {
 		// FatalError("So far, no mechanism to select environment collisions");
-	}
+	// }
 
 	for (size_t i = 0; i < noCollision.size(); i++) {
 		int link = LinkIndex(noCollision[i].c_str());
@@ -1333,132 +1333,140 @@ bool Robot::LoadRob(const char *fn)
 		// FatalError("So far, no mechanism to turn off collisions");
 	}
 
-	if (joints.empty()) {
-		joints.resize(links.size());
+	// if (joints.empty()) {
+	joints.resize(links.size());
 
-		for (size_t i = 0; i < links.size(); i++) {
-			if (parents[i] == -1) {
-				if (velMin[i] == 0 && velMax[i] == 0) {
-					joints[i].type = RobotJoint::Weld;
-				} else {
-					joints[i].type = RobotJoint::Normal;
-				}
-			} else {
+	for (size_t i = 0; i < links.size(); i++)
+	{
+		if (parents[i] == -1)
+		{
+			if (velMin[i] == 0 && velMax[i] == 0)
+			{
+				joints[i].type = RobotJoint::Weld;
+			}
+			else
+			{
 				joints[i].type = RobotJoint::Normal;
 			}
-
-			joints[i].linkIndex = (int) i;
 		}
-	}
+		else
+		{
+			joints[i].type = RobotJoint::Normal;
+		}
 
-	if (drivers.empty()) {
+		joints[i].linkIndex = (int) i;
+	}
+	// }
+
+	// if (drivers.empty()) {
 //    Assert(joints.size() == links.size());
-		drivers.resize(0);
+	drivers.resize(0);
 
-		for (size_t i = 0; i < joints.size(); i++) {
-			if (joints[i].type != RobotJoint::Normal
-				&& joints[i].type != RobotJoint::Spin) {
-				continue;
-			}
-
-			RobotJointDriver d;
-			d.type = RobotJointDriver::Normal;
-			d.linkIndices.push_back(i);
-			d.qmin = qMin(i);
-			d.qmax = qMax(i);
-			d.vmin = velMin(i);
-			d.vmax = velMax(i);
-			d.tmin = -torqueMax(i);
-			d.tmax = torqueMax(i);
-			d.amin = -accMax(i);
-			d.amax = accMax(i);
-			d.servoP = 0;
-			d.servoI = 0;
-			d.servoD = 0;
-			d.dryFriction = 0;
-			d.viscousFriction = 0;
-			drivers.push_back(d);
+	for (size_t i = 0; i < joints.size(); i++) {
+		if (joints[i].type != RobotJoint::Normal
+			&& joints[i].type != RobotJoint::Spin) {
+			continue;
 		}
 
-		nd = (int) drivers.size();
-	} else {
-		//load normal driver settings
-		for (size_t i = 0; i < drivers.size(); i++) {
-			if (drivers[i].type == RobotJointDriver::Normal
-				|| drivers[i].type == RobotJointDriver::Translation
-				|| drivers[i].type == RobotJointDriver::Rotation) {
-				int itemp = drivers[i].linkIndices[0];
-				Assert(itemp >= 0 && itemp < (int) n);
-				drivers[i].qmin = qMin(itemp);
-				drivers[i].qmax = qMax(itemp);
-				drivers[i].vmin = velMin(itemp);
-				drivers[i].vmax = velMax(itemp);
-				drivers[i].tmin = -torqueMax(itemp);
-				drivers[i].tmax = torqueMax(itemp);
-				drivers[i].amin = -accMax(itemp);
-				drivers[i].amax = accMax(itemp);
-			}
-		}
+		RobotJointDriver d;
+		d.type = RobotJointDriver::Normal;
+		d.linkIndices.push_back(i);
+		d.qmin = qMin(i);
+		d.qmax = qMax(i);
+		d.vmin = velMin(i);
+		d.vmax = velMax(i);
+		d.tmin = -torqueMax(i);
+		d.tmax = torqueMax(i);
+		d.amin = -accMax(i);
+		d.amax = accMax(i);
+		d.servoP = 0;
+		d.servoI = 0;
+		d.servoD = 0;
+		d.dryFriction = 0;
+		d.viscousFriction = 0;
+		drivers.push_back(d);
 	}
 
-	if (driverNames.empty()) {
-		driverNames.resize(0);
+	nd = (int) drivers.size();
+	// } 
+	// else {
+	// 	//load normal driver settings
+	// 	for (size_t i = 0; i < drivers.size(); i++) {
+	// 		if (drivers[i].type == RobotJointDriver::Normal
+	// 			|| drivers[i].type == RobotJointDriver::Translation
+	// 			|| drivers[i].type == RobotJointDriver::Rotation) {
+	// 			int itemp = drivers[i].linkIndices[0];
+	// 			Assert(itemp >= 0 && itemp < (int) n);
+	// 			drivers[i].qmin = qMin(itemp);
+	// 			drivers[i].qmax = qMax(itemp);
+	// 			drivers[i].vmin = velMin(itemp);
+	// 			drivers[i].vmax = velMax(itemp);
+	// 			drivers[i].tmin = -torqueMax(itemp);
+	// 			drivers[i].tmax = torqueMax(itemp);
+	// 			drivers[i].amin = -accMax(itemp);
+	// 			drivers[i].amax = accMax(itemp);
+	// 		}
+	// 	}
+	// }
 
-		for (size_t i = 0; i < drivers.size(); i++) {
-			driverNames.push_back(linkNames[drivers[i].linkIndices[0]]);
-		}
+	// if (driverNames.empty()) {
+	driverNames.resize(0);
+
+	for (size_t i = 0; i < drivers.size(); i++) {
+		driverNames.push_back(linkNames[drivers[i].linkIndices[0]]);
 	}
+	// }
 
 	//setup driver servo parameters, if they exist
-	if (!servoP.empty() && servoP.size() != nd) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Wrong number of servo P parameters specified: "<<servoP.size()<<" vs "<<nd);
-		return false;
-	}
+	// if (!servoP.empty() && servoP.size() != nd) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser),"   Wrong number of servo P parameters specified: "<<servoP.size()<<" vs "<<nd);
+	// 	return false;
+	// }
 
-	if (!servoI.empty() && servoI.size() != nd) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of servo I parameters specified ("<<servoI.size()<<")");
-		return false;
-	}
+	// if (!servoI.empty() && servoI.size() != nd) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of servo I parameters specified ("<<servoI.size()<<")");
+	// 	return false;
+	// }
 
-	if (!servoD.empty() && servoD.size() != nd) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of servo D parameters specified ("<<servoD.size()<<")");
-		return false;
-	}
+	// if (!servoD.empty() && servoD.size() != nd) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of servo D parameters specified ("<<servoD.size()<<")");
+	// 	return false;
+	// }
 
-	if (!dryFriction.empty() && dryFriction.size() != nd) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of dry friction parameters specified ("<<dryFriction.size()<<")");
-		return false;
-	}
+	// if (!dryFriction.empty() && dryFriction.size() != nd) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of dry friction parameters specified ("<<dryFriction.size()<<")");
+	// 	return false;
+	// }
 
-	if (!viscousFriction.empty() &&  viscousFriction.size() != nd) {
-		// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of viscous friction parameters specified ("<<viscousFriction.size()<<")");
-		return false;
-	}
+	// if (!viscousFriction.empty() &&  viscousFriction.size() != nd) {
+	// 	// LOG4CXX_ERROR(GET_LOGGER(RobParser), "   Wrong number of viscous friction parameters specified ("<<viscousFriction.size()<<")");
+	// 	return false;
+	// }
 
-	for (size_t i = 0; i < servoP.size(); i++) {
-		drivers[i].servoP = servoP[i];
-		Assert(servoP[i] >= 0);
-	}
+	// for (size_t i = 0; i < servoP.size(); i++) {
+	// 	drivers[i].servoP = servoP[i];
+	// 	Assert(servoP[i] >= 0);
+	// }
 
-	for (size_t i = 0; i < servoI.size(); i++) {
-		drivers[i].servoI = servoI[i];
-		Assert(servoI[i] >= 0);
-	}
+	// for (size_t i = 0; i < servoI.size(); i++) {
+	// 	drivers[i].servoI = servoI[i];
+	// 	Assert(servoI[i] >= 0);
+	// }
 
-	for (size_t i = 0; i < servoD.size(); i++) {
-		drivers[i].servoD = servoD[i];
-		Assert(servoD[i] >= 0);
-	}
+	// for (size_t i = 0; i < servoD.size(); i++) {
+	// 	drivers[i].servoD = servoD[i];
+	// 	Assert(servoD[i] >= 0);
+	// }
 
-	for (size_t i = 0; i < dryFriction.size(); i++) {
-		drivers[i].dryFriction = dryFriction[i];
-		Assert(dryFriction[i] >= 0);
-	}
+	// for (size_t i = 0; i < dryFriction.size(); i++) {
+	// 	drivers[i].dryFriction = dryFriction[i];
+	// 	Assert(dryFriction[i] >= 0);
+	// }
 
-	for (size_t i = 0; i < viscousFriction.size(); i++) {
-		drivers[i].viscousFriction = viscousFriction[i];
-		Assert(viscousFriction[i] >= 0);
-	}
+	// for (size_t i = 0; i < viscousFriction.size(); i++) {
+	// 	drivers[i].viscousFriction = viscousFriction[i];
+	// 	Assert(viscousFriction[i] >= 0);
+	// }
 
 	if (!CheckValid()) {
 		return false;
@@ -1466,7 +1474,8 @@ bool Robot::LoadRob(const char *fn)
 
 
 	//first mount the geometries, they affect whether a link is included in self collision testing
-	for (size_t i = 0; i < mountLinks.size(); i++) {
+	for (size_t i = 0; i < mountLinks.size(); i++)
+	{
 		const char *ext = FileExtension(mountFiles[i].c_str());
 
 		if (ext && (0 == strcmp(ext, "rob") || 0 == strcmp(ext, "urdf"))) {
@@ -1487,65 +1496,65 @@ bool Robot::LoadRob(const char *fn)
 	}
 
 	//automatically compute mass parameters from geometry
-	if (autoMass) {
-		for (size_t i = 0; i < links.size(); i++) {
-			if (comVec.empty()) {
-				if (geometry[i] && !geometry[i]->Empty()) {
-					links[i].com = CenterOfMass(*geometry[i]);
-				} else {
-					links[i].com.setZero();
-				}
-			}
+	// if (autoMass) {
+	// 	for (size_t i = 0; i < links.size(); i++) {
+	// 		if (comVec.empty()) {
+	// 			if (geometry[i] && !geometry[i]->Empty()) {
+	// 				links[i].com = CenterOfMass(*geometry[i]);
+	// 			} else {
+	// 				links[i].com.setZero();
+	// 			}
+	// 		}
 
-			if (inertiaVec.empty()) {
-				if (!IsGeometryEmpty(i) && links[i].mass != 0.0) {
-					links[i].inertia = Inertia(*geometry[i], links[i].com,
-											   links[i].mass);
+	// 		if (inertiaVec.empty()) {
+	// 			if (!IsGeometryEmpty(i) && links[i].mass != 0.0) {
+	// 				links[i].inertia = Inertia(*geometry[i], links[i].com,
+	// 										   links[i].mass);
 
-					//check for infinity
-					if (!links[i].inertia.isZero(1e300)) {
-						// LOG4CXX_INFO(GET_LOGGER(RobParser),"Huge automass inertia for "<<linkNames[i]<<": "<<links[i].inertia);
-						// LOG4CXX_INFO(GET_LOGGER(RobParser),"Press enter to continue...");
-						//KrisLibrary::loggerWait();
-					}
-				} else {
-					links[i].inertia.setZero();
-					//LOG4CXX_INFO(GET_LOGGER(RobParser),"Automass setting zero inertia for "<<linkNames[i]);
-				}
-			}
-		}
-	}
+	// 				//check for infinity
+	// 				if (!links[i].inertia.isZero(1e300)) {
+	// 					// LOG4CXX_INFO(GET_LOGGER(RobParser),"Huge automass inertia for "<<linkNames[i]<<": "<<links[i].inertia);
+	// 					// LOG4CXX_INFO(GET_LOGGER(RobParser),"Press enter to continue...");
+	// 					//KrisLibrary::loggerWait();
+	// 				}
+	// 			} else {
+	// 				links[i].inertia.setZero();
+	// 				//LOG4CXX_INFO(GET_LOGGER(RobParser),"Automass setting zero inertia for "<<linkNames[i]);
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	//Initialize self collisions -- pre subchain mounting
 	CleanupSelfCollisions();
 	vector<pair<string, string> > residualSelfCollisions, residualNoSelfCollisions;
 
-	if (selfCollision.empty()) {
-		InitAllSelfCollisions();
-	} else {
-		for (size_t i = 0; i < selfCollision.size(); i++) {
-			int link1, link2;
-			link1 = LinkIndex(selfCollision[i].first.c_str());
-			link2 = LinkIndex(selfCollision[i].second.c_str());
+	// if (selfCollision.empty()) {
+	InitAllSelfCollisions();
+	// } else {
+	// 	for (size_t i = 0; i < selfCollision.size(); i++) {
+	// 		int link1, link2;
+	// 		link1 = LinkIndex(selfCollision[i].first.c_str());
+	// 		link2 = LinkIndex(selfCollision[i].second.c_str());
 
-			if (link1 < 0 || link1 >= (int) links.size() ||
-				link2 < 0 || link2 >= (int) links.size()) {
-				residualSelfCollisions.push_back(selfCollision[i]);
-				continue;
-			}
+	// 		if (link1 < 0 || link1 >= (int) links.size() ||
+	// 			link2 < 0 || link2 >= (int) links.size()) {
+	// 			residualSelfCollisions.push_back(selfCollision[i]);
+	// 			continue;
+	// 		}
 
-			if ( link1 > link2 ) {
-				Swap(link1, link2);
-			}
+	// 		if ( link1 > link2 ) {
+	// 			Swap(link1, link2);
+	// 		}
 
-			if (!(link1 < link2)) {
-				// LOG4CXX_ERROR(GET_LOGGER(RobParser),"Robot::Load(): Invalid self collision pair "<<selfCollision[i].first<<", "<<selfCollision[i].second);
-				return false;
-			}
+	// 		if (!(link1 < link2)) {
+	// 			// LOG4CXX_ERROR(GET_LOGGER(RobParser),"Robot::Load(): Invalid self collision pair "<<selfCollision[i].first<<", "<<selfCollision[i].second);
+	// 			return false;
+	// 		}
 
-			InitSelfCollisionPair(link1, link2);
-		}
-	}
+	// 		InitSelfCollisionPair(link1, link2);
+	// 	}
+	// }
 
 	for (size_t i = 0; i < noSelfCollision.size(); i++) {
 		int link1, link2;
@@ -1569,7 +1578,7 @@ bool Robot::LoadRob(const char *fn)
 	}
 
 
-	timer.Reset();
+	// timer.Reset();
 
 	//do the mounting of subchains
 	for (size_t i = 0; i < mountLinks.size(); i++) {
