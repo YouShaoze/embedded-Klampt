@@ -1,10 +1,10 @@
 /*
-* @File Name: Robot.cpp
-* @File Path: K:\work\MAS2\embedded-Klampt\API\Modeling\Robot.cpp
+* @File Name Robot.cpp
+* @File Path M:\MAS2\embedded Klampt\API\Modeling\Robot.cpp
 * @Author: 29505
 * @Date:   2019-05-21 22:23:19
-* @Last Modified by:   29505
-* @Last Modified time: 2019-05-21 23:56:37
+* @Last Modified by:   Ruige_Lee
+* @Last Modified time: 2019-05-22 10:54:14
 * @Email: 295054118@whut.edu.cn
 */
 /*
